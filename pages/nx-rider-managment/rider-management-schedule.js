@@ -504,7 +504,7 @@ export default function RiderManagementScheduleNew() {
     return (
         <>
             {/* <Layout> */}
-            {/* <Breadcrumbs title="Nx Rider Management" breadcrumbs={breadcrumbs} /> */}
+            {/* <Breadcrumbs title="DPK MANAGMENT SYSTEM" breadcrumbs={breadcrumbs} /> */}
             <LoadingOverlay active={loading} className="h-[calc(100vh-4rem)]" spinner text='Loading...'
                 styles={{
                     overlay: (base) => ({ ...base, background: 'rgba(215, 219, 227, 0.6)' }), spinner: (base) => ({ ...base, }),

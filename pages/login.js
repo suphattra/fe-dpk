@@ -18,7 +18,7 @@ export default function Login() {
             await authService.authentication(e).then(res => {
                 console.log(res)
                 if (res.data.resultCode === '20000') {
-                    router.push('nx-rider-managment');
+                    router.push('calendar-schedule');
                     setLoading(false)
                 } else if (res.resultCode === '40100') {
                     setMsgError("Invalid username or password.")

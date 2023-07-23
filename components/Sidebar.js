@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { Transition } from '@headlessui/react'
 import Link from 'next/link';
 const navigation = [
-    { name: 'Dashboard', icon: Squares2X2Icon, href: '/nx-rider-managment', current: true },
+    { name: 'Dashboard', icon: Squares2X2Icon, href: '/calendar-schedule', current: true },
     { name: 'บันทึกการทำงาน', icon: DocumentTextIcon, href: '/job', count: 3, current: false },
     { name: 'พนักงาน', icon: UserIcon, href: '/driver', count: 4, current: false },
     { name: 'สาขา&แปลงงาน', icon: UsersIcon, href: '/customer', count: 4, current: false },

@@ -3,6 +3,7 @@
 @import "tailwindcss/components";
 
 @import "tailwindcss/utilities";
+@import 'react-big-calendar';
 
 html,
 body {
