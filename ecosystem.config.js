@@ -7,7 +7,7 @@ module.exports = {
         instances: "max", // Set the number of instances. "max" will use the maximum available cores
         exec_mode: "cluster", // Use cluster mode for better performance
         env: {
-          NODE_ENV: "production",
+          NODE_ENV: "production", //development production
         },
       },
     ],
