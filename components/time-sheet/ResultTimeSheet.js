@@ -1,6 +1,6 @@
 import { EyeIcon } from "@heroicons/react/24/outline"
 import { useRouter } from "next/router";
-import Pagination from "../../components/Pagination";
+import Pagination from "../Pagination";
 
 export default function ResultTimeSheet({ jobList, total, paginate, currentPage, callBack }) {
     const router = useRouter();
