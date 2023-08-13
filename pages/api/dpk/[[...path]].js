@@ -3,7 +3,7 @@ const ENDPOINT = `${process.env.NEXT_PUBLIC_API_URL}`
 
 const rewrite = function () {
   if (process.env.NODE_ENV === "development") {
-    return { "/api/nxrider": '/api' }
+    return { "/api/dpk": '/api' }
   } else {
     return { "": "/api" }
   }

@@ -1,5 +1,5 @@
 import jwt from 'jwt-decode'
-import { http } from '../nxrider/http.endpoint.nxrider';
+import { http } from '../dpk/http.endpoint.dpk';
 export const authService = {
     getToken,
     authentication,

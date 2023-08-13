@@ -9,6 +9,7 @@ import { JobService } from "../api/job.service";
 import { MasterService } from "../api/master.service";
 import SearchTimeSheet from "../../components/time-sheet/SearchTimeSheet";
 import RusultTimeSheet from "../../components/time-sheet/RusultTimeSheet";
+import { OperationsService } from "../api/operations.service";
 LoadingOverlay.propTypes = undefined
 const initial = {
     search: {
@@ -56,7 +57,7 @@ export default function Job() {
     const getJobList = async (searchParam) => {
         setLoading(true)
         let param = convertFilter(searchParam)
-        await JobService.getJobList(param).then(res => {
+        await OperationsService.getOperationsList(param).then(res => {
             if (res.data.resultCode === "20000") {
                 setJobList(res.data.resultData.jobs)
                 setTotal(res.data.resultData.total)
@@ -102,7 +103,7 @@ export default function Job() {
                         }
                     }}>
 
-                    {/* <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}> */}{/* </Breadcrumbs> */}
+                    {/* <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs> */}
                     <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} jobStatus={jobStatus} customerType={customerType} paymentStatus={paymentStatus}/>
                     <RusultTimeSheet jobList={jobList} total={total} paginate={paginate} currentPage={currentPage} />
                 </LoadingOverlay>
