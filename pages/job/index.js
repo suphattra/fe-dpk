@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import LoadingOverlay from "react-loading-overlay";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Result from "../../components/job/result";
-import Search from "../../components/job/search";
+// import SearchTimeSheet from "../../components/time/SearchTimeSheet";
 import { convertFilter } from "../../helpers/utils";
 import Layout from "../../layouts";
 import { JobService } from "../api/job.service";
 import { MasterService } from "../api/master.service";
+import SearchTimeSheet from "../../components/time-sheet/SearchTimeSheet";
+import RusultTimeSheet from "../../components/time-sheet/RusultTimeSheet";
 LoadingOverlay.propTypes = undefined
 const initial = {
     search: {
@@ -21,7 +23,7 @@ const initial = {
     },
     jobList: []
 }
-const breadcrumbs = [{ index: 1, href: '/job', name: 'job' }]
+const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }]
 export default function Job() {
     const [loading, setLoading] = useState(true)
     const [searchParam, setSearchParam] = useState(initial.search)
@@ -100,12 +102,12 @@ export default function Job() {
                         }
                     }}>
 
-                    <Breadcrumbs title="Job" breadcrumbs={breadcrumbs}>
-                    </Breadcrumbs>
-                    <Search handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} jobStatus={jobStatus} customerType={customerType} paymentStatus={paymentStatus}/>
-                    <Result jobList={jobList} total={total} paginate={paginate} currentPage={currentPage} />
+                    {/* <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}> */}{/* </Breadcrumbs> */}
+                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} jobStatus={jobStatus} customerType={customerType} paymentStatus={paymentStatus}/>
+                    <RusultTimeSheet jobList={jobList} total={total} paginate={paginate} currentPage={currentPage} />
                 </LoadingOverlay>
             </Layout>
         </>
     )
 }
+

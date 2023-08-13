@@ -9,9 +9,9 @@ export default function Search({ handleSearch, handleReset, handleChange, search
             <div className="md:container md:mx-auto">
                 <div className="flex justify-end w-full max-w-screen pt-4" aria-label="Breadcrumb">
                     <button type="button"
-                        onClick={() => { router.push('job/detail/create-job'); }}
+                        onClick={() => { router.push('job-dpk/detail/create-job'); }}
                         className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        <PlusCircleIcon className="h-4 w-4 mr-2" />NEW
+                        <PlusCircleIcon className="h-4 w-4 mr-2" />สร้างบันทึก
                     </button>
                 </div>
                 <CardBasic title="Search Criteria">
@@ -57,3 +57,4 @@ export default function Search({ handleSearch, handleReset, handleChange, search
         </>
     )
 }
+

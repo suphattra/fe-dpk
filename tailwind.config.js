@@ -9,6 +9,7 @@ module.exports = {
     extend: {
       colors: {
         'regal-blue-900': '#243c5a',
+        'green': '#16a34a',
       },
       gridAutoColumns: {
         '2fr': 'minmax(0, 2fr)',
@@ -37,3 +38,5 @@ module.exports = {
     require('@tailwindcss/forms'),
   ],
 }
+
+
