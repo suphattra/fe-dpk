@@ -3,7 +3,7 @@ const nextConfig = {
   // async rewrites() {
   //   return [
   //     {
-  //       source: '/api/nxrider/:path*',
+  //       source: '/api/dpk/:path*',
   //       // destination: 'http://localhost:5000/:path*',
   //       destination: 'https://nx-customer-iot.n-digitaltech.com/api/:path*',
   //       // destination: 'https://e-tracking.n-digitaltech.com/dow/api/:path*',

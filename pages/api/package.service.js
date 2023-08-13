@@ -1,4 +1,4 @@
-import { http } from './nxrider/http.endpoint.nxrider';
+import { http } from './dpk/http.endpoint.dpk';
 
 export const PackageService = {
     getPackageList,

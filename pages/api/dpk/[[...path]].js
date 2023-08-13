@@ -12,7 +12,7 @@ const rewrite = function () {
 export default createProxyMiddleware({
   target: ENDPOINT,
   changeOrigin: true,
-  pathRewrite: rewrite(),//{ "/api/nxrider": '/api' }
+  pathRewrite: rewrite(),//{ "/api/dpk": '/api' }
   onError(err, req, res) {
     res.json(err || {})
   },

@@ -1,4 +1,4 @@
-import { http } from './nxrider/http.endpoint.nxrider';
+import { http } from './dpk/http.endpoint.dpk';
 let Omise = null
 let paymentResult = null
 export const PaymentService = {
