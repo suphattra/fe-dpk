@@ -24,7 +24,8 @@ export default function DetailOperation() {
         employee: {},
         mainBranch: {},
         subBranch: {},
-        task: {}
+        task: {},
+        extraInventory: [{ index: 1 }]
     }])
     const createValidationSchema = () => {
     }
@@ -40,23 +41,33 @@ export default function DetailOperation() {
     const onChange = (e, index, name,) => {
         console.log('dddddddddddddd', e, index, name)
         let _newValue = [...timeSheetForm]
-        _newValue[index - 1][name] = e.target.value
+        _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
+    }
+    const deleteAddOnService = (rowIndex) => {
+        console.log("rowIndex", rowIndex)
+        // let newData = newData.filter((_, i) => i != rowIndex - 1)
+        const newData = timeSheetForm.filter(item => item.index !== rowIndex);
+        console.log("newData", newData)
+        setTimeSheetForm(newData)
     }
     const insertAddOnService = async () => {
         if (timeSheetForm.length === 10) {
             // setErrAddOnService("สามารถเพิ่มสูงสุด 10 รายการ")
             return
         }
+        let lastElement = timeSheetForm.length > 0 ? timeSheetForm[timeSheetForm.length - 1] : { index: 0 };
         let newService = {
-            index: timeSheetForm.length + 1,
+            index: lastElement.index + 1,//timeSheetForm.length + 1,
             startDate: "",
             employee: {},
             mainBranch: {},
             subBranch: {},
-            task: {}
+            task: {},
+            extraInventory: [{ index: 1 }]
         }
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
+        console.log(newService)
     }
     return (
         <Layout>
@@ -72,7 +83,7 @@ export default function DetailOperation() {
                     <form className="space-y-4" id='inputForm'>
                         {timeSheetForm && timeSheetForm.map((timeSheet, index) => {
                             return (
-                                <CardTimesheet timeSheet={timeSheet} onChange={onChange} />
+                                <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} />
                             )
                         })}
                     </form>
