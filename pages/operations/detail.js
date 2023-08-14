@@ -25,13 +25,6 @@ export default function DetailOperation() {
         mainBranch: {},
         subBranch: {},
         task: {}
-    }, {
-        index: 2,
-        startDate: "",
-        employee: {},
-        mainBranch: {},
-        subBranch: {},
-        task: {}
     }])
     const createValidationSchema = () => {
     }
@@ -41,9 +34,14 @@ export default function DetailOperation() {
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
-    const submitOrderJobEntry = async (data) => {
+    const handleSave = async () => {
+        console.log(timeSheetForm)
     }
-    const onChange = async (evt) => {
+    const onChange = (e, index, name,) => {
+        console.log('dddddddddddddd', e, index, name)
+        let _newValue = [...timeSheetForm]
+        _newValue[index - 1][name] = e.target.value
+        setTimeSheetForm(_newValue)
     }
     const insertAddOnService = async () => {
         if (timeSheetForm.length === 10) {
@@ -71,10 +69,10 @@ export default function DetailOperation() {
                 }}>
                 <Breadcrumbs title="Job Detail" breadcrumbs={breadcrumbs} />
                 <div className="md:container md:mx-auto">
-                    <form className="space-y-4" onSubmit={handleSubmit(submitOrderJobEntry)} id='inputForm'>
+                    <form className="space-y-4" id='inputForm'>
                         {timeSheetForm && timeSheetForm.map((timeSheet, index) => {
                             return (
-                                <CardTimesheet timeSheet={timeSheet} />
+                                <CardTimesheet timeSheet={timeSheet} onChange={onChange} />
                             )
                         })}
                     </form>
@@ -95,9 +93,10 @@ export default function DetailOperation() {
                                 >
                                     ยกเลิก
                                 </button>
-                                <button type="button"
+                                <button
+                                    type="button"
                                     className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                // onClick={handleSearch}
+                                    onClick={handleSave}
                                 >
                                     บันทึก
                                 </button>

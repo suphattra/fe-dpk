@@ -7,7 +7,7 @@ import { renderOptions } from "../../helpers/utils";
 import InputGroup from "../InputGroup";
 import { useState } from "react";
 
-export default function CardTimesheet({ timeSheet }) {
+export default function CardTimesheet({ timeSheet, onChange }) {
     const [wageType, setWageType] = useState([{
         "code": "MD0032",
         "value1": "รายวัน",
@@ -32,18 +32,15 @@ export default function CardTimesheet({ timeSheet }) {
         "value2": "Banana"
     }])//get จาก config
 
-
-    const onChange = async (evt) => {
-    }
     return (
         <CardBasic title={"บันทึกการทำงานที่ " + timeSheet.index}>
             <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
                 <>
                     <InputGroupDate
-                        type="date" id="shipmentDate" name="shipmentDate" label="วัน/เดือน/ปี"
+                        type="date" id={"startDate" + timeSheet.index} name="startDate" label="วัน/เดือน/ปี"
                         format="YYYY-MM-DD"
-                        onChange={onChange}
-                        value={timeSheet.shipmentDate ? moment(new Date(timeSheet.shipmentDate)).format('YYYY-MM-DD') : ""}
+                        onChange={(e) => onChange(e, timeSheet.index, "startDate")}
+                        value={timeSheet.startDate ? moment(new Date(timeSheet.startDate)).format('YYYY-MM-DD') : ""}
                         required />
 
                     <InputSelectGroup type="text" id="customerId" name="customerId" label="พนักงาน"
