@@ -8,7 +8,7 @@ import Layout from "../../layouts";
 import { JobService } from "../api/job.service";
 import { MasterService } from "../api/master.service";
 import SearchTimeSheet from "../../components/time-sheet/SearchTimeSheet";
-import RusultTimeSheet from "../../components/time-sheet/RusultTimeSheet";
+import RusultTimeSheet from "../../components/time-sheet/ResultTimeSheet";
 import { OperationsService } from "../api/operations.service";
 LoadingOverlay.propTypes = undefined
 const initial = {

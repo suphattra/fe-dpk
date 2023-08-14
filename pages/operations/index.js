@@ -24,7 +24,8 @@ const initial = {
 export default function Job() {
     const [loading, setLoading] = useState(true)
     const [searchParam, setSearchParam] = useState(initial.search)
-    const [jobList, setJobList] = useState(initial.jobList)
+    const [operationsList, setOperationsList] = useState(initial.jobList)
+    console.log("job ==>",operationsList,initial.jobList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const [jobStatus, setJobStatus] = useState([])
@@ -34,15 +35,15 @@ export default function Job() {
     useEffect(() => {
         async function fetchData() {
             await getOperationsList(searchParam);
-            await getConfig('JOB_STATUS')
-            await getConfig('CUSTOMER_TYPE')
-            await getConfig('PAYMENT_STATUS')
+            // await getConfig('JOB_STATUS')
+            // await getConfig('CUSTOMER_TYPE')
+            // await getConfig('PAYMENT_STATUS')
         }
         fetchData();
     }, []);
     const handleReset = async () => {
         setSearchParam(initial.search)
-        setJobList([])
+        setOperationsList([])
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
@@ -55,14 +56,17 @@ export default function Job() {
         setLoading(true)
         let param = convertFilter(searchParam)
         await OperationsService.getOperationsList(param).then(res => {
-            if (res.data.resultCode === "20000") {
-                setJobList(res.data.resultData.jobs)
-                setTotal(res.data.resultData.total)
+            if (res.data.responseCode === 200) {
+                setOperationsList(res.data.data)
+                // setTotal(res.data.resultData.total)
+                console.log("==> list job",res.data.operationCode)
             } else {
-                setJobList([])
+                setOperationsList([])
+                console.log("==> list job2",res.data.data,res.data.responseMessage,res.data.responseCode)
             }
             setLoading(false)
         }).catch(err => {
+            console.log("==> list job3")
             setLoading(false)
         })
     }
@@ -79,9 +83,9 @@ export default function Job() {
         }
         await MasterService.getConfig(paramquery).then(res => {
             if (res.data.resultCode === "20000") {
-                if (configCategory === 'JOB_STATUS') setJobStatus(res.data.resultData.configs)
-                if (configCategory === 'CUSTOMER_TYPE') setCustomerType(res.data.resultData.configs)
-                if (configCategory === 'PAYMENT_STATUS') setPaymentStatus(res.data.resultData.configs)
+                // if (configCategory === 'JOB_STATUS') setJobStatus(res.data.resultData.configs)
+                // if (configCategory === 'CUSTOMER_TYPE') setCustomerType(res.data.resultData.configs)
+                // if (configCategory === 'PAYMENT_STATUS') setPaymentStatus(res.data.resultData.configs)
             } else {
                 setJobStatus([])
             }
@@ -102,7 +106,7 @@ export default function Job() {
 
                     <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs>
                     <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} jobStatus={jobStatus} customerType={customerType} paymentStatus={paymentStatus}/>
-                    <ResultTimeSheet jobList={jobList} total={total} paginate={paginate} currentPage={currentPage} />
+                    <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} />
                 </LoadingOverlay>
             </Layout>
         </>
