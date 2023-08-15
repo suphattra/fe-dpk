@@ -60,40 +60,41 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 value={timeSheet.startDate ? moment(new Date(timeSheet.startDate)).format('YYYY-MM-DD') : ""}
                                 required />
 
-                            <InputSelectGroup type="text" id="customerId" name="customerId" label="พนักงาน"
-                                onChange={onChange}
+                            <InputSelectGroup type="text" id={"employee" + timeSheet.index} name="employee" label="พนักงาน"
+                                onChange={(e) => onChange(e, index, "employee")}
                                 isSearchable
                                 options={[{ name: "นวลเพ็ญ", value: 1 }, { name: "ทอมมี่(แมว)", value: 2 }, { name: "ปีโป้(นวล)", value: 3 }]}
                                 value="นวลเพ็ญ"
                                 required />
-                            <InputSelectGroup type="text" id="customerId" name="customerId" label="แปลงใหญ่"
+                            <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
                                 options={renderOptions([], "fullName", "customerId")}
                                 onChange={onChange}
                                 isSearchable
                                 value="นวลเพ็ญ"
                                 required />
-                            <InputSelectGroup type="text" id="estStartTime" name="estStartTime" label="แปลงย่อย"
+                            <InputSelectGroup type="text" id={"subBranch" + timeSheet.index} name="subBranch" label="แปลงย่อย"
                                 options={[]}
                                 onChange={onChange}
                                 value={timeSheet.estStartTime}
                                 isSearchable
                             />
-                            <InputSelectGroup type="text" id="customerId" name="customerId" label="งาน"
+                            <InputSelectGroup type="text" id={"task" + timeSheet.index} name="task" label="งาน"
                                 options={renderOptions([], "fullName", "customerId")}
                                 onChange={onChange}
                                 isSearchable
                                 value="นวลเพ็ญ"
                                 required />
-                            <InputSelectGroup type="text" id="estStartTime" name="estStartTime" label="ผลผลิต"
+                            <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
                                 options={[]}
                                 onChange={onChange} value={timeSheet.estStartTime}
                                 isSearchable />
                             <div className="block w-full">
-                                <label htmlFor={"taxAddress"} className="block text-sm font-medium text-gray-700">
+                                <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
                                     {"หมายเหตุ:"}
                                 </label>
                                 <textarea
-                                    id="taxAddress" name="หมายเหตุ"
+                                    onChange={(e) => onChange(e, index, "remark")}
+                                    id="remark" name="หมายเหตุ"
                                     rows={2}
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
                                 />
