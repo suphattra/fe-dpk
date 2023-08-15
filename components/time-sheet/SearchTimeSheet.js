@@ -9,9 +9,9 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             <div className="md:container md:mx-auto">
 
                 <div className="flex justify-end w-full max-w-screen pt-4" aria-label="Breadcrumb">
-                    <div className="block justify-left w-full pt-4">
+                    {/* <div className="block justify-left w-full pt-4">
                         บันทึกการทำงาน
-                    </div>
+                    </div> */}
                     <button type="button"
                         onClick={() => { router.push('job/detail/create-job'); }}
                         className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
@@ -29,7 +29,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     </button>
                 </div>
                 <CardBasic >
-                    <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                    <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
 
                         <InputSelectGroup type="text" id="status" name="status" label="แปลงใหญ่"
                             options={renderOptions(jobStatus, "configValue2", "configCode", "configValue")}
@@ -47,7 +47,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             onChange={handleChange}
                         />
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
 
                         {/* <InputGroup type="text" id="contactName" name="contactName" label="Recepient name:" onChange={handleChange} value={searchParam.contactName} /> */}
                         <InputSelectGroup type="text" id="status" name="status" label="พนักงาน"
