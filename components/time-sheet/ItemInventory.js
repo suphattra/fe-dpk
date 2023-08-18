@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 
-export default function ItemInventory({ extraInventory, deleteAddOnService }) {
+export default function ItemInventory({ extraInventory, deleteAddOnService ,callbackInventory}) {
   const [inventoryList, setInventoryList] = useState([]);
   useEffect(() => {
     setInventoryList(extraInventory);
@@ -25,8 +25,9 @@ export default function ItemInventory({ extraInventory, deleteAddOnService }) {
       subBranch: {},
       task: {},
     };
+    const _newValue = [...inventoryList,newService]
     setInventoryList((item) => [...item, newService]);
-    // callbackInventory()
+    callbackInventory(_newValue)
   };
   const deleteInventory = async (rowIndex) => {
     console.log("rowIndex", rowIndex);

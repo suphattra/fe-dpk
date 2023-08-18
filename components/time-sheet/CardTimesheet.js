@@ -37,6 +37,10 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
     }
+    const callbackInventory = (e)=>{
+        console.log('dedefef',e)
+        //onChange to extraInventory
+    }
 
     return (
         <div className="mt-4 flex flex-col">
@@ -113,7 +117,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                         {openAddInventory &&
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
-                                    <ItemInventory extraInventory={timeSheet.extraInventory} />
+                                    <ItemInventory extraInventory={timeSheet.extraInventory}
+                                    callbackInventory={(e)=>callbackInventory(e)} />
 
                                 </div>
                             </>}
