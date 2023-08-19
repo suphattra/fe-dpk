@@ -1,12 +1,12 @@
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
-import { renderOptions } from "../../helpers/utils";
+import { _resObjConfig, renderOptions } from "../../helpers/utils";
 import InputSelectGroup from "../InputSelectGroup";
 import InputSelectGroupInline from "../InputSelectGroupInline";
 import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 
-export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory }) {
+export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption }) {
   const [inventoryList, setInventoryList] = useState([]);
   useEffect(() => {
     setInventoryList(extraInventory);
@@ -18,32 +18,41 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
         ? inventoryList[inventoryList.length - 1]
         : { index: 0 };
     let newService = {
-      index: lastElement.index + 1, //timeSheetForm.length + 1,
-      startDate: "",
-      employee: {},
-      mainBranch: {},
-      subBranch: {},
-      task: {},
+      index: lastElement.index + 1,
+      inventoryCode: "",
+      inventoryName: "",
+      unit: "",
+      pickupAmount: ""
     };
     const _newValue = [...inventoryList, newService]
     setInventoryList((item) => [...item, newService]);
     callbackInventory(_newValue)
   };
   const deleteInventory = async (rowIndex) => {
-    console.log("rowIndex", rowIndex);
-    const newData = inventoryList.filter((item) => item.index !== rowIndex);
-    console.log("newData", newData);
-    setInventoryList(newData);
+    const _newValue = inventoryList.filter((item) => item.index !== rowIndex);
+    setInventoryList(_newValue);
+    callbackInventory(_newValue)
   };
   const onChange = (e, index, name) => {
-    console.log("onChange", e.target.value, index, name);
-    let _newValue = [...inventoryList];
-    _newValue[index][name] = e.target.value;
-    setInventoryList(_newValue);
+    if (name === 'inventory') {
+      let obj = {}
+      obj = inventoryOption.find((ele => { return ele.inventoryCode === e.target.value }))
+      let _newValue = [...inventoryList];
+      _newValue[index]['inventoryCode'] = obj.inventoryCode;
+      _newValue[index]['inventoryName'] = obj.inventoryName;
+      _newValue[index]['unit'] = obj.unit;
+      setInventoryList(_newValue);
+    } else {
+      console.log("onChange", e.target.value, index, name);
+      let _newValue = [...inventoryList];
+      _newValue[index][name] = e.target.value;
+      setInventoryList(_newValue);
+    }
+
   };
   return (
     <div className="flow-root">
-      {inventoryList &&
+      {inventoryList.length > 0 &&
         inventoryList.map((extra, index) => {
           return (
             <>
@@ -54,9 +63,8 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                     id="inventory"
                     name="inventory"
                     label="สินค้าคงคลัง:"
-                    // options={renderOptions(extraCharge, "configValue", "configCode")}
-                    // options={renderOptions(enp, "configValue", "configCode")}
-                    value={extra.inventory}
+                    options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
+                    value={extra.inventoryCode}
                     onChange={(e) => {
                       onChange(e, index, "inventory");
                     }}

@@ -10,6 +10,7 @@ import ItemInventory from "./ItemInventory";
 import InputGroupMask from "../InputGroupMask";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
+import { InventoryService } from "../../pages/api/inventory.service";
 
 export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService }) {
     const [openAddInventory, setAddInventory] = useState(false)
@@ -19,12 +20,14 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [operationStatus, setOperationStatus] = useState([])
     const [employeesOption, setEmployeesOption] = useState([])
     const [taskOption, setTaskption] = useState([])
+    const [inventoryOption, setInventoryOption] = useState([])
     useEffect(() => {
         async function fetchData() {
             getEmployeeList();
             getConfigList('WAGE_TYPE');
             getConfigList('OPERATION_STATUS');
             getConfigList('TASK');
+            getInventoryList();
         }
         fetchData()
     }, [])
@@ -43,9 +46,20 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }).catch(err => {
         })
     }
+    const getInventoryList = async () => {
+        setInventoryOption([])
+        await InventoryService.getInventoryList().then(res => {
+            if (res.data.resultCode === 200) {
+                setInventoryOption(res.data.resultData)
+            } else {
+                setInventoryOption([])
+            }
+        }).catch(err => {
+        })
+    }
     const getConfigList = async (code) => {
         let param = {
-            subType: code//'WAGE_TYPE'
+            subType: code
         }
         await MasterService.getConfig(param).then(res => {
             if (res.data.resultCode === 200) {
@@ -62,10 +76,14 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
+        if(!e.target.checked){
+            onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
+        }
     }
     const callbackInventory = (e) => {
         console.log('dedefef', e)
         //onChange to extraInventory
+        onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
     }
 
     const handleChange = (e, index, name) => {
@@ -126,7 +144,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
 
             </div>
             <div className="rounded-md p-4 shadow-md">
-                <div className="flex flex-1 items-stretch overflow-hidden">
+                {/* items-stretch overflow-hidden */}
+                <div className="flex flex-1 items-stretch">
                     <div className='relative w-0 flex-1 mr-6 border-r'>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
                             <InputGroupDate
@@ -189,7 +208,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                         {openAddInventory &&
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
-                                    <ItemInventory extraInventory={timeSheet.extraInventory}
+                                    <ItemInventory extraInventory={timeSheet.inventory}
+                                        inventoryOption={inventoryOption}
                                         callbackInventory={(e) => callbackInventory(e)} />
 
                                 </div>

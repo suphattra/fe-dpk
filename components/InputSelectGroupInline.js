@@ -29,6 +29,7 @@ export default function InputSelectGroupInline({ label, type, classes, id, name,
                 fontSize: "0.875rem",
             };
         },
+        menuPortal: base => ({ ...base, zIndex: 99999 }),
     };
     return (
 

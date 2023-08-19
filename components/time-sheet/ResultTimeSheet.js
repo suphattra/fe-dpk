@@ -11,13 +11,17 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
         let buttonColor;
         let text_color;
         switch (code) {
-            case "MD0024":
-                buttonColor = 'bg-gray-300 border-gray-300';
-                text_color = "text-gray-500"
+            case "MD0029":
+                buttonColor = 'bg-red-100 border-red-300';
+                text_color = "text-red-800"
                 break;
-            case "MD0025":
+            case "MD0028":
                 buttonColor = "bg-green-100 border-green-300";
                 text_color = "text-green-800"
+                break;
+            case "MD0027":
+                buttonColor = "bg-yellow-100 border-yellow-300";
+                text_color = "text-yellow-800"
                 break;
             default:
                 buttonColor = "bg-gray-100 border-gray-300";

@@ -11,6 +11,7 @@ import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import moment from 'moment'
 import { OperationsService } from "../api/operations.service";
+import { NotifyService } from "../api/notify.service";
 const initial = {
     jobDetail: {},
     wageType: {
@@ -42,7 +43,14 @@ const initial = {
             "code": "MD0022",
             "value1": "แปลงใหญ่"
         }
-    }
+    },
+    inventory: [{
+        index: 1,
+        inventoryCode: "",
+        inventoryName: "",
+        unit: "",
+        pickupAmount: ""
+    }]
 }
 export default function DetailOperation() {
     const breadcrumbs = [{ index: 1, href: '/operations', name: 'บันทึกการทำงาน' }, { index: 2, href: '/operations', name: 'สร้างบันทึก' }]
@@ -57,7 +65,7 @@ export default function DetailOperation() {
         mainBranch: initial.mainBranch,
         subBranch: initial.subBranch,
         task: initial.task,
-        extraInventory: [{ index: 1 }],
+        inventory: initial.inventory,
         wageType: initial.wageType,
         operationStatus: initial.operationStatus
     }])
@@ -75,9 +83,13 @@ export default function DetailOperation() {
         let dataList = {
             dataList: timeSheetForm
         }
-        // await OperationsService.createOperations(dataList).then(res => {
-        //     console.log(res)
-        // })
+        await OperationsService.createOperations(dataList).then(res => {
+            if (res.data.resultCode === 200) {
+                NotifyService.success('Create Success')
+            } else {
+                NotifyService.error(res.data.resultDescription)
+            }
+        })
         setLoading(false)
     }
     const onChange = (e, index, name,) => {
@@ -101,13 +113,13 @@ export default function DetailOperation() {
         }
         let lastElement = timeSheetForm.length > 0 ? timeSheetForm[timeSheetForm.length - 1] : { index: 0 };
         let newService = {
-            index: lastElement.index + 1,//timeSheetForm.length + 1,
+            index: lastElement.index + 1,
             startDate: moment(new Date).format('YYYY-MM-DD'),
             employee: initial.employee,
             mainBranch: initial.mainBranch,
             subBranch: initial.subBranch,
             task: initial.task,
-            extraInventory: [{ index: 1 }],
+            inventory: initial.inventory,
             wageType: initial.wageType,
             operationStatus: initial.operationStatus
         }
