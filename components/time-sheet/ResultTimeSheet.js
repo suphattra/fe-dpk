@@ -1,8 +1,9 @@
 import { useRouter } from "next/router";
 import Pagination from "../Pagination";
+import moment from "moment";
 
 export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack }) {
-    
+    console.log(operationsList)
     const defaultTextColor = 'text-gray-500';
     const defaultButtonColor = 'bg-gray-300 border-gray-300';
 
@@ -66,7 +67,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {operationsList.map((job) => (
+                                    {operationsList && operationsList.length > 0 && operationsList.map((job) => (
                                         <>
                                             <tr >
                                                 <td className="text-center whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
@@ -84,11 +85,11 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                         {job.otAmount} * {job.otRate}
                                                     </span>
                                                 </td>
-                                                <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">{job.startDate}</td>
+                                                <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">{job.startDate ? moment(job.startDate).format('DD/MM/YYYY') : ""}</td>
 
                                                 <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                <button type="button" className={`ml-2 px-4 py-2 rounded ${buttonColor} ${textColor}`}>
-                                                        {job.operationStatus.value1}
+                                                    <button type="button" className={`ml-2 px-4 py-2 rounded ${buttonColor} ${textColor}`}>
+                                                        {/* {job.operationStatus.value1} */}
                                                     </button>
                                                 </td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">

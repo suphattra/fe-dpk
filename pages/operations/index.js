@@ -56,10 +56,10 @@ export default function Job() {
         setLoading(true)
         let param = convertFilter(searchParam)
         await OperationsService.getOperationsList(param).then(res => {
-            if (res.data.responseCode === 200) {
-                setOperationsList(res.data.data)
+            if (res.data.resultCode === 200) {
+                setOperationsList(res.data.resultData)
                 // setTotal(res.data.resultData.total)
-                console.log("==> list job",res.data.operationCode)
+                console.log("==> list job",res.data.resultData)
             } else {
                 setOperationsList([])
                 console.log("==> list job2",res.data.data,res.data.responseMessage,res.data.responseCode)

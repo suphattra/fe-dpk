@@ -3,43 +3,64 @@ import CardBasic from "../CardBasic";
 import InputGroupDate from "../InputGroupDate";
 import InputRadioGroup from "../InputRadioGroup";
 import InputSelectGroup from "../InputSelectGroup";
-import { renderOptions } from "../../helpers/utils";
-import InputGroup from "../InputGroup";
-import { useState } from "react";
-import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { isEmpty, renderOptions } from "../../helpers/utils";
+import { useEffect, useState } from "react";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import ItemInventory from "./ItemInventory";
+import InputGroupMask from "../InputGroupMask";
 
 export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService }) {
     const [openAddInventory, setAddInventory] = useState(false)
+    const [otAmount, setOtAmount] = useState(timeSheet.otAmount ? timeSheet.otAmount : null)
+    const [otRate, setOtRate] = useState(timeSheet.otRate ? timeSheet.otRate : null)
     const [wageType, setWageType] = useState([{
-        "code": "MD0032",
+        "code": "MD0031",
         "value1": "รายวัน",
         "value2": "daily"
     }, {
-        "code": "MD0033",
-        "value1": "รายเดือน",
-        "value2": "ssss"
+        "code": "MD0032",
+        "value1": "เหมาจ่าย",
+        "value2": "เหมาจ่าย"
     }, {
         "code": "MD0033",
-        "value1": "รายเดือน",
-        "value2": "ssss"
+        "value1": "เงินเดือน",
+        "value2": "เงินเดือน"
     }]) //get จาก config
     const [operationStatus, setOperationStatus] = useState([{
         "code": "MD0024",
-        "value1": "ทุเรียน",
-        "value2": "Durian"
+        "value1": "รอการอนุมัติ",
+        "value2": "รอการอนุมัติ"
     },
     {
         "code": "MD0025",
-        "value1": "กล้วย",
-        "value2": "Banana"
+        "value1": "อนุมัติงาน",
+        "value2": "อนุมัติงาน"
     }])//get จาก config
+    useEffect(() => {
+        calculatorOT()
+    }, [otAmount, otRate])
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
     }
-    const callbackInventory = (e)=>{
-        console.log('dedefef',e)
+    const callbackInventory = (e) => {
+        console.log('dedefef', e)
         //onChange to extraInventory
+    }
+    const handleChange = (e, index, name) => {
+        let obj = {}
+        if (name === 'wageType') {
+            obj = wageType.find((ele => { return ele.code === e.target.value }))
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+    }
+    const calculatorOT = () => {
+        if (!isEmpty(otAmount) && !isEmpty(otRate)) {
+            const otTotal = parseInt(otAmount) * parseInt(otRate)
+            onChange({ target: { name: 'otTotal', value: otTotal } }, index, 'otTotal')
+        } else {
+            onChange({ target: { name: 'otTotal', value: null } }, index, 'otTotal')
+
+        }
     }
 
     return (
@@ -118,7 +139,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
                                     <ItemInventory extraInventory={timeSheet.extraInventory}
-                                    callbackInventory={(e)=>callbackInventory(e)} />
+                                        callbackInventory={(e) => callbackInventory(e)} />
 
                                 </div>
                             </>}
@@ -131,39 +152,56 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     ประเภทค่าเเรง:
                                 </label>
                                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
-                                    {wageType.map((item, index) => (
-                                        <InputRadioGroup key={index} classes="h-4 w-4" type={"radio"}
-                                            id={item.code} name="wageType" label={item.value1}
-                                            onChange={onChange} value={item.code}
-                                            checked={item.code === timeSheet.wageType ? true : false} />
-                                    ))}
+                                    {wageType.map(function (item, inx) {
+                                        return (
+                                            <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                id={"wageType_" + inx + timeSheet.index} name={"wageType" + timeSheet.index} label={item.value1}
+                                                onChange={(e) => handleChange(e, index, "wageType")}
+                                                value={item.code}
+                                                checked={item.code === timeSheet.wageType.code ? true : false} />
+                                        )
+                                    })}
 
                                 </div>
                             </div>
-                            <InputGroup type="text" id="trackingNo" name="trackingNo" label="จำนวนงาน"
-                                onChange={onChange}
-                                value={timeSheet.trackingNo} />
-                            <InputGroup type="text" id="trackingNo" name="trackingNo" label="ค่าแรง"
-                                onChange={onChange}
-                                value={timeSheet.trackingNo} />
-                            <InputGroup type="text" id="trackingNo" name="trackingNo" label="จำนวน OT"
-                                onChange={onChange} value={timeSheet.trackingNo}
+                            <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
+                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                onChange={(e) => onChange(e, index, "taskAmount")}
+                                value={timeSheet.taskAmount} />
+                            <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
+                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                onChange={(e) => onChange(e, index, "taskPaymentRate")}
+                                value={timeSheet.taskPaymentRate} />
+                            <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
+                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                onChange={(e) => { setOtAmount(e.target.value), onChange(e, index, "otAmount") }}
+                                value={otAmount}
                             />
-                            <InputGroup type="text" id="trackingNo" name="trackingNo" label="อัตรา OT"
-                                onChange={onChange} value={timeSheet.trackingNo} />
-                            <InputGroup type="text" id="trackingNo" name="trackingNo" label="รวมเงิน OT"
-                                onChange={onChange} value={timeSheet.trackingNo} />
+                            <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
+                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                onChange={(e) => { setOtRate(e.target.value), onChange(e, index, "otRate") }}
+                                value={otRate}
+                            />
+                            <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
+                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                onChange={(e) => handleChange(e, index, "otTotal")}
+                                value={timeSheet.otTotal}
+                                disabled
+                            />
                             <div class="col-span-2">
                                 <label className="block text-sm font-medium text-gray-700">
                                     สถานะงาน:
                                 </label>
                                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
-                                    {operationStatus.map((item, index) => (
-                                        <InputRadioGroup key={index} classes="h-4 w-4" type={"radio"}
-                                            id={item.code} name="operationStatus" label={item.value1}
-                                            onChange={onChange} value={item.code}
-                                            checked={item.code === timeSheet.operationStatus ? true : false} />
-                                    ))}
+                                    {operationStatus.map(function (item, inx) {
+                                        return (
+                                            <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                id={"operationStatus_" + inx + timeSheet.index} name={"operationStatus" + timeSheet.index} label={item.value1}
+                                                onChange={(e) => onChange(e, index, "operationStatus")}
+                                                value={item.code}
+                                                checked={item.code === timeSheet.operationStatus ? true : false} />
+                                        )
+                                    })}
                                 </div>
                             </div>
                         </div>

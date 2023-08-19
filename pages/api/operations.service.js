@@ -18,7 +18,7 @@ async function getOperationsList(param) {
 }
 async function getOperationsDetail(param) {
     try {
-        return http.get(`/v1/job/${param}`);
+        return http.get(`/v1/operations/${param}`);
     } catch (err) {
         console.log(err)
     }
@@ -26,14 +26,14 @@ async function getOperationsDetail(param) {
 
 async function updateOperations(param, data) {
     try {
-        return http.put(`/nx/v1/job/${param}`, data);
+        return http.put(`/v1/operations/${param}`, data);
     } catch (err) {
         console.log(err)
     }
 }
 async function createOperations(data) {
     try {
-        return http.post(`/nx/v1/job`, data);
+        return http.post(`/v1/operations`, data);
     } catch (err) {
         console.log(err)
     }

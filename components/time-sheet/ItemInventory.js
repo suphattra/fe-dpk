@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 
-export default function ItemInventory({ extraInventory, deleteAddOnService ,callbackInventory}) {
+export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory }) {
   const [inventoryList, setInventoryList] = useState([]);
   useEffect(() => {
     setInventoryList(extraInventory);
@@ -25,7 +25,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService ,call
       subBranch: {},
       task: {},
     };
-    const _newValue = [...inventoryList,newService]
+    const _newValue = [...inventoryList, newService]
     setInventoryList((item) => [...item, newService]);
     callbackInventory(_newValue)
   };
@@ -65,28 +65,14 @@ export default function ItemInventory({ extraInventory, deleteAddOnService ,call
                 <div className="flex-auto w-64">
                   <InputGroupMaskInline
                     type="text"
-                    id="number"
-                    name="number"
+                    id="pickupAmount"
+                    name="pickupAmount"
                     label="จำนวน:"
                     classes=""
-                    value={extra.number}
-                    mask={[
-                      /[0-9]/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                      /\d/,
-                    ]}
+                    value={extra.pickupAmount}
+                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                     onChange={(e) => {
-                      onChange(e, index, "number");
+                      onChange(e, index, "pickupAmount");
                     }}
                   />
                 </div>

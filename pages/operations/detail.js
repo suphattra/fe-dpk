@@ -9,8 +9,15 @@ import { renderOptions } from "../../helpers/utils";
 import CardTimesheet from "../../components/time-sheet/CardTimesheet";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import moment from 'moment'
+import { OperationsService } from "../api/operations.service";
 const initial = {
-    jobDetail: {}
+    jobDetail: {},
+    wageType: {
+        code: 'MD0031',
+        value1: "รายวัน",
+        value2: "daily"
+    }
 }
 export default function DetailOperation() {
     const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }, { index: 2, href: '/job', name: 'สร้างบันทึก' }]
@@ -20,12 +27,13 @@ export default function DetailOperation() {
     const [jobDetail, setJobDetail] = useState(initial.jobDetail)
     const [timeSheetForm, setTimeSheetForm] = useState([{
         index: 1,
-        startDate: "",
+        startDate: moment(new Date).format('YYYY-MM-DD'),
         employee: {},
         mainBranch: {},
         subBranch: {},
         task: {},
-        extraInventory: [{ index: 1 }]
+        extraInventory: [{ index: 1 }],
+        wageType: initial.wageType
     }])
     const createValidationSchema = () => {
     }
@@ -36,14 +44,23 @@ export default function DetailOperation() {
         return classes.filter(Boolean).join(' ')
     }
     const handleSave = async () => {
+        setLoading(true)
         console.log(timeSheetForm)
+        let dataList = {
+            dataList: timeSheetForm
+        }
+        await OperationsService.createOperations(dataList).then(res => {
+            console.log(res)
+        })
+        setLoading(false)
     }
     const onChange = (e, index, name,) => {
-        console.log('dddddddddddddd', e, index, name)
+        console.log('dddddddddddddd', JSON.parse(JSON.stringify(e.target.value)), index, name)
         let _newValue = [...timeSheetForm]
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
     }
+
     const deleteAddOnService = (rowIndex) => {
         console.log("rowIndex", rowIndex)
         // let newData = newData.filter((_, i) => i != rowIndex - 1)
@@ -59,12 +76,13 @@ export default function DetailOperation() {
         let lastElement = timeSheetForm.length > 0 ? timeSheetForm[timeSheetForm.length - 1] : { index: 0 };
         let newService = {
             index: lastElement.index + 1,//timeSheetForm.length + 1,
-            startDate: "",
+            startDate: moment(new Date).format('YYYY-MM-DD'),
             employee: {},
             mainBranch: {},
             subBranch: {},
             task: {},
-            extraInventory: [{ index: 1 }]
+            extraInventory: [{ index: 1 }],
+            wageType: initial.wageType
         }
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)
