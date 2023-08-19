@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Pagination from "../Pagination";
+// import Pagination from "../Pagination";
 import moment from "moment";
 
 export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack }) {
@@ -107,7 +107,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList} />
+                        {/* <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList} /> */}
                     </div>
                 </div>
             </div>

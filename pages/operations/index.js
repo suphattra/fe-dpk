@@ -25,7 +25,6 @@ export default function Job() {
     const [loading, setLoading] = useState(true)
     const [searchParam, setSearchParam] = useState(initial.search)
     const [operationsList, setOperationsList] = useState(initial.jobList)
-    console.log("job ==>",operationsList,initial.jobList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const [jobStatus, setJobStatus] = useState([])
