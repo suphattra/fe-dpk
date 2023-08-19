@@ -5,7 +5,7 @@ const rewrite = function () {
   if (process.env.NODE_ENV === "development") {
     return { "/api/dpk": '/api' }
   } else {
-    return { "": "/api" }
+    return { "/api/dpk": "/api" }
   }
 };
 

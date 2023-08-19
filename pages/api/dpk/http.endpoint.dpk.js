@@ -1,6 +1,6 @@
 import axios from "axios"
 import { authHeader, authHeaderFile, authService } from "../auth/auth-service"
-const baseAPI = process.env.NODE_ENV === "development" ? "/api/dpk" : '/api'
+const baseAPI = process.env.NODE_ENV === "development" ? "/api/dpk" : '/api/dpk'
 
 const header = () => ({
   Authorization: `Bearer ${authService.getToken() || "unknown"}`
