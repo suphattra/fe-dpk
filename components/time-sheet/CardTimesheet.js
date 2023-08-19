@@ -3,42 +3,63 @@ import CardBasic from "../CardBasic";
 import InputGroupDate from "../InputGroupDate";
 import InputRadioGroup from "../InputRadioGroup";
 import InputSelectGroup from "../InputSelectGroup";
-import { isEmpty, renderOptions } from "../../helpers/utils";
+import { _resObjConfig, convertFilter, isEmpty, renderOptions } from "../../helpers/utils";
 import { useEffect, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import ItemInventory from "./ItemInventory";
 import InputGroupMask from "../InputGroupMask";
+import { EmployeeService } from "../../pages/api/employee.service";
+import { MasterService } from "../../pages/api/master.service";
 
 export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService }) {
     const [openAddInventory, setAddInventory] = useState(false)
     const [otAmount, setOtAmount] = useState(timeSheet.otAmount ? timeSheet.otAmount : null)
     const [otRate, setOtRate] = useState(timeSheet.otRate ? timeSheet.otRate : null)
-    const [wageType, setWageType] = useState([{
-        "code": "MD0031",
-        "value1": "รายวัน",
-        "value2": "daily"
-    }, {
-        "code": "MD0032",
-        "value1": "เหมาจ่าย",
-        "value2": "เหมาจ่าย"
-    }, {
-        "code": "MD0033",
-        "value1": "เงินเดือน",
-        "value2": "เงินเดือน"
-    }]) //get จาก config
-    const [operationStatus, setOperationStatus] = useState([{
-        "code": "MD0024",
-        "value1": "รอการอนุมัติ",
-        "value2": "รอการอนุมัติ"
-    },
-    {
-        "code": "MD0025",
-        "value1": "อนุมัติงาน",
-        "value2": "อนุมัติงาน"
-    }])//get จาก config
+    const [wageType, setWageType] = useState([])
+    const [operationStatus, setOperationStatus] = useState([])
+    const [employeesOption, setEmployeesOption] = useState([])
+    const [taskOption, setTaskption] = useState([])
+    useEffect(() => {
+        async function fetchData() {
+            getEmployeeList();
+            getConfigList('WAGE_TYPE');
+            getConfigList('OPERATION_STATUS');
+            getConfigList('TASK');
+        }
+        fetchData()
+    }, [])
     useEffect(() => {
         calculatorOT()
     }, [otAmount, otRate])
+
+    const getEmployeeList = async () => {
+        setEmployeesOption([])
+        await EmployeeService.getEmployeeList().then(res => {
+            if (res.data.resultCode === 200) {
+                setEmployeesOption(res.data.resultData)
+            } else {
+                setEmployeesOption([])
+            }
+        }).catch(err => {
+        })
+    }
+    const getConfigList = async (code) => {
+        let param = {
+            subType: code//'WAGE_TYPE'
+        }
+        await MasterService.getConfig(param).then(res => {
+            if (res.data.resultCode === 200) {
+                if (code === 'WAGE_TYPE') setWageType(res.data.resultData)
+                if (code === 'OPERATION_STATUS') setOperationStatus(res.data.resultData)
+                if (code === 'TASK') setTaskption(res.data.resultData)
+            } else {
+                if (code === 'WAGE_TYPE') setWageType([])
+                if (code === 'OPERATION_STATUS') setOperationStatus([])
+                if (code === 'TASK') setTaskption([])
+            }
+        }).catch(err => {
+        })
+    }
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
     }
@@ -46,11 +67,41 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         console.log('dedefef', e)
         //onChange to extraInventory
     }
+
     const handleChange = (e, index, name) => {
         let obj = {}
-        if (name === 'wageType') {
-            obj = wageType.find((ele => { return ele.code === e.target.value }))
+        if (name === 'wageType' || name === 'operationStatus' || name === 'task') {
+            let _option = []
+            switch (name) {
+                case "wageType":
+                    _option = wageType
+                    break;
+                case "operationStatus":
+                    _option = operationStatus
+                    break;
+                case "task":
+                    _option = taskOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
             onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'employee') {
+            obj = employeesOption.find((ele => { return ele.employeeCode === e.target.value }))
+            if (!isEmpty(obj)) {
+                let emp = {
+                    _id: obj._id,
+                    employeeCode: obj.employeeCode,
+                    title: obj.title,
+                    firstName: obj.firstName,
+                    lastName: obj.lastName,
+                    nickName: obj.nickName,
+                    gender: obj.gender,
+                }
+                onChange({ target: { name: name, value: emp } }, index, name)
+            }
+
         }
     }
     const calculatorOT = () => {
@@ -86,9 +137,9 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 required />
 
                             <InputSelectGroup type="text" id={"employee" + timeSheet.index} name="employee" label="พนักงาน"
-                                onChange={(e) => onChange(e, index, "employee")}
+                                onChange={(e) => handleChange(e, index, "employee")}
                                 isSearchable
-                                options={[{ name: "นวลเพ็ญ", value: 1 }, { name: "ทอมมี่(แมว)", value: 2 }, { name: "ปีโป้(นวล)", value: 3 }]}
+                                options={renderOptions(employeesOption, "firstName", "employeeCode", null, "lastName")}
                                 value="นวลเพ็ญ"
                                 required />
                             <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
@@ -104,10 +155,10 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 isSearchable
                             />
                             <InputSelectGroup type="text" id={"task" + timeSheet.index} name="task" label="งาน"
-                                options={renderOptions([], "fullName", "customerId")}
-                                onChange={onChange}
+                                options={renderOptions(taskOption, "value1", "code")}
+                                onChange={(e) => handleChange(e, index, "task")}
                                 isSearchable
-                                value="นวลเพ็ญ"
+                                value={timeSheet.task}
                                 required />
                             <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
                                 options={[]}
@@ -152,7 +203,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     ประเภทค่าเเรง:
                                 </label>
                                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
-                                    {wageType.map(function (item, inx) {
+                                    {wageType && wageType.map(function (item, inx) {
                                         return (
                                             <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
                                                 id={"wageType_" + inx + timeSheet.index} name={"wageType" + timeSheet.index} label={item.value1}
@@ -197,9 +248,9 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                         return (
                                             <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
                                                 id={"operationStatus_" + inx + timeSheet.index} name={"operationStatus" + timeSheet.index} label={item.value1}
-                                                onChange={(e) => onChange(e, index, "operationStatus")}
+                                                onChange={(e) => handleChange(e, index, "operationStatus")}
                                                 value={item.code}
-                                                checked={item.code === timeSheet.operationStatus ? true : false} />
+                                                checked={item.code === timeSheet.operationStatus.code ? true : false} />
                                         )
                                     })}
                                 </div>

@@ -11,14 +11,21 @@ export function renderConfigOptions(options, blank) {
     }
 }
 
-export function renderOptions(options, name, value, addOn) {
+export function renderOptions(options, name, value, addOn, name2) {
     var result = []
 
     if (options === undefined || options.length <= 0) {
+
         result.unshift({ value: '', name: 'Please Select' })
         return result
     } else {
-        result = options.map(item => ({ value: item[value], name: addOn ? item[name] + " (" + item[addOn] + ")" : item[name] }));
+        if (name2 !== undefined) {
+            result = options.map(item => ({ value: item[value], name: name2 ? item[name] + " " + item[name2] : item[name] }));
+
+        } else {
+            result = options.map(item => ({ value: item[value], name: addOn ? item[name] + " (" + item[addOn] + ")" : item[name] }));
+
+        }
         result.unshift({ value: '', name: 'Please Select' })
         return result
     }
@@ -51,4 +58,19 @@ export function convertFilter(_filter) {
         }
     }
     return param;
+}
+
+export function _resObjConfig(value, optionList) {
+    let obj = {}
+    obj = optionList.find((ele => { return ele.code === value }))
+    if (!isEmpty(obj)) {
+        let type = {
+            code: obj.code,
+            value1: obj.value1,
+            value2: obj.value2
+        }
+        return type
+    }
+    return {}
+
 }

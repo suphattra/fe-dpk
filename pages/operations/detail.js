@@ -14,13 +14,38 @@ import { OperationsService } from "../api/operations.service";
 const initial = {
     jobDetail: {},
     wageType: {
-        code: 'MD0031',
+        code: 'MD0024',
         value1: "รายวัน",
         value2: "daily"
+    },
+    operationStatus: {
+        "code": "MD0027",
+        "value1": "รอการอนุมัติ",
+        "value2": "รอการอนุมัติ"
+    },
+    task: {},
+    employee: {},
+    subBranch: {
+        "_id": "64c1557f95d25869bb895389",
+        "branchCode": "BC10001",
+        "branchName": "ทรัพย์ประเมิน",
+        "branchType": {
+            "code": "MD0023",
+            "value1": "แปลงย่อย"
+        }
+    },
+    mainBranch: {
+        "_id": "64c1557f95d25869bb89538a",
+        "branchCode": "BC10002",
+        "branchName": "บ้านแหลม",
+        "branchType": {
+            "code": "MD0022",
+            "value1": "แปลงใหญ่"
+        }
     }
 }
 export default function DetailOperation() {
-    const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }, { index: 2, href: '/job', name: 'สร้างบันทึก' }]
+    const breadcrumbs = [{ index: 1, href: '/operations', name: 'บันทึกการทำงาน' }, { index: 2, href: '/operations', name: 'สร้างบันทึก' }]
     const [loading, setLoading] = useState(false)
     const router = useRouter();
     const [mode, setMode] = useState(router.query["mode"])
@@ -29,11 +54,12 @@ export default function DetailOperation() {
         index: 1,
         startDate: moment(new Date).format('YYYY-MM-DD'),
         employee: {},
-        mainBranch: {},
-        subBranch: {},
-        task: {},
+        mainBranch: initial.mainBranch,
+        subBranch: initial.subBranch,
+        task: initial.task,
         extraInventory: [{ index: 1 }],
-        wageType: initial.wageType
+        wageType: initial.wageType,
+        operationStatus: initial.operationStatus
     }])
     const createValidationSchema = () => {
     }
@@ -49,9 +75,9 @@ export default function DetailOperation() {
         let dataList = {
             dataList: timeSheetForm
         }
-        await OperationsService.createOperations(dataList).then(res => {
-            console.log(res)
-        })
+        // await OperationsService.createOperations(dataList).then(res => {
+        //     console.log(res)
+        // })
         setLoading(false)
     }
     const onChange = (e, index, name,) => {
@@ -77,12 +103,13 @@ export default function DetailOperation() {
         let newService = {
             index: lastElement.index + 1,//timeSheetForm.length + 1,
             startDate: moment(new Date).format('YYYY-MM-DD'),
-            employee: {},
-            mainBranch: {},
-            subBranch: {},
-            task: {},
+            employee: initial.employee,
+            mainBranch: initial.mainBranch,
+            subBranch: initial.subBranch,
+            task: initial.task,
             extraInventory: [{ index: 1 }],
-            wageType: initial.wageType
+            wageType: initial.wageType,
+            operationStatus: initial.operationStatus
         }
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)

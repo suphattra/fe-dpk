@@ -12,7 +12,7 @@ export const MasterService = {
 
 async function getConfig(param) {
     try {
-        return http.get(`/nx/v1/config`, param);
+        return http.get(`/v1/masters`, param);
     } catch (err) {
         console.log(err)
     }

@@ -3,26 +3,27 @@ import Pagination from "../Pagination";
 import moment from "moment";
 
 export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack }) {
-    console.log(operationsList)
-    const defaultTextColor = 'text-gray-500';
-    const defaultButtonColor = 'bg-gray-300 border-gray-300';
 
-    let textColor = defaultTextColor;
-    let buttonColor = defaultButtonColor;
-
-    if (operationsList && operationsList.operationStatus) {
-        const code = operationsList.operationStatus.code;
-
-        if (code === 'MD0034') {
-            textColor = 'text-gray-500';
-            buttonColor = 'bg-gray-300 border-gray-300';
-        } else if (code === 'MD0035') {
-            textColor = 'text-green-500';
-            buttonColor = 'bg-green-300 border-green-300';
-        } else if (code === 'MD0036') {
-            textColor = 'text-red-500';
-            buttonColor = 'bg-red-300 border-red-300';
+    function classNames(...classes) {
+        return classes.filter(Boolean).join(' ')
+    }
+    const renderbadgeStatus = (status, code) => {
+        let buttonColor;
+        let text_color;
+        switch (code) {
+            case "MD0024":
+                buttonColor = 'bg-gray-300 border-gray-300';
+                text_color = "text-gray-500"
+                break;
+            case "MD0025":
+                buttonColor = "bg-green-100 border-green-300";
+                text_color = "text-green-800"
+                break;
+            default:
+                buttonColor = "bg-gray-100 border-gray-300";
+                text_color = "text-gray-800"
         }
+        return <span className={classNames(buttonColor, text_color, "inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium ")}>{status}</span>
     }
 
     return (
@@ -88,9 +89,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                 <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">{job.startDate ? moment(job.startDate).format('DD/MM/YYYY') : ""}</td>
 
                                                 <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    <button type="button" className={`ml-2 px-4 py-2 rounded ${buttonColor} ${textColor}`}>
-                                                        {/* {job.operationStatus.value1} */}
-                                                    </button>
+                                                    {job.operationStatus ? renderbadgeStatus(job.operationStatus.value1, job.operationStatus.code) : ""}
                                                 </td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
