@@ -2,8 +2,47 @@ import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate } from "../../components";
 import { renderOptions } from "../../helpers/utils";
-export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, jobStatus, customerType, paymentStatus }) {
+import { MasterService } from "../../pages/api/master.service";
+import { useEffect, useState } from "react";
+import { EmployeeService } from "../../pages/api/employee.service";
+export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus }) {
     const router = useRouter();
+    const [jobStatus, setJobStatus] = useState([])
+    const [employeesOption, setEmployeesOption] = useState([])
+    const [taskOption, setTaskption] = useState([])
+    useEffect(() => {
+        async function fetchData() {
+            await getConfig('OPERATION_STATUS')
+            await getConfig('TASK')
+            await getEmployeeList()
+        }
+        fetchData();
+    }, []);
+    const getConfig = async (configCategory) => {
+        let paramquery = {
+            subType: configCategory,
+        }
+        await MasterService.getConfig(paramquery).then(res => {
+            if (res.data.resultCode === 200) {
+                if (configCategory === 'OPERATION_STATUS') setJobStatus(res.data.resultData)
+                if (configCategory === 'TASK') setTaskption(res.data.resultData)
+            } else {
+                setJobStatus([])
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+    const getEmployeeList = async () => {
+        await EmployeeService.getEmployeeList().then(res => {
+            if (res.data.resultCode === 200) {
+                setEmployeesOption(res.data.resultData)
+            } else {
+                setEmployeesOption([])
+            }
+        }).catch(err => {
+        })
+    }
     return (
         <>
             <div className="md:container md:mx-auto">
@@ -41,23 +80,27 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             value={searchParam.customerType}
                             onChange={handleChange}
                         />
-                        <InputSelectGroup type="text" id="paymentStatus" name="paymentStatus" label="สถานะงาน"
-                            options={renderOptions(paymentStatus, "configValue", "configCode")}
-                            value={searchParam.paymentStatus}
+                        <InputSelectGroup type="text" id="operationStatus" name="operationStatus" label="สถานะงาน"
+                            options={renderOptions(jobStatus, "value1", "code")}
+                            isMulti
+                            isSearchable
+                            value={searchParam.operationStatus}
                             onChange={handleChange}
                         />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
-
-                        {/* <InputGroup type="text" id="contactName" name="contactName" label="Recepient name:" onChange={handleChange} value={searchParam.contactName} /> */}
-                        <InputSelectGroup type="text" id="status" name="status" label="พนักงาน"
-                            options={renderOptions(jobStatus, "configValue2", "configCode", "configValue")}
-                            value={searchParam.status}
+                        <InputSelectGroup type="text" id="employee" name="employee" label="พนักงาน"
+                            isMulti
+                            isSearchable
+                            options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
+                            value={searchParam.employee}
                             onChange={handleChange}
                         />
-                        <InputSelectGroup type="text" id="status" name="status" label="งาน"
-                            options={renderOptions(jobStatus, "configValue2", "configCode", "configValue")}
-                            value={searchParam.status}
+                        <InputSelectGroup type="text" id="task" name="task" label="งาน"
+                            options={renderOptions(taskOption, "value1", "code")}
+                            isMulti
+                            isSearchable
+                            value={searchParam.task}
                             onChange={handleChange}
                         />
                         <InputGroupDate type="text" id="shipmentDateTo" name="shipmentDateTo" label="วัน/เเดือน/ปี" onChange={handleChange} value={searchParam.shipmentDateTo ? searchParam.shipmentDateTo : ""} format="YYYY-MM-DD" />

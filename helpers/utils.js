@@ -19,13 +19,8 @@ export function renderOptions(options, name, value, addOn, name2) {
         result.unshift({ value: '', name: 'Please Select' })
         return result
     } else {
-        if (name2 !== undefined) {
-            result = options.map(item => ({ value: item[value], name: name2 ? item[name] + " " + item[name2] : item[name] }));
+        result = options.map(item => ({ value: item[value], name: addOn ? item[name] + " (" + item[addOn] + ")" : item[name] }));
 
-        } else {
-            result = options.map(item => ({ value: item[value], name: addOn ? item[name] + " (" + item[addOn] + ")" : item[name] }));
-
-        }
         result.unshift({ value: '', name: 'Please Select' })
         return result
     }

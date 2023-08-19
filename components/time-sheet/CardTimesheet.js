@@ -23,11 +23,11 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [inventoryOption, setInventoryOption] = useState([])
     useEffect(() => {
         async function fetchData() {
-            getEmployeeList();
-            getConfigList('WAGE_TYPE');
-            getConfigList('OPERATION_STATUS');
-            getConfigList('TASK');
-            getInventoryList();
+            await getEmployeeList();
+            await getConfigList('WAGE_TYPE');
+            await getConfigList('OPERATION_STATUS');
+            await getConfigList('TASK');
+            await getInventoryList();
         }
         fetchData()
     }, [])
@@ -76,7 +76,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
-        if(!e.target.checked){
+        if (!e.target.checked) {
             onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
         }
     }
@@ -158,7 +158,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                             <InputSelectGroup type="text" id={"employee" + timeSheet.index} name="employee" label="พนักงาน"
                                 onChange={(e) => handleChange(e, index, "employee")}
                                 isSearchable
-                                options={renderOptions(employeesOption, "firstName", "employeeCode", null, "lastName")}
+                                options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
                                 value="นวลเพ็ญ"
                                 required />
                             <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
