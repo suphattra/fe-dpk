@@ -73,16 +73,19 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                         <InputSelectGroup type="text" id="status" name="status" label="แปลงใหญ่"
                             options={renderOptions(jobStatus, "configValue2", "configCode", "configValue")}
                             value={searchParam.status}
+                            placeholder="ทั้งหมด"
                             onChange={handleChange}
                         />
                         <InputSelectGroup type="text" id="customerType" name="customerType" label="แปลงย่อย"
                             options={renderOptions(customerType, "configValue", "configCode")}
                             value={searchParam.customerType}
                             onChange={handleChange}
+                            placeholder="ทั้งหมด"
                         />
                         <InputSelectGroup type="text" id="operationStatus" name="operationStatus" label="สถานะงาน"
                             options={renderOptions(jobStatus, "value1", "code")}
                             isMulti
+                            placeholder="ทั้งหมด"
                             isSearchable
                             value={searchParam.operationStatus}
                             onChange={handleChange}
@@ -95,15 +98,18 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
                             value={searchParam.employee}
                             onChange={handleChange}
+                            placeholder="ทั้งหมด"
                         />
                         <InputSelectGroup type="text" id="task" name="task" label="งาน"
                             options={renderOptions(taskOption, "value1", "code")}
                             isMulti
                             isSearchable
                             value={searchParam.task}
+                            placeholder="ทั้งหมด"
                             onChange={handleChange}
                         />
-                        <InputGroupDate type="text" id="shipmentDateTo" name="shipmentDateTo" label="วัน/เเดือน/ปี" onChange={handleChange} value={searchParam.shipmentDateTo ? searchParam.shipmentDateTo : ""} format="YYYY-MM-DD" />
+                        
+                        <InputGroupDate type="text" id="shipmentDateTo" name="shipmentDateTo" label="วัน/เดือน/ปี" onChange={handleChange} value={searchParam.shipmentDateTo ? searchParam.shipmentDateTo : ""} format="YYYY-MM-DD" />
                     </div>
                     <div className="flex justify-center items-center overflow-y-auto p-4" >
                         <button type="button"

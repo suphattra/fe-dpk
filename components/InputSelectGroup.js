@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Select, { StylesConfig } from 'react-select';
 // const refInput = React.createRef();
-export default function InputSelectGroup({ label, type, classes, id, name, onChange, value, options, disabled, readOnly, invalid, required, ref, msgError, isSearchable, isMulti }) {
+export default function InputSelectGroup({ label, type, classes,placeholder ,id, name, onChange, value, options, disabled, readOnly, invalid, required, ref, msgError, isSearchable, isMulti }) {
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
@@ -54,7 +54,7 @@ export default function InputSelectGroup({ label, type, classes, id, name, onCha
                     // value={getDefaultValue()}
                     defaultValue={getDefaultValue()}
                     isDisabled={disabled}
-                    placeholder={"Please Select"}
+                    placeholder={placeholder}
                     id={id}
                     name={name}
                 />
@@ -75,6 +75,7 @@ InputSelectGroup.propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     options: PropTypes.array,
     invalid: PropTypes.bool,
+    placeholder:PropTypes.bool,
 };
 InputSelectGroup.defaultProps = {
     type: "select",
