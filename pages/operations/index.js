@@ -11,7 +11,7 @@ import moment from "moment";
 LoadingOverlay.propTypes = undefined
 const initial = {
     search: {
-        startDate: moment(new Date).format('YYYY-MM-DD'),
+        startDate: '',// moment(new Date).format('YYYY-MM-DD'),
         // jobNo: '',
         // customerName: '',
         // recepientName: '',
@@ -45,7 +45,7 @@ export default function Job() {
     }
     const handleSearch = async () => {
         let param = {}
-        console.log("searchParam",searchParam)
+        console.log("searchParam", searchParam)
         if (searchParam.task) {
             let split = ""
             searchParam.task.map((ele) => {
@@ -81,7 +81,7 @@ export default function Job() {
             })
             param.subBranch = split
         }
-        
+
         if (searchParam.startDate) {
             param.startDate = searchParam.startDate
         }

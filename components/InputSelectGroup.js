@@ -79,7 +79,7 @@ InputSelectGroup.propTypes = {
 };
 InputSelectGroup.defaultProps = {
     type: "select",
-    placeholder: "",
+    placeholder: "กรุณาเลือก",
     require: false,
     readOnly: false,
     value: "",
