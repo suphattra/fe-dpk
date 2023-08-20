@@ -147,9 +147,9 @@ export default function DetailOperation() {
                     </form>
                     <div className="flex flex-row-reverse pt-4">
                         <button type="button"
-                            className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-indigo-800 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-80"
+                            className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-white-800 px-6 py-1.5 text-xs font-medium text-black shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-white-500 focus:ring-offset-0 disabled:opacity-80"
                             onClick={insertAddOnService} >
-                            <PlusCircleIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+                            <PlusCircleIcon className="h-8 w-8 mr-2" aria-hidden="true" />
                             เพิ่มบันทึก
                         </button>
                     </div>
