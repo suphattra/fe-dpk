@@ -19,7 +19,8 @@ import { DriverService } from "../../api/driver.service";
 import { PackageService } from "../../api/package.service";
 
 export default function CreateJob() {
-  
+    const handleLoadScript = () => {
+    }
     return (
         <Layout>
             <Script src="https://cdn.omise.co/omise.js" onLoad={handleLoadScript} />
