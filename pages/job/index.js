@@ -24,7 +24,7 @@ const initial = {
     },
     jobList: []
 }
-const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }]
+const breadcrumbs = [{ index: 1, href: '/operations', name: 'บันทึกการทำงาน' }]
 export default function Job() {
     const [loading, setLoading] = useState(true)
     const [searchParam, setSearchParam] = useState(initial.search)
@@ -37,9 +37,10 @@ export default function Job() {
     useEffect(() => {
         async function fetchData() {
             await getJobList(searchParam);
-            await getConfig('JOB_STATUS')
-            await getConfig('CUSTOMER_TYPE')
-            await getConfig('PAYMENT_STATUS')
+            // await getConfig('JOB_STATUS')
+            // await getConfig('CUSTOMER_TYPE')
+            // await getConfig('PAYMENT_STATUS')
+            await getMastersConfig('')
         }
         fetchData();
     }, []);
@@ -92,6 +93,25 @@ export default function Job() {
             console.log(err)
         })
     }
+
+    const getMastersConfig = async (configCategory) => {
+        let paramquery = {
+            configCategory: configCategory,
+            configCode: '',
+            status: ''
+        }
+        await MasterService.getMastersConfig(paramquery).then(res => {
+            if (res.data.resultCode === "20000") {
+                if (configCategory === 'JOB_STATUS') setJobStatus(res.data.resultData.configs)
+                if (configCategory === 'CUSTOMER_TYPE') setCustomerType(res.data.resultData.configs)
+                if (configCategory === 'PAYMENT_STATUS') setPaymentStatus(res.data.resultData.configs)
+            } else {
+                setJobStatus([])
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
     return (
         <>
             <Layout>
@@ -104,7 +124,7 @@ export default function Job() {
                     }}>
 
                     {/* <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs> */}
-                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} jobStatus={jobStatus} customerType={customerType} paymentStatus={paymentStatus}/>
+                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} jobStatus={jobStatus} customerType={customerType} paymentStatus={paymentStatus} />
                     <RusultTimeSheet jobList={jobList} total={total} paginate={paginate} currentPage={currentPage} />
                 </LoadingOverlay>
             </Layout>

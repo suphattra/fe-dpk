@@ -19,7 +19,7 @@ const initial = {
     },
     driverList: []
 }
-const breadcrumbs = [{ index: 1, href: '/driver', name: 'driver' }]
+const breadcrumbs = [{ index: 1, href: '/driver', name: 'ข้อมูลพนักงาน' }]
 LoadingOverlay.propTypes = undefined
 export default function Driver() {
     const [loading, setLoading] = useState(true)
@@ -78,7 +78,7 @@ export default function Driver() {
                         overflowY: loading ? 'scroll' : 'scroll'
                     }
                 }}>
-                <Breadcrumbs title="Driver" breadcrumbs={breadcrumbs} />
+                <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
                 <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
                 <Result driverList={driverList} total={total} paginate={paginate} currentPage={currentPage} callBack={handleSearch} />
             </LoadingOverlay>

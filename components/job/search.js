@@ -4,6 +4,23 @@ import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate } from "../../c
 import { renderOptions } from "../../helpers/utils";
 export default function Search({ handleSearch, handleReset, handleChange, searchParam, jobStatus, customerType, paymentStatus }) {
     const router = useRouter();
+
+    const getJobList = async (searchParam) => {
+        setLoading(true)
+        let param = convertFilter(searchParam)
+        await OperationsService.getOperationsList(param).then(res => {
+            if (res.data.resultCode === "20000") {
+                setJobList(res.data.resultData.jobs)
+                setTotal(res.data.resultData.total)
+            } else {
+                setJobList([])
+            }
+            setLoading(false)
+        }).catch(err => {
+            setLoading(false)
+        })
+    }
+
     return (
         <>
             <div className="md:container md:mx-auto">

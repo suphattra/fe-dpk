@@ -578,7 +578,7 @@ export default function DriverDetail() {
                         overflowY: loading ? 'scroll' : 'scroll'
                     }
                 }}>
-                <Breadcrumbs title="Driver" breadcrumbs={breadcrumbs} />
+                <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
 
                 <div className="md:container md:mx-auto">
                     <div className="flex items-end justify-end sm:px-6 lg:px-2 sm:py-0 lg:pt-4">

@@ -11,6 +11,7 @@ import InputGroupMask from "../InputGroupMask";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
+import { BranchService } from "../../pages/api/branch.service";
 
 export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService }) {
     const [openAddInventory, setAddInventory] = useState(false)
@@ -21,6 +22,9 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [employeesOption, setEmployeesOption] = useState([])
     const [taskOption, setTaskption] = useState([])
     const [inventoryOption, setInventoryOption] = useState([])
+    const [mainBranchOption, setMainBranchOption] = useState([])
+    const [subBranchOption, setSubBranchOption] = useState([])
+    const [productOption, setProductOption] = useState([])
     useEffect(() => {
         async function fetchData() {
             await getEmployeeList();
@@ -28,6 +32,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             await getConfigList('OPERATION_STATUS');
             await getConfigList('TASK');
             await getInventoryList();
+            await getMainBranchList();
+            await getSubBranchList();
         }
         fetchData()
     }, [])
@@ -36,8 +42,11 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }, [otAmount, otRate])
 
     const getEmployeeList = async () => {
+        let param = {
+            status: 'Active'
+        }
         setEmployeesOption([])
-        await EmployeeService.getEmployeeList().then(res => {
+        await EmployeeService.getEmployeeList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesOption(res.data.resultData)
             } else {
@@ -53,6 +62,32 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                 setInventoryOption(res.data.resultData)
             } else {
                 setInventoryOption([])
+            }
+        }).catch(err => {
+        })
+    }
+    const getMainBranchList = async () => {
+        let param = {
+            branchType: 'MD0014'
+        }
+        await BranchService.getBranchList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setMainBranchOption(res.data.resultData)
+            } else {
+                setMainBranchOption([])
+            }
+        }).catch(err => {
+        })
+    }
+    const getSubBranchList = async () => {
+        let param = {
+            branchType: 'MD0015'
+        }
+        await BranchService.getBranchList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setSubBranchOption(res.data.resultData)
+            } else {
+                setSubBranchOption([])
             }
         }).catch(err => {
         })
@@ -81,8 +116,6 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }
     }
     const callbackInventory = (e) => {
-        console.log('dedefef', e)
-        //onChange to extraInventory
         onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
     }
 
@@ -121,6 +154,27 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             }
 
         }
+        if (name === 'mainBranch' || name === 'subBranch') {
+            if (name === 'mainBranch') {
+                obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
+            } else {
+                obj = subBranchOption.find((ele => { return ele.branchCode === e.target.value }))
+            }
+
+            if (!isEmpty(obj)) {
+                let emp = {
+                    _id: obj._id,
+                    branchCode: obj.branchCode,
+                    branchName: obj.branchName,
+                    branchType: obj.branchType
+                }
+                onChange({ target: { name: name, value: emp } }, index, name)
+            }
+        }
+        if (name === 'product') {
+            onChange({ target: { name: name, value: e.target.value } }, index, name)
+        }
+
     }
     const calculatorOT = () => {
         if (!isEmpty(otAmount) && !isEmpty(otRate)) {
@@ -129,6 +183,14 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         } else {
             onChange({ target: { name: 'otTotal', value: null } }, index, 'otTotal')
 
+        }
+    }
+    const onChangeMainBranch = (e) => {
+        let obj = []
+        obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
+        console.log(obj)
+        if (!isEmpty(obj)) {
+            setProductOption(obj.product)
         }
     }
 
@@ -159,18 +221,18 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 onChange={(e) => handleChange(e, index, "employee")}
                                 isSearchable
                                 options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
-                                value="นวลเพ็ญ"
+                                value={timeSheet.employee}
                                 required />
                             <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
-                                options={renderOptions([], "fullName", "customerId")}
-                                onChange={onChange}
+                                options={renderOptions(mainBranchOption, "branchName", "branchCode")}
+                                onChange={(e) => { onChangeMainBranch(e); handleChange(e, index, "mainBranch") }}
                                 isSearchable
-                                value="นวลเพ็ญ"
+                                value={timeSheet.mainBranch}
                                 required />
                             <InputSelectGroup type="text" id={"subBranch" + timeSheet.index} name="subBranch" label="แปลงย่อย"
-                                options={[]}
-                                onChange={onChange}
-                                value={timeSheet.estStartTime}
+                                options={renderOptions(subBranchOption, "branchName", "branchCode")}
+                                onChange={(e) => handleChange(e, index, "subBranch")}
+                                value={timeSheet.subBranch}
                                 isSearchable
                             />
                             <InputSelectGroup type="text" id={"task" + timeSheet.index} name="task" label="งาน"
@@ -180,8 +242,10 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 value={timeSheet.task}
                                 required />
                             <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
-                                options={[]}
-                                onChange={onChange} value={timeSheet.estStartTime}
+                                options={renderOptions(productOption, "value1", "code")}
+                                onChange={(e) => handleChange(e, index, "product")}
+                                value={timeSheet.product}
+                                isMulti
                                 isSearchable />
                             <div className="block w-full">
                                 <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
