@@ -27,7 +27,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [productOption, setProductOption] = useState([])
     useEffect(() => {
         async function fetchData() {
-            await getEmployeeList();
+            await getEmployeeUnassignList();
             await getConfigList('WAGE_TYPE');
             await getConfigList('OPERATION_STATUS');
             await getConfigList('TASK');
@@ -41,12 +41,15 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         calculatorOT()
     }, [otAmount, otRate])
 
-    const getEmployeeList = async () => {
+    const getEmployeeUnassignList = async (date) => {
+        let _date = moment(new Date(date)).format('YYYY-MM-DD')
         let param = {
-            status: 'Active'
+            status: 'Active',
+            operationAssignDate: _date
         }
+        onChange({ target: { name: 'employee', value: '' } }, index, 'employee')
         setEmployeesOption([])
-        await EmployeeService.getEmployeeList(param).then(res => {
+        await EmployeeService.getEmployeeUnassignList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesOption(res.data.resultData)
             } else {
@@ -213,7 +216,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                             <InputGroupDate
                                 type="date" id={"startDate" + timeSheet.index} name="startDate" label="วัน/เดือน/ปี"
                                 format="YYYY-MM-DD"
-                                onChange={(e) => onChange(e, index, "startDate")}
+                                onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
                                 value={timeSheet.startDate ? moment(new Date(timeSheet.startDate)).format('YYYY-MM-DD') : ""}
                                 required />
 

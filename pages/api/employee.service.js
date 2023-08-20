@@ -4,7 +4,8 @@ export const EmployeeService = {
     getEmployeeList,
     getEmployeeDetail,
     updateEmployee,
-    createEmployee
+    createEmployee,
+    getEmployeeUnassignList
 };
 
 async function getEmployeeList(param) {
@@ -32,6 +33,13 @@ async function updateEmployee(param, data) {
 async function createEmployee(data) {
     try {
         return http.post(`/v1/employee`, data);
+    } catch (err) {
+        console.log(err)
+    }
+}
+async function getEmployeeUnassignList(param) {
+    try {
+        return http.get(`/v1/employee/unassign/timesheet`, param);
     } catch (err) {
         console.log(err)
     }
