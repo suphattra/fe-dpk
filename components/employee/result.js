@@ -1,45 +1,23 @@
 import { CheckIcon, EyeIcon } from "@heroicons/react/24/outline"
 import { useRouter } from "next/router";
-import { SwitchGroup } from "../../components"
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import Pagination from "../../components/Pagination";
-import { DriverService } from "../../pages/api/driver.service";
 
-export default function Result({ employeesOption, driverList, total, currentPage, paginate, callBack }) {
+export default function Result({ employeesList, total, currentPage, paginate }) {
     const router = useRouter();
     const [open, setOpen] = useState(false)
-    const arrayToCommaDelimeter = (data, key) => {
-        let result = data.map(function (val) {
-            return `${val[key] ? val[key] : ''}`;
-        }).join(', ');
-        return result;
+
+    const openPopup = async () => {
+        setOpen(true)
     }
-    async function onChangeStatus(event) {
-        if (event === 'Ok') {
-            driver.checked = driver.checked
-            let body = {
-                driverId: driver.driverId,
-                status: driver.checked === true ? 'A' : 'S'
-            }
-            await DriverService.updateStatusDriver(body).then(res => {
-                if (res.data.resultCode === "20000") {
-                    setOpen(false)
-                    callBack()
-                } else {
-                    // setCustomer({})
-                }
-            }).finally(() => {
-            }).catch(err => {
-                console.log(err)
-                // setLoading(false)
-            })
+
+    const onChangeStatus = async (status) => {
+        if (status === 'Ok') {
+            console.log('OK')
         } else {
             setOpen(false)
-            driver.checked = !driver.checked
-            callBack()
         }
-
     }
     return (
         <div className="md:container md:mx-auto">
@@ -83,7 +61,7 @@ export default function Result({ employeesOption, driverList, total, currentPage
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200 bg-white">
-                                    {employeesOption?.map((employees) => (
+                                    {employeesList?.map((employees) => (
                                         <tr>
                                             <td className="whitespace-nowrap text-center py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                                 {employees.firstName} {employees.lastName}
@@ -98,12 +76,15 @@ export default function Result({ employeesOption, driverList, total, currentPage
 
                                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                 <EyeIcon className="text-indigo-600 hover:text-indigo-900 h-6 w-6 cursor-pointer"
-                                                    onClick={() => { router.push('driver/detail/driver-detail?mode=view&id=' + driver.driverId); }}
+                                                // onClick={() => { router.push('driver/detail/driver-detail?mode=view&id=' + driver.driverId); }}
                                                 /><span className="sr-only">, </span>
                                             </td>
 
                                             <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                 <button type="button"
+                                                    onClick={() => {
+                                                        openPopup()
+                                                    }}
                                                     className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
                                                     บันทึกเบิก - จ่าย
                                                 </button>
@@ -114,7 +95,7 @@ export default function Result({ employeesOption, driverList, total, currentPage
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={employeesOption} />
+                        <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={employeesList} />
 
                     </div>
                 </div>

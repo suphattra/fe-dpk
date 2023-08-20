@@ -1,60 +1,7 @@
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CardBasic, InputGroup, InputRadioGroup, InputSelectGroup } from "../../components";
-import { renderConfigOptions } from "../../helpers/utils";
-import { MasterService } from "../../pages/api/master.service";
+import { CardBasic, InputGroup, } from "../../components";
 
+export default function Search({ handleSearch, handleReset, handleChange, searchParam }) {
 
-export default function Search({ handleSearch, handleReset, handleChange, searchParam,employeesOption }) {
-    const data = {}
-    const router = useRouter();
-    const [driverType, setDriverType] = useState([])
-    const [jobType, setJobType] = useState([])
-    const [selectjobType, setSelectJobType] = useState([])
-    useEffect(() => {
-        getConfig('DRIVER_TYPE')
-        getConfig('JOB_TYPE')
-    }, []);
-
-    const getConfig = async (configCategory) => {
-        let paramquery = {
-            configCategory: configCategory,
-            configCode: '',
-            status: ''
-        }
-        await MasterService.getConfig(paramquery).then(res => {
-            if (res.data.resultCode === "20000") {
-                if (configCategory === 'DRIVER_TYPE') setDriverType(res.data.resultData.configs)
-                if (configCategory === 'JOB_TYPE') setJobType(res.data.resultData.configs)
-            } else {
-                if (configCategory === 'DRIVER_TYPE') setDriverType([])
-                if (configCategory === 'JOB_TYPE') setJobType([])
-            }
-        }).catch(err => {
-            console.log(err)
-        })
-    }
-
-    const handleChangeJobType = async (checked, value, name, other) => {
-        const found = selectjobType.find(e => e === value)
-        if (!found) {
-            let valueStr = [...selectjobType, value]
-            setSelectJobType(data => [...data, value])
-            handleChange({ target: { name: 'jobType', value: valueStr.toString() } })
-        } else {
-            let temp = selectjobType.filter((e, i) => e !== value)
-            let arr = [...temp]
-            setSelectJobType(arr);
-            handleChange({ target: { name: 'jobType', value: arr.toString() } })
-        }
-
-
-    }
-    const handleResetCriteria = async () => {
-        setSelectJobType([])
-        handleReset()
-    }
     return (
         <>
             <CardBasic title="ข้อมูลพนักงาน" >
@@ -62,9 +9,9 @@ export default function Search({ handleSearch, handleReset, handleChange, search
                 <td className=" flex justify-end text-center whitespace-nowrap text-sm text-gray-500">
 
                     <button type="button"
-                    
+
                         className="flex justify-center inline-flex items-center rounded-md border border-gray-400 bg-g-600 px-6 py-1 pb-1.5 text-sm font-medium text-black shadow-sm hover:bg--700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
-                     สร้างรายงาน
+                        สร้างรายงาน
                     </button>
                     <button type="button"
                         className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
@@ -82,13 +29,13 @@ export default function Search({ handleSearch, handleReset, handleChange, search
 
                         <button type="button"
                             className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
-                        // onClick={handleSearch}
+                            onClick={handleSearch}
                         >
                             ค้นหา
                         </button>
                         <button type="button"
                             className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                        // onClick={handleReset}
+                            onClick={handleReset}
                         >
                             ล้าง
                         </button>

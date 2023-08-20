@@ -8,22 +8,17 @@ import { EmployeeService } from "../api/employee.service";
 const initial = {
     search: {
         name: '',
-        status: '',
-        phone: '',
-        driverType: '',
-        driverId: '',
-        jobType: '',
         limit: 10,
         offset: 1
     },
-    driverList: []
+    employeesList: []
 }
 const breadcrumbs = [{ index: 1, href: '/driver', name: 'ข้อมูลพนักงาน' }]
 LoadingOverlay.propTypes = undefined
 export default function Driver() {
     const [loading, setLoading] = useState(false)
     const [searchParam, setSearchParam] = useState(initial.search)
-    const [employeesOption, setEmployeesOption] = useState(initial.driverList)
+    const [employeesList, setEmployeesList] = useState(initial.employeesList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     useEffect(() => {
@@ -32,59 +27,25 @@ export default function Driver() {
         }
         fetchData();
     }, []);
-  
     
-    const handleChange = (e, index, name) => {
-        let obj = {}
-        if (name === 'wageType' || name === 'operationStatus' || name === 'task') {
-            let _option = []
-            switch (name) {
-                case "wageType":
-                    _option = wageType
-                    break;
-                case "operationStatus":
-                    _option = operationStatus
-                    break;
-                case "task":
-                    _option = taskOption
-                    break;
-                default:
-            }
-            obj = _resObjConfig(e.target.value, _option)
-            onChange({ target: { name: name, value: obj } }, index, name)
-        }
-        if (name === 'employee') {
-            obj = employeesOption.find((ele => { return ele.employeeCode === e.target.value }))
-            if (!isEmpty(obj)) {
-                let emp = {
-                    _id: obj._id,
-                    employeeCode: obj.employeeCode,
-                    title: obj.title,
-                    firstName: obj.firstName,
-                    lastName: obj.lastName,
-                    nickName: obj.nickName,
-                    gender: obj.gender,
-                }
-                onChange({ target: { name: name, value: emp } }, index, name)
-            }
-
-        }
+    const handleChange = (evt) => {
+        const { name, value, checked, type } = evt.target;
+        setSearchParam(data => ({ ...data, [name]: value }));
     }
     const handleReset = async () => {
         setSearchParam(initial.search)
-        setDriverList([])
+        setEmployeesList([])
     }
     const handleSearch = async () => {
-        getDriverList(searchParam);
+        getEmployeeList(searchParam);
     }
 
-    const getEmployeeList = async () => {
-        setEmployeesOption([])
-        await EmployeeService.getEmployeeList().then(res => {
+    const getEmployeeList = async (searchParam) => {
+        await EmployeeService.getEmployeeList(searchParam).then(res => {
             if (res.data.resultCode === 200) {
-                setEmployeesOption(res.data.resultData)
+                setEmployeesList(res.data.resultData)
             } else {
-                setEmployeesOption([])
+                setEmployeesList([])
             }
         }).catch(err => {
         })
@@ -100,7 +61,7 @@ export default function Driver() {
                 }}>
                 <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
                 <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
-                <Result employeesOption={employeesOption}  total={total}  currentPage={currentPage} callBack={handleSearch} />
+                <Result employeesList={employeesList}  total={total}  currentPage={currentPage} callBack={handleSearch} />
             </LoadingOverlay>
         </Layout>
     )
