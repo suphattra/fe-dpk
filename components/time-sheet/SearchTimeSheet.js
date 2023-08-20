@@ -11,6 +11,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
     const [jobStatus, setJobStatus] = useState([])
     const [employeesOption, setEmployeesOption] = useState([])
     const [mainBranchOption, setMainBranchOption] = useState([])
+    const [subBranchOption, setSubBranchOption] = useState([])
     const [taskOption, setTaskption] = useState([])
     useEffect(() => {
         async function fetchData() {
@@ -18,6 +19,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             await getConfig('TASK')
             await getEmployeeList()
             await getMainBranchList()
+            await getSubBranchList()
         }
         fetchData();
     }, []);
@@ -37,7 +39,10 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         })
     }
     const getEmployeeList = async () => {
-        await EmployeeService.getEmployeeList().then(res => {
+        let param = {
+            // status: 'Active'
+        }
+        await EmployeeService.getEmployeeList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesOption(res.data.resultData)
             } else {
@@ -47,11 +52,27 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         })
     }
     const getMainBranchList = async () => {
-        await BranchService.getBranchList().then(res => {
+        let param = {
+            branchType: 'MD0014'
+        }
+        await BranchService.getBranchList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setMainBranchOption(res.data.resultData)
             } else {
                 setMainBranchOption([])
+            }
+        }).catch(err => {
+        })
+    }
+    const getSubBranchList = async () => {
+        let param = {
+            branchType: 'MD0015'
+        }
+        await BranchService.getBranchList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setSubBranchOption(res.data.resultData)
+            } else {
+                setSubBranchOption([])
             }
         }).catch(err => {
         })
@@ -90,9 +111,10 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             isMulti
                         />
                         <InputSelectGroup type="text" id="subBranch" name="subBranch" label="แปลงย่อย"
-                            options={renderOptions(jobStatus, "configValue", "configCode")}
+                            options={renderOptions(subBranchOption, "branchName", "branchCode")}
                             value={searchParam.subBranch}
                             onChange={handleChange}
+                            isMulti
                         />
                         <InputSelectGroup type="text" id="operationStatus" name="operationStatus" label="สถานะงาน"
                             options={renderOptions(jobStatus, "value1", "code")}
