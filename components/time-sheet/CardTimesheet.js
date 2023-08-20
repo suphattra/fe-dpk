@@ -11,6 +11,7 @@ import InputGroupMask from "../InputGroupMask";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
+import { BranchService } from "../../pages/api/branch.service";
 
 export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService }) {
     const [openAddInventory, setAddInventory] = useState(false)
@@ -21,6 +22,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [employeesOption, setEmployeesOption] = useState([])
     const [taskOption, setTaskption] = useState([])
     const [inventoryOption, setInventoryOption] = useState([])
+    const [mainBranchOption, setMainBranchOption] = useState([])
     useEffect(() => {
         async function fetchData() {
             await getEmployeeList();
@@ -28,6 +30,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             await getConfigList('OPERATION_STATUS');
             await getConfigList('TASK');
             await getInventoryList();
+            await getMainBranchList();
         }
         fetchData()
     }, [])
@@ -57,6 +60,16 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }).catch(err => {
         })
     }
+    const getMainBranchList = async () => {
+        await BranchService.getBranchList().then(res => {
+            if (res.data.resultCode === 200) {
+                setMainBranchOption(res.data.resultData)
+            } else {
+                setMainBranchOption([])
+            }
+        }).catch(err => {
+        })
+    }
     const getConfigList = async (code) => {
         let param = {
             subType: code
@@ -81,8 +94,6 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }
     }
     const callbackInventory = (e) => {
-        console.log('dedefef', e)
-        //onChange to extraInventory
         onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
     }
 
@@ -120,6 +131,18 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                 onChange({ target: { name: name, value: emp } }, index, name)
             }
 
+        }
+        if (name === 'mainBranch') {
+            obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
+            if (!isEmpty(obj)) {
+                let emp = {
+                    _id: obj._id,
+                    branchCode: obj.branchCode,
+                    branchName: obj.branchName,
+                    branchType: obj.branchType
+                }
+                onChange({ target: { name: name, value: emp } }, index, name)
+            }
         }
     }
     const calculatorOT = () => {
@@ -162,8 +185,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 value="นวลเพ็ญ"
                                 required />
                             <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
-                                options={renderOptions([], "fullName", "customerId")}
-                                onChange={onChange}
+                                options={renderOptions(mainBranchOption, "branchName", "branchCode")}
+                                onChange={(e) => handleChange(e, index, "mainBranch")}
                                 isSearchable
                                 value="นวลเพ็ญ"
                                 required />

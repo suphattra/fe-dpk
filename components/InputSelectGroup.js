@@ -51,10 +51,11 @@ export default function InputSelectGroup({ label, type, classes, id, name, onCha
                     options={options}
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => option.value}
-                    // value={getDefaultValue()}
+                    value={getDefaultValue()}
                     defaultValue={getDefaultValue()}
                     isDisabled={disabled}
                     placeholder={"Please Select"}
+                    // isClearable={true}
                     id={id}
                     name={name}
                 />

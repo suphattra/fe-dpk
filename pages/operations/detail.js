@@ -86,6 +86,7 @@ export default function DetailOperation() {
         await OperationsService.createOperations(dataList).then(res => {
             if (res.data.resultCode === 200) {
                 NotifyService.success('Create Success')
+                router.push('/operations');
             } else {
                 NotifyService.error(res.data.resultDescription)
             }
@@ -108,7 +109,7 @@ export default function DetailOperation() {
     }
     const insertAddOnService = async () => {
         if (timeSheetForm.length === 10) {
-            // setErrAddOnService("สามารถเพิ่มสูงสุด 10 รายการ")
+            NotifyService.error("สามารถเพิ่มสูงสุด 10 รายการ")
             return
         }
         let lastElement = timeSheetForm.length > 0 ? timeSheetForm[timeSheetForm.length - 1] : { index: 0 };
@@ -157,7 +158,7 @@ export default function DetailOperation() {
                             <div className="flex justify-center items-center">
                                 <button type="button"
                                     className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                // onClick={handleReset}
+                                    onClick={() => { router.push('/operations'); }}
                                 >
                                     ยกเลิก
                                 </button>

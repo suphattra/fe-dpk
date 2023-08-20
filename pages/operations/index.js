@@ -7,10 +7,11 @@ import SearchTimeSheet from "../../components/time-sheet/SearchTimeSheet";
 import { OperationsService } from "../api/operations.service";
 import ResultTimeSheet from "../../components/time-sheet/ResultTimeSheet";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import moment from "moment";
 LoadingOverlay.propTypes = undefined
 const initial = {
     search: {
-        // jobId: '',
+        startDate: moment(new Date).format('YYYY-MM-DD'),
         // jobNo: '',
         // customerName: '',
         // recepientName: '',
@@ -64,6 +65,17 @@ export default function Job() {
                 split += ele.value + '|'
             })
             param.operationStatus = split
+        }
+        if (searchParam.mainBranch) {
+            let split = ""
+            searchParam.mainBranch.map((ele) => {
+                split += ele.value + '|'
+            })
+            param.mainBranch = split
+        }
+
+        if (searchParam.startDate) {
+            param.startDate = searchParam.startDate
         }
 
         console.log(param)
