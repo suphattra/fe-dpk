@@ -1,20 +1,25 @@
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useRouter } from "next/router";
 import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate } from "../../components";
 import { renderOptions } from "../../helpers/utils";
 import { MasterService } from "../../pages/api/master.service";
 import { useEffect, useState } from "react";
 import { EmployeeService } from "../../pages/api/employee.service";
+import { BranchService } from "../../pages/api/branch.service";
 export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus }) {
     const router = useRouter();
     const [jobStatus, setJobStatus] = useState([])
     const [employeesOption, setEmployeesOption] = useState([])
     const [taskOption, setTaskption] = useState([])
+    const [mainBranchOption, setMainBranchOption] = useState([])
+    const [subBranchOption, setSubBranchOption] = useState([])
+
     useEffect(() => {
         async function fetchData() {
             await getConfig('OPERATION_STATUS')
             await getConfig('TASK')
             await getEmployeeList()
+            await getMainBranchList()
+            await getSubBranchList()
         }
         fetchData();
     }, []);
@@ -43,6 +48,34 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         }).catch(err => {
         })
     }
+
+    const getMainBranchList = async () => {
+        let param = {
+            branchType: 'MD0014'
+        }
+        await BranchService.getBranchList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setMainBranchOption(res.data.resultData)
+            } else {
+                setMainBranchOption([])
+            }
+        }).catch(err => {
+        })
+    }
+    const getSubBranchList = async () => {
+        let param = {
+            branchType: 'MD0015'
+        }
+        await BranchService.getBranchList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setSubBranchOption(res.data.resultData)
+            } else {
+                setSubBranchOption([])
+            }
+        }).catch(err => {
+        })
+    }
+
     return (
         <>
             <div className="md:container md:mx-auto">
@@ -70,17 +103,19 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                 <CardBasic >
                     <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
 
-                        <InputSelectGroup type="text" id="status" name="status" label="แปลงใหญ่"
-                            options={renderOptions(jobStatus, "configValue2", "configCode", "configValue")}
-                            value={searchParam.status}
+                        <InputSelectGroup type="text" id="mainBranch" name="mainBranch" label="แปลงใหญ่"
+                            options={renderOptions(mainBranchOption, "branchName", "branchCode")}
+                            value={searchParam.mainBranch}
                             placeholder="ทั้งหมด"
                             onChange={handleChange}
+                            isMulti
                         />
-                        <InputSelectGroup type="text" id="customerType" name="customerType" label="แปลงย่อย"
-                            options={renderOptions(customerType, "configValue", "configCode")}
-                            value={searchParam.customerType}
+                        <InputSelectGroup type="text" id="subBranch" name="subBranch" label="แปลงย่อย"
+                            options={renderOptions(subBranchOption, "branchName", "branchCode")}
+                            value={searchParam.subBranch}
                             onChange={handleChange}
                             placeholder="ทั้งหมด"
+                            isMulti
                         />
                         <InputSelectGroup type="text" id="operationStatus" name="operationStatus" label="สถานะงาน"
                             options={renderOptions(jobStatus, "value1", "code")}
@@ -108,7 +143,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             placeholder="ทั้งหมด"
                             onChange={handleChange}
                         />
-                        
+
                         <InputGroupDate type="text" id="shipmentDateTo" name="shipmentDateTo" label="วัน/เดือน/ปี" onChange={handleChange} value={searchParam.shipmentDateTo ? searchParam.shipmentDateTo : ""} format="YYYY-MM-DD" />
                     </div>
                     <div className="flex justify-center items-center overflow-y-auto p-4" >
