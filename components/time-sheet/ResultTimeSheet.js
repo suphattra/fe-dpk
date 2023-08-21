@@ -1,9 +1,14 @@
 import { useRouter } from "next/router";
+import {  useState } from 'react';
 // import Pagination from "../Pagination";
 import moment from "moment";
+import ModalUpdateTimesheet from "./ModalUpdateTimesheet";
 
 export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack }) {
-
+    const [showJobDetailForm, setShowJobDetailForm] = useState(false)
+    const onSetJobDetailModal = (value) => {
+        setShowJobDetailForm(value)
+    }
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
@@ -96,12 +101,17 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                     {job.operationStatus ? renderbadgeStatus(job.operationStatus.value1, job.operationStatus.code) : ""}
                                                 </td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" onClick={() => onSetJobDetailModal(true)}>
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
                                                     </svg>
                                                 </td>
                                             </tr>
-
+                                            <ModalUpdateTimesheet
+                                                open={showJobDetailForm}
+                                                setOpen={onSetJobDetailModal}
+                                                mode={"view"}
+                                               
+                                            />
                                         </>
                                     ))}
                                 </tbody>
