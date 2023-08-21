@@ -94,7 +94,7 @@ export default function DetailOperation() {
         setLoading(false)
     }
     const onChange = (e, index, name,) => {
-        console.log('dddddddddddddd', JSON.parse(JSON.stringify(e.target.value)), index, name)
+        console.log('dddddddddddddd', e, index, name)
         let _newValue = [...timeSheetForm]
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)

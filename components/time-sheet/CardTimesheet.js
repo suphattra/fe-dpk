@@ -13,7 +13,7 @@ import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
 import { BranchService } from "../../pages/api/branch.service";
 
-export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService }) {
+export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService ,mode}) {
     const [openAddInventory, setAddInventory] = useState(false)
     const [otAmount, setOtAmount] = useState(timeSheet.otAmount ? timeSheet.otAmount : null)
     const [otRate, setOtRate] = useState(timeSheet.otRate ? timeSheet.otRate : null)
@@ -25,6 +25,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [mainBranchOption, setMainBranchOption] = useState([])
     const [subBranchOption, setSubBranchOption] = useState([])
     const [productOption, setProductOption] = useState([])
+    const [querySucess, setQuerySucess] = useState(false)
     useEffect(() => {
         async function fetchData() {
             await getEmployeeUnassignList();
@@ -34,12 +35,23 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             await getInventoryList();
             await getMainBranchList();
             await getSubBranchList();
+            setQuerySucess(true)
         }
         fetchData()
     }, [])
+    
     useEffect(() => {
         calculatorOT()
     }, [otAmount, otRate])
+
+    useEffect(()=>{
+        let obj = []
+        obj = mainBranchOption.find((ele => { return ele.branchCode === timeSheet.mainBranch.branchCode }))
+        console.log(obj)
+        if (!isEmpty(obj)) {
+            setProductOption(obj.product)
+        }
+    },[timeSheet.mainBranch.branchCode])
 
     const getEmployeeUnassignList = async (date) => {
         let _date = moment(new Date(date)).format('YYYY-MM-DD')
@@ -175,7 +187,14 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             }
         }
         if (name === 'product') {
-            onChange({ target: { name: name, value: e.target.value } }, index, name)
+            let product = []
+            product =e.target.value
+            product.forEach((ele)=>{
+                ele.code = ele.value,
+                ele.value1 = ele.name,
+                ele.value2 = ele.value2
+            })
+            onChange({ target: { name: name, value: product } }, index, name)
         }
 
     }
@@ -197,9 +216,20 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }
     }
 
+    const _convertValue = (value)=>{
+        if(!isEmpty(value)){
+            value.map((ele)=>{
+                ele.value = ele.code,
+                ele.name = ele.value1
+            })
+            return value
+        }
+        return value
+    }
+
     return (
         <div className="mt-4 flex flex-col">
-            <div className="flex flex-row-reverse py-2 px-2 border border-gray-200 rounded-t-md">
+            {mode != 'edit' &&<div className="flex flex-row-reverse py-2 px-2 border border-gray-200 rounded-t-md">
                 <button type="button"
                     className="flex justify-center inline-flex items-center rounded-md border border-transparent  text-xs font-medium text-black shadow-sm hover:bg-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-80"
                     onClick={(e) => deleteAddOnService(timeSheet.index)}
@@ -207,9 +237,10 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                     <XMarkIcon className="h-8 w-8  pointer" aria-hidden="true" />
                 </button>
 
-            </div>
+            </div>}
             <div className="rounded-md p-4 shadow-md">
                 {/* items-stretch overflow-hidden */}
+                {querySucess &&
                 <div className="flex flex-1 items-stretch">
                     <div className='relative w-0 flex-1 mr-6 border-r'>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
@@ -224,30 +255,30 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 onChange={(e) => handleChange(e, index, "employee")}
                                 isSearchable
                                 options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
-                                value={timeSheet.employee}
+                                value={timeSheet.employee.employeeCode}
                                 required />
                             <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
                                 options={renderOptions(mainBranchOption, "branchName", "branchCode")}
                                 onChange={(e) => { onChangeMainBranch(e); handleChange(e, index, "mainBranch") }}
                                 isSearchable
-                                value={timeSheet.mainBranch}
+                                value={timeSheet.mainBranch.branchCode}
                                 required />
                             <InputSelectGroup type="text" id={"subBranch" + timeSheet.index} name="subBranch" label="แปลงย่อย"
                                 options={renderOptions(subBranchOption, "branchName", "branchCode")}
                                 onChange={(e) => handleChange(e, index, "subBranch")}
-                                value={timeSheet.subBranch}
+                                value={timeSheet.subBranch.branchCode}
                                 isSearchable
                             />
                             <InputSelectGroup type="text" id={"task" + timeSheet.index} name="task" label="งาน"
                                 options={renderOptions(taskOption, "value1", "code")}
                                 onChange={(e) => handleChange(e, index, "task")}
                                 isSearchable
-                                value={timeSheet.task}
+                                value={timeSheet.task.code}
                                 required />
                             <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
                                 options={renderOptions(productOption, "value1", "code")}
                                 onChange={(e) => handleChange(e, index, "product")}
-                                value={timeSheet.product}
+                                value={_convertValue(timeSheet.product)}
                                 isMulti
                                 isSearchable />
                             <div className="block w-full">
@@ -255,6 +286,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     {"หมายเหตุ:"}
                                 </label>
                                 <textarea
+                                    value={timeSheet.remark}
                                     onChange={(e) => onChange(e, index, "remark")}
                                     id="remark" name="หมายเหตุ"
                                     rows={2}
@@ -344,7 +376,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>}
             </div>
         </div >
 

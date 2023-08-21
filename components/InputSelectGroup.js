@@ -17,7 +17,15 @@ export default function InputSelectGroup({ label, type, classes,placeholder ,id,
     };
     function getDefaultValue() {
         if (!value) return null;
-        return options.find(option => option.value == value);
+        if (isMulti) {
+            // let valueArr = []
+            // value.map((item)=>{
+            //     valueArr.push(options.find(option => option.value == item.code));
+            // })
+            return value //valueArr;
+        }else{
+            return options.find(option => option.value == value);
+        }
     }
     const colourStyles = {
         control: (baseStyles, { data, isDisabled, isFocused, isSelected }) => ({
