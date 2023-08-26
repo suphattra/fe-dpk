@@ -128,10 +128,23 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         setAddInventory(e.target.checked)
         if (!e.target.checked) {
             onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
+        }else{
+            onChange({ target: { name: 'inventory', value: [{    
+                index: 1,
+                inventoryCode: "",
+                inventoryName: "",
+                unit: "",
+                pickupAmount: ""
+            }] } }, index, 'inventory')
         }
     }
     const callbackInventory = (e) => {
-        onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
+        if(openAddInventory){
+            onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
+        }else{
+            onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
+        }
+       
     }
 
     const handleChange = (e, index, name) => {
@@ -309,7 +322,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
                                     <ItemInventory extraInventory={timeSheet.inventory}
                                         inventoryOption={inventoryOption}
-                                        callbackInventory={(e) => callbackInventory(e)} />
+                                        callbackInventory={(e) => callbackInventory(e,openAddInventory)} />
 
                                 </div>
                             </>}

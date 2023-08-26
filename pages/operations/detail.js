@@ -44,13 +44,15 @@ const initial = {
             "value1": "แปลงใหญ่"
         }
     },
-    inventory: [{
-        index: 1,
-        inventoryCode: "",
-        inventoryName: "",
-        unit: "",
-        pickupAmount: ""
-    }]
+    inventory: [
+    //     {
+    //     index: 1,
+    //     inventoryCode: "",
+    //     inventoryName: "",
+    //     unit: "",
+    //     pickupAmount: ""
+    // }
+]
 }
 export default function DetailOperation() {
     const breadcrumbs = [{ index: 1, href: '/operations', name: 'บันทึกการทำงาน' }, { index: 2, href: '/operations', name: 'สร้างบันทึก' }]
