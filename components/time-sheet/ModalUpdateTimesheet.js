@@ -50,7 +50,7 @@ export default function ModalUpdateTimesheet(props) {
     }, []);
     useEffect(() => {
         onChangeMainBranch({ target: { name: 'mainBranch', value: timesheetDetail.mainBranch?.branchCode } });
-    },[timesheetDetail.mainBranch])
+    }, [timesheetDetail.mainBranch])
 
     const getOperationDetail = async (operationCode) => {
         await OperationsService.getOperationsDetail(operationCode).then(res => {
@@ -60,10 +60,10 @@ export default function ModalUpdateTimesheet(props) {
                 setQuerySuccess(true)
                 //default data
                 console.log('gdueduie', res.data.resultData[0].mainBranch.branchCode)
-                if(res.data.resultData[0].inventory.length > 0){
+                if (res.data.resultData[0].inventory.length > 0) {
                     setAddInventory(true)
                 }
-              
+
             } else {
                 setTimesheetDetail({})
                 setQuerySuccess(false)
@@ -162,68 +162,68 @@ export default function ModalUpdateTimesheet(props) {
             }
             obj = _resObjConfig(e.target.value, _option)
             setTimesheetDetail(data => ({ ...data, [name]: obj }));
-        }else
-        if (name === 'employee') {
-            obj = employeesOption.find((ele => { return ele.employeeCode == e.target.value }))
-            if (!isEmpty(obj)) {
-                let emp = {
-                    _id: obj._id,
-                    employeeCode: obj.employeeCode,
-                    title: obj.title,
-                    firstName: obj.firstName,
-                    lastName: obj.lastName,
-                    nickName: obj.nickName,
-                    gender: obj.gender,
+        } else
+            if (name === 'employee') {
+                obj = employeesOption.find((ele => { return ele.employeeCode == e.target.value }))
+                if (!isEmpty(obj)) {
+                    let emp = {
+                        _id: obj._id,
+                        employeeCode: obj.employeeCode,
+                        title: obj.title,
+                        firstName: obj.firstName,
+                        lastName: obj.lastName,
+                        nickName: obj.nickName,
+                        gender: obj.gender,
+                    }
+                    setTimesheetDetail(data => ({ ...data, [name]: emp }));
                 }
-                setTimesheetDetail(data => ({ ...data, [name]: emp }));
-            }
-        }else
-        if (name === 'mainBranch' || name === 'subBranch') {
-            if (name === 'mainBranch') {
-                obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
-            } else {
-                obj = subBranchOption.find((ele => { return ele.branchCode === e.target.value }))
-            }
+            } else
+                if (name === 'mainBranch' || name === 'subBranch') {
+                    if (name === 'mainBranch') {
+                        obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
+                    } else {
+                        obj = subBranchOption.find((ele => { return ele.branchCode === e.target.value }))
+                    }
 
-            if (!isEmpty(obj)) {
-                let branch = {
-                    _id: obj._id,
-                    branchCode: obj.branchCode,
-                    branchName: obj.branchName,
-                    branchType: obj.branchType
-                }
-                setTimesheetDetail(data => ({ ...data, [name]: branch }));
-            }
-        }else
-        if (name === 'product') {
-            let product = []
-            product =e.target.value
-            product.forEach((ele)=>{
-                ele.code = ele.value,
-                ele.value1 = ele.name,
-                ele.value2 = ele.value2
-            })
-            setTimesheetDetail(data => ({ ...data, [name]: product }));
-            // onChange({ target: { name: name, value: product } }, index, name)
-        }else{
-            setTimesheetDetail(data => ({ ...data, [name]: e.target.value }));
-        }
+                    if (!isEmpty(obj)) {
+                        let branch = {
+                            _id: obj._id,
+                            branchCode: obj.branchCode,
+                            branchName: obj.branchName,
+                            branchType: obj.branchType
+                        }
+                        setTimesheetDetail(data => ({ ...data, [name]: branch }));
+                    }
+                } else
+                    if (name === 'product') {
+                        let product = []
+                        product = e.target.value
+                        product.forEach((ele) => {
+                            ele.code = ele.value,
+                                ele.value1 = ele.name,
+                                ele.value2 = ele.value2
+                        })
+                        setTimesheetDetail(data => ({ ...data, [name]: product }));
+                        // onChange({ target: { name: name, value: product } }, index, name)
+                    } else {
+                        setTimesheetDetail(data => ({ ...data, [name]: e.target.value }));
+                    }
 
     }
     const onChangeMainBranch = (e) => {
         let obj = []
         console.log(e)
         obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
-        console.log('obj',obj)
+        console.log('obj', obj)
         if (!isEmpty(obj)) {
             setProductOption(obj.product)
         }
     }
-    const _convertValue = (value)=>{
-        if(!isEmpty(value)){
-            value.map((ele)=>{
+    const _convertValue = (value) => {
+        if (!isEmpty(value)) {
+            value.map((ele) => {
                 ele.value = ele.code,
-                ele.name = ele.value1
+                    ele.name = ele.value1
             })
             return value
         }
@@ -246,10 +246,10 @@ export default function ModalUpdateTimesheet(props) {
         let dataList = {
             dataList: timesheetDetail
         }
-        await OperationsService.updateOperations(operationCode,timesheetDetail).then(res => {
+        await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
             if (res.data.resultCode === 200) {
-                NotifyService.success('Create Success')
-                // router.push('/operations');
+                NotifyService.success('Update Success')
+                setOpen(false)
             } else {
                 NotifyService.error(res.data.resultDescription)
             }
@@ -347,8 +347,8 @@ export default function ModalUpdateTimesheet(props) {
                                                 </div>
                                                 <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 ml-2 py-4 mr-6">
                                                     <InputRadioGroup
-                                                    value={openAddInventory}
-                                                    checked={openAddInventory}
+                                                        value={openAddInventory}
+                                                        checked={openAddInventory}
                                                         type={"checkbox"}
                                                         name="status"
                                                         id={"addInventory"}
@@ -357,78 +357,78 @@ export default function ModalUpdateTimesheet(props) {
                                                     />
                                                 </div>
                                                 {openAddInventory &&
-                                                <>
-                                                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
-                                                        <ItemInventory extraInventory={timesheetDetail.inventory}
-                                                            inventoryOption={inventoryOption}
-                                                            callbackInventory={(e) => callbackInventory(e)} />
+                                                    <>
+                                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
+                                                            <ItemInventory extraInventory={timesheetDetail.inventory}
+                                                                inventoryOption={inventoryOption}
+                                                                callbackInventory={(e) => callbackInventory(e)} />
 
-                                                    </div>
-                                                </>}
+                                                        </div>
+                                                    </>}
                                             </div>
                                             <div className="relative w-0 flex-1">
                                                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-                                                <div class="col-span-2">
-                                                    <label className="block text-sm font-medium text-gray-700">
-                                                        ประเภทค่าเเรง:
-                                                    </label>
-                                                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
-                                                        {wageType && wageType.map(function (item, inx) {
-                                                            return (
-                                                                <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                                    id={"wageType_" + inx} name={"wageType"} label={item.value1}
-                                                                    onChange={(e) => onChange(e, "wageType")}
-                                                                    value={item.code}
-                                                                    checked={item.code === timesheetDetail.wageType.code ? true : false} />
-                                                            )
-                                                        })}
+                                                    <div class="col-span-2">
+                                                        <label className="block text-sm font-medium text-gray-700">
+                                                            ประเภทค่าเเรง:
+                                                        </label>
+                                                        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
+                                                            {wageType && wageType.map(function (item, inx) {
+                                                                return (
+                                                                    <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                                        id={"wageType_" + inx} name={"wageType"} label={item.value1}
+                                                                        onChange={(e) => onChange(e, "wageType")}
+                                                                        value={item.code}
+                                                                        checked={item.code === timesheetDetail.wageType.code ? true : false} />
+                                                                )
+                                                            })}
 
+                                                        </div>
                                                     </div>
-                                                    </div>
-                                               
-                                                <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
-                                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                    onChange={(e) => onChange(e, "taskAmount")}
-                                                    value={timesheetDetail.taskAmount} />
-                                                <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
-                                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                    onChange={(e) => onChange(e, "taskPaymentRate")}
-                                                    value={timesheetDetail.taskPaymentRate} />
-                                                <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
-                                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                    onChange={(e) => { setOtAmount(e.target.value), onChange(e, "otAmount") }}
-                                                    // value={otAmount}
-                                                    value={timesheetDetail.otAmount}
-                                                />
-                                                 <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
-                                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                    onChange={(e) => { setOtRate(e.target.value), onChange(e, "otRate") }}
-                                                    // value={otRate}
-                                                    value={timesheetDetail.otRate}
-                                                />
-                                                <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
-                                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                    onChange={(e) => onChange(e, "otTotal")}
-                                                    value={timesheetDetail.otTotal}
-                                                    disabled
-                                                />
-                                                 <div class="col-span-2">
-                                                    <label className="block text-sm font-medium text-gray-700">
-                                                        สถานะงาน:
-                                                    </label>
-                                                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
-                                                        {operationStatus.map(function (item, inx) {
-                                                            return (
-                                                                <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                                    id={"operationStatus_" + inx} name={"operationStatus"} label={item.value1}
-                                                                    onChange={(e) => onChange(e, "operationStatus")}
-                                                                    value={item.code}
-                                                                    checked={item.code === timesheetDetail.operationStatus.code ? true : false} />
-                                                            )
-                                                        })}
+
+                                                    <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => onChange(e, "taskAmount")}
+                                                        value={timesheetDetail.taskAmount} />
+                                                    <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => onChange(e, "taskPaymentRate")}
+                                                        value={timesheetDetail.taskPaymentRate} />
+                                                    <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => { setOtAmount(e.target.value), onChange(e, "otAmount") }}
+                                                        // value={otAmount}
+                                                        value={timesheetDetail.otAmount}
+                                                    />
+                                                    <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => { setOtRate(e.target.value), onChange(e, "otRate") }}
+                                                        // value={otRate}
+                                                        value={timesheetDetail.otRate}
+                                                    />
+                                                    <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => onChange(e, "otTotal")}
+                                                        value={timesheetDetail.otTotal}
+                                                        disabled
+                                                    />
+                                                    <div class="col-span-2">
+                                                        <label className="block text-sm font-medium text-gray-700">
+                                                            สถานะงาน:
+                                                        </label>
+                                                        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
+                                                            {operationStatus.map(function (item, inx) {
+                                                                return (
+                                                                    <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                                        id={"operationStatus_" + inx} name={"operationStatus"} label={item.value1}
+                                                                        onChange={(e) => onChange(e, "operationStatus")}
+                                                                        value={item.code}
+                                                                        checked={item.code === timesheetDetail.operationStatus.code ? true : false} />
+                                                                )
+                                                            })}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                 </div>
                                             </div>
                                         </div>
                                     }
@@ -439,14 +439,14 @@ export default function ModalUpdateTimesheet(props) {
                                         <div className="flex justify-center items-center">
                                             <button type="button"
                                                 className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                            onClick={() => { setOpen(false) }}
+                                                onClick={() => { setOpen(false) }}
                                             >
                                                 ยกเลิก
                                             </button>
                                             <button
                                                 type="button"
                                                 className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                            onClick={handleSave}
+                                                onClick={handleSave}
                                             >
                                                 บันทึก
                                             </button>

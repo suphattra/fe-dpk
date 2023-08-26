@@ -18,7 +18,7 @@ const initial = {
         // employee: [],
         // task: [],
         limit: 10,
-        offset: 1
+        offset: 0
     },
     jobList: []
 }
@@ -29,6 +29,7 @@ export default function Job() {
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }]
+    const [paramSearch, setParamSearch] = useState({})
     useEffect(() => {
         async function fetchData() {
             await getOperationsList(searchParam);
@@ -38,6 +39,7 @@ export default function Job() {
     const handleReset = async () => {
         setSearchParam(initial.search)
         setOperationsList([])
+        setCurrentPage(1);
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
@@ -85,7 +87,7 @@ export default function Job() {
         if (searchParam.startDate) {
             param.startDate = searchParam.startDate
         }
-
+        setParamSearch(param)
         console.log(param)
         getOperationsList(param);
     }
@@ -95,6 +97,7 @@ export default function Job() {
         await OperationsService.getOperationsList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setOperationsList(res.data.resultData)
+                setTotal(res.data.total)
             } else {
                 setOperationsList([])
             }
@@ -106,8 +109,8 @@ export default function Job() {
     }
     const paginate = async (pageNumber) => {
         setCurrentPage(pageNumber);
-        setSearchParam(data => ({ ...data, offset: pageNumber }));
-        getOperationsList({ ...searchParam, offset: pageNumber })
+        setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
+        getOperationsList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
     }
     return (
         <>
