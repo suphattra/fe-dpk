@@ -5,6 +5,7 @@ import moment from "moment";
 import ModalUpdateTimesheet from "./ModalUpdateTimesheet";
 import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
+import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
 
 export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack,onSort }) {
     const [showJobDetailForm, setShowJobDetailForm] = useState(false)
@@ -78,52 +79,56 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                 <tr>
                                     <th scope="col" className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-6">
                                     <div class="flex items-center justify-center" onClick={()=>{sortTable('employee.firstName');setSort(!sort)}}>พนักงาน
-                                      
-                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                        {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}
+                                            {/* <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                                 <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
+                                            </svg> */}
                                     </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                                     <div class="flex items-center justify-center" onClick={()=>{sortTable('mainBranch.branchName');setSort(!sort)}}>แปลงใหญ่
-                                      
-                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
+                                        {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}
+                                        
                                         </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                        
                                         <div class="flex items-center justify-center" onClick={()=>{sortTable('subBranch.branchName');setSort(!sort)}}>แปลงย่อย
-                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
+                                            {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}    
+                                           
                                         </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                                         
                                         <div class="flex items-center justify-center" onClick={()=>{sortTable('task.value1');setSort(!sort)}}>งาน
-                                  
-                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
+                                            {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}    
+                                          
                                         </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                                        <div class="flex items-center justify-center" onClick={()=>{sortTable('taskAmount');setSort(!sort)}}>
                                         จำนวน
+                                        {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}                
+ 
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                        ค่าแรง
+                                        <div class="flex items-center justify-center" onClick={()=>{sortTable('taskPaymentRate');setSort(!sort)}}>
+                                         ค่าแรง
+                                         {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}                
+                                       
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                                        <div class="flex items-center justify-center" onClick={()=>{sortTable('otTotal');setSort(!sort)}}>
                                         OT
+                                        {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}                
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                                         <div class="flex items-center justify-center" onClick={()=>{sortTable('startDate');setSort(!sort)}}>
                                             วัน/เดือน/ปี
-                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
-                                            </svg>
+                                            {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1"/> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1"/>}    
+                                            
                                         </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
@@ -159,7 +164,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                 {job.operationStatus ? renderbadgeStatus(job.operationStatus.value1, job.operationStatus.code) : ""}
                                             </td>
                                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer"
                                                     onClick={() => {
                                                         onSetJobDetailModal(true)
                                                         // getOperationDetail(job.operationCode)
