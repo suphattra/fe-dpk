@@ -17,6 +17,8 @@ const initial = {
         // recepientName: '',
         // employee: [],
         // task: [],
+        desc :'DESC',
+        sort:'startDate',
         limit: 10,
         offset: 0
     },
@@ -112,6 +114,10 @@ export default function Job() {
         setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
         getOperationsList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
     }
+    const onsort = async (sort,desc)=>{
+        setSearchParam(data => ({ ...data, sort: sort ,desc :desc ? 'DESC' : 'ASC' }));
+        getOperationsList({ ...paramSearch, sort: sort ,desc :desc ? 'DESC' : 'ASC'})
+    }
     return (
         <>
             <Layout>
@@ -125,7 +131,7 @@ export default function Job() {
 
                     <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs>
                     <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} />
-                    <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} />
+                    <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort}/>
                 </LoadingOverlay>
             </Layout>
         </>
