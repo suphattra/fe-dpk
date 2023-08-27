@@ -1,3 +1,4 @@
+import Router from "next/router";
 import { CardBasic, InputGroup, } from "../../components";
 
 export default function Search({ handleSearch, handleReset, handleChange, searchParam }) {
@@ -11,6 +12,7 @@ export default function Search({ handleSearch, handleReset, handleChange, search
                         สร้างรายงาน
                     </button>
                     <button type="button"
+                        onClick={() => { Router.push('employee/detail/employee-detail'); }}
                         className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
                         เพิ่มพนักงาน
                     </button>
