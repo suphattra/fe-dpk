@@ -6,10 +6,11 @@ import ModalUpdateTimesheet from "./ModalUpdateTimesheet";
 import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 
-export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack }) {
+export default function ResultTimeSheet({ operationsList, total, paginate, currentPage, callBack,onSort }) {
     const [showJobDetailForm, setShowJobDetailForm] = useState(false)
     const [timesheetDetail, setTimesheetDetail] = useState({})
     const [loading, setLoading] = useState(false)
+    const [sort, setSort] = useState(true)
     const onSetJobDetailModal = (value) => {
         setShowJobDetailForm(value)
     }
@@ -55,7 +56,9 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
             setLoading(false)
         })
     }
-
+    const sortTable = async(name) =>{
+        onSort(name,sort)
+    }
 
     return (
         <div className="md:container md:mx-auto">
@@ -74,16 +77,37 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th scope="col" className="py-3.5 pl-4 pr-3 text-center text-sm font-semibold text-gray-900 sm:pl-6">
-                                        พนักงาน
+                                    <div class="flex items-center justify-center" onClick={()=>{sortTable('employee.firstName');setSort(!sort)}}>พนักงาน
+                                      
+                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
+                                            </svg>
+                                    </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                        แปลงใหญ่
+                                    <div class="flex items-center justify-center" onClick={()=>{sortTable('mainBranch.branchName');setSort(!sort)}}>แปลงใหญ่
+                                      
+                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
+                                            </svg>
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                        แปลงย่อย
+                                        
+                                        <div class="flex items-center justify-center" onClick={()=>{sortTable('subBranch.branchName');setSort(!sort)}}>แปลงย่อย
+                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
+                                            </svg>
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                        งาน
+                                        
+                                        <div class="flex items-center justify-center" onClick={()=>{sortTable('task.value1');setSort(!sort)}}>งาน
+                                  
+                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
+                                            </svg>
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                                         จำนวน
@@ -95,7 +119,12 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                         OT
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                        วัน/เดือน/ปี
+                                        <div class="flex items-center justify-center" onClick={()=>{sortTable('startDate');setSort(!sort)}}>
+                                            วัน/เดือน/ปี
+                                            <svg class="w-3 h-3 ml-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8.574 11.024h6.852a2.075 2.075 0 0 0 1.847-1.086 1.9 1.9 0 0 0-.11-1.986L13.736 2.9a2.122 2.122 0 0 0-3.472 0L6.837 7.952a1.9 1.9 0 0 0-.11 1.986 2.074 2.074 0 0 0 1.847 1.086Zm6.852 1.952H8.574a2.072 2.072 0 0 0-1.847 1.087 1.9 1.9 0 0 0 .11 1.985l3.426 5.05a2.123 2.123 0 0 0 3.472 0l3.427-5.05a1.9 1.9 0 0 0 .11-1.985 2.074 2.074 0 0 0-1.846-1.087Z"/>
+                                            </svg>
+                                        </div>
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                                         สถานะงาน
