@@ -15,7 +15,7 @@ export default function EmployeeDetail() {
     const [addEmployeeForm, setAddEmployeeForm] = useState([{
         index: 1,
         startDate: moment(new Date).format('YYYY-MM-DD'),
-        // employee: {},
+        title: {},
         // mainBranch: "",
         // subBranch: "",
         // task: "",
@@ -35,10 +35,10 @@ export default function EmployeeDetail() {
 
     }
     const onChange = (e, index, name,) => {
-        // console.log('dddddddddddddd', e, index, name)
-        // let _newValue = [...addEmployeeForm]
-        // _newValue[index][name] = e.target.value
-        // setAddEmployeeForm(_newValue)
+        console.log('dddddddddddddd', e, index, name)
+        let _newValue = [...addEmployeeForm]
+        _newValue[index][name] = e.target.value
+        setAddEmployeeForm(_newValue)
     }
 
     const deleteAddOnService = (rowIndex) => {
