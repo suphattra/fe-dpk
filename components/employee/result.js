@@ -3,11 +3,13 @@ import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import Pagination from "../../components/Pagination";
+import ModalUpdateEmployee from "./ModalUpdateEmployee";
 
 export default function Result({ employeesList, total, currentPage, paginate }) {
     const router = useRouter();
     const [open, setOpen] = useState(false)
-
+    const [showModalDetialEmp, setShowModalDetialEmp] = useState(false)
+    const [employeeDetail, setEmployeeDetail] = useState({})
     const openPopup = async () => {
         setOpen(true)
     }
@@ -18,6 +20,9 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
         } else {
             setOpen(false)
         }
+    }
+    const onSetOpenModalEdit = (value) => {
+        setShowModalDetialEmp(value)
     }
     return (
         <div className="md:container md:mx-auto">
@@ -76,7 +81,10 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
 
                                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                 <EyeIcon className="text-indigo-600 hover:text-indigo-900 h-6 w-6 cursor-pointer"
-                                                // onClick={() => { router.push('driver/detail/driver-detail?mode=view&id=' + driver.driverId); }}
+                                                onClick={() => { 
+                                                    onSetOpenModalEdit(true)
+                                                    setEmployeeDetail(employees)
+                                                }}
                                                 /><span className="sr-only">, </span>
                                             </td>
 
@@ -99,6 +107,14 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
 
                     </div>
                 </div>
+                {showModalDetialEmp && 
+                    <ModalUpdateEmployee 
+                        open={showModalDetialEmp}
+                        setOpen={onSetOpenModalEdit}
+                        mode={"edit"}
+                        employeeCode={employeeDetail.employeeCode}
+                    />
+                }
                 <Transition.Root show={open} >
                     <Dialog as="div" className="relative z-10" onClose={setOpen}>
                         <Transition.Child
