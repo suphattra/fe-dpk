@@ -7,6 +7,7 @@ import { MasterService } from "../../pages/api/master.service";
 import InputGroup from "../InputGroup";
 import InputGroupDate from "../InputGroupDate";
 import moment from "moment";
+import { NotifyService } from "../../pages/api/notify.service";
 export default function ModalUpdateEmployee(props) {
   const { open, setOpen, mode, employeeCode, jobEntry, timesheet } = props;
   const [employeeDetail, setEmployeeDetail] = useState({});
@@ -58,11 +59,20 @@ export default function ModalUpdateEmployee(props) {
       })
       .catch((err) => { });
   };
-  const handleSave = async () => { };
+  const handleSave = async () => {
+    await EmployeeService.updateEmployee(employeeCode, employeeDetail).then(res => {
+      if (res.data.resultCode === 200) {
+        NotifyService.success('Update Success')
+        setOpen(false)
+      } else {
+        NotifyService.error(res.data.resultDescription)
+      }
+    })
+  };
   const handleChange = (e, name) => { };
   const onChange = (e, name) => {
     let obj = {}
-    if (name === 'title' || name === 'gender' || name === 'nationality') {
+    if (name === 'title' || name === 'gender' || name === 'nationality' || name === 'employeeType') {
       let _option = []
       switch (name) {
         case "title":
@@ -72,6 +82,9 @@ export default function ModalUpdateEmployee(props) {
           _option = genderOption
           break;
         case "nationality":
+          _option = nationalityOption
+          break;
+        case "employeeType":
           _option = nationalityOption
           break;
         default:
