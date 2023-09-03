@@ -212,7 +212,11 @@ export default function ModalUpdateEmployee(props) {
                             value={employeeDetail.phoneContact2}
                             required
                           />
-                          <InputSelectGroup type="text" label="ประเภทพนักงาน"
+                         
+                        </div>
+                        <hr className="mt-5 mb-2"></hr>
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
+                        <InputSelectGroup type="text" label="ประเภทพนักงาน"
                             id="employeeType"
                             name="employeeType"
                             options={renderOptions(
