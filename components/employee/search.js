@@ -33,7 +33,7 @@ export default function Search({ handleSearch, handleReset, handleChange, search
                             คำค้นหา
                         </div>
                         <div className="flex items-center">
-                            <InputGroup type="text" id="name" name="name" onChange={handleChange} value={searchParam.name} />
+                            <InputGroup type="text" id="employeeFullName" name="employeeFullName" onChange={handleChange} value={searchParam.employeeFullName} />
                         </div>
                         <div className="flex justify-flex-start items-center overflow-y-auto p-4" >
 

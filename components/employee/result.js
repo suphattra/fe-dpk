@@ -4,6 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import Pagination from "../../components/Pagination";
 import ModalUpdateEmployee from "./ModalUpdateEmployee";
+import moment from "moment";
 
 export default function Result({ employeesList, total, currentPage, paginate }) {
     const router = useRouter();
@@ -74,7 +75,7 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
                                             <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.nickName}</td>
                                             <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.gender.value1}</td>
                                             <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.nationality.value1}</td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.birthDate}</td>
+                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.birthDate ? moment(new Date(employees.birthDate)).format('YYYY-MM-DD') : ""}</td>
                                             <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.employeeRole.value1}</td>
                                             <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.employeeType.value1}</td>
 

@@ -7,9 +7,9 @@ import Layout from "../../layouts";
 import { EmployeeService } from "../api/employee.service";
 const initial = {
     search: {
-        name: '',
+        employeeFullName: '',
         limit: 10,
-        offset: 1
+        offset: 0
     },
     employeesList: []
 }
@@ -27,7 +27,7 @@ export default function Driver() {
         }
         fetchData();
     }, []);
-    
+
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
         setSearchParam(data => ({ ...data, [name]: value }));
@@ -37,10 +37,12 @@ export default function Driver() {
         setEmployeesList([])
     }
     const handleSearch = async () => {
+        searchParam.employeeFullName = searchParam.employeeFullName.trim()
         getEmployeeList(searchParam);
     }
 
     const getEmployeeList = async (searchParam) => {
+
         await EmployeeService.getEmployeeList(searchParam).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesList(res.data.resultData)
@@ -61,7 +63,7 @@ export default function Driver() {
                 }}>
                 <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
                 <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
-                <Result employeesList={employeesList}  total={total}  currentPage={currentPage} callBack={handleSearch} />
+                <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} />
             </LoadingOverlay>
         </Layout>
     )

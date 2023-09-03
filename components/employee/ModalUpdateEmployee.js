@@ -15,11 +15,15 @@ export default function ModalUpdateEmployee(props) {
   const [titleOption, setTitleOption] = useState([]);
   const [genderOption, setGenderOption] = useState([])
   const [nationalityOption, setNationalityOption] = useState([])
+  const [typeOption, setTypeOption] = useState([])
+  const [roleOption, setRoleOption] = useState([])
   useEffect(() => {
     async function fetchData() {
       await getConfigList("TITLE");
       await getConfigList('GENDER');
       await getConfigList('NATIONALITY');
+      await getConfigList('TYPE', 'EMPLOYEE')
+      await getConfigList('ROLE', 'EMPLOYEE')
       await getEmployeeDetail(employeeCode);
     }
     fetchData();
@@ -40,9 +44,10 @@ export default function ModalUpdateEmployee(props) {
         console.log("==> list job3");
       });
   };
-  const getConfigList = async (code) => {
+  const getConfigList = async (code, type) => {
     let param = {
       subType: code,
+      type: type
     };
     await MasterService.getConfig(param)
       .then((res) => {
@@ -50,16 +55,20 @@ export default function ModalUpdateEmployee(props) {
           if (code === "TITLE") setTitleOption(res.data.resultData);
           if (code === "GENDER") setGenderOption(res.data.resultData);
           if (code === "NATIONALITY") setNationalityOption(res.data.resultData);
-
+          if (code === "TYPE") setTypeOption(res.data.resultData);
+          if (code === "ROLE") setRoleOption(res.data.resultData);
         } else {
           if (code === "TITLE") setTitleOption([]);
           if (code === "GENDER") setGenderOption([]);
           if (code === "NATIONALITY") setNationalityOption([]);
+          if (code === "TYPE") setTypeOption([]);
+          if (code === "ROLE") setRoleOption([]);
         }
       })
       .catch((err) => { });
   };
   const handleSave = async () => {
+    console.log(employeeDetail)
     await EmployeeService.updateEmployee(employeeCode, employeeDetail).then(res => {
       if (res.data.resultCode === 200) {
         NotifyService.success('Update Success')
@@ -69,10 +78,9 @@ export default function ModalUpdateEmployee(props) {
       }
     })
   };
-  const handleChange = (e, name) => { };
   const onChange = (e, name) => {
     let obj = {}
-    if (name === 'title' || name === 'gender' || name === 'nationality' || name === 'employeeType') {
+    if (name === 'title' || name === 'gender' || name === 'nationality' || name === 'employeeType' || name === 'employeeRole') {
       let _option = []
       switch (name) {
         case "title":
@@ -85,7 +93,10 @@ export default function ModalUpdateEmployee(props) {
           _option = nationalityOption
           break;
         case "employeeType":
-          _option = nationalityOption
+          _option = typeOption
+          break;
+        case "employeeRole":
+          _option = roleOption
           break;
         default:
       }
@@ -121,7 +132,7 @@ export default function ModalUpdateEmployee(props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-2 pb-2 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6">
                 {querySuccess && (
                   <div className="rounded-md p-4 shadow-md">
                     <div className="flex flex-1 items-stretch">
@@ -181,7 +192,10 @@ export default function ModalUpdateEmployee(props) {
                           <InputGroupDate
                             type="date" label="วันเกิด"
                             format="YYYY-MM-DD"
-                          // value={employeeDetail.birthDate ? moment(new Date(employeeDetail.birthDate)).format('YYYY-MM-DD') : ""}
+                            id={"birthDate"}
+                            name="birthDate"
+                            onChange={(e) => onChange(e, "birthDate")}
+                            value={employeeDetail.birthDate ? moment(new Date(employeeDetail.birthDate)).format('YYYY-MM-DD') : ""}
                           />
                           <InputSelectGroup
                             type="text"
@@ -212,15 +226,15 @@ export default function ModalUpdateEmployee(props) {
                             value={employeeDetail.phoneContact2}
                             required
                           />
-                         
+
                         </div>
                         <hr className="mt-5 mb-2"></hr>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
-                        <InputSelectGroup type="text" label="ประเภทพนักงาน"
+                          <InputSelectGroup type="text" label="ประเภทพนักงาน"
                             id="employeeType"
                             name="employeeType"
                             options={renderOptions(
-                              nationalityOption,
+                              typeOption,
                               "value1",
                               "code"
                             )}
@@ -232,7 +246,7 @@ export default function ModalUpdateEmployee(props) {
                             id="employeeRole"
                             name="employeeRole"
                             options={renderOptions(
-                              nationalityOption,
+                              roleOption,
                               "value1",
                               "code"
                             )}
@@ -257,20 +271,25 @@ export default function ModalUpdateEmployee(props) {
                           <InputGroupDate
                             type="date" name="startDate" label="วันเริ่มงาน"
                             format="YYYY-MM-DD"
+                            id={"startDate"}
+                            onChange={(e) => onChange(e, "startDate")}
+                            value={employeeDetail.startDate ? moment(new Date(employeeDetail.startDate)).format('YYYY-MM-DD') : ""}
                             required />
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4  mr-6 my-4">
                           <InputGroupDate
                             type="date" label="วันสิ้นสุด"
                             format="YYYY-MM-DD"
-
+                            id={"endDate"}
+                            onChange={(e) => onChange(e, "endDate")}
+                            value={employeeDetail.endDate ? moment(new Date(employeeDetail.endDate)).format('YYYY-MM-DD') : ""}
                             required />
                         </div>
                       </div>
                     </div>
                   </div>
                 )}
-                <footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
+                <footer className="flex items-center justify-center sm:px-2 lg:px-2 sm:py-2 lg:py-2">
                   <div className="flex justify-center items-center overflow-y-auto p-4">
                     <div className="flex justify-center items-center">
                       <button
