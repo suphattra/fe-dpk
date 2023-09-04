@@ -31,7 +31,7 @@ export default function MyCalendar(props) {
   const [searchParam, setSearchParam] = useState({})
   useEffect(() => {
     async function fetchData() {
-      await getOperationsList();
+      await getOperationsList({ limit: 1000, offet: 0 });
       await getMainBranchList()
       await getConfig('OPERATION_STATUS')
       await getConfig('TASK')
@@ -153,7 +153,7 @@ export default function MyCalendar(props) {
     param.limit = 1000
     param.offset = 0
     // setSearchParam(param)
-     getOperationsList(param)
+    getOperationsList(param)
   }
 
   const _renderColor = (name) => {
