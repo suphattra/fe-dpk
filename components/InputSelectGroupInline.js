@@ -2,18 +2,29 @@ import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import Select, { StylesConfig } from 'react-select';
 // const refInput = React.createRef();
-export default function InputSelectGroupInline({ label, type, classes, id, name, onChange, value, options, disabled, readOnly, invalid, required, ref, msgError, isSearchable, placeholder }) {
+export default function InputSelectGroupInline({ label, type, classes, id, name, onChange, value, options, disabled, readOnly, invalid, required, ref, msgError, isSearchable, placeholder, isMulti }) {
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
     const handleChangeDate = (e) => {
-        console.log(e)
-        onChange({ target: { name: name, value: e.value } })
+        if (isMulti) {
+            onChange({ target: { name: name, value: e } })
+        } else {
+            onChange({ target: { name: name, value: e.value } })
+        }
     };
     function getDefaultValue() {
         if (!value) return null;
-        return options.find(option => option.value == value);
+        if (isMulti) {
+            // let valueArr = []
+            // value.map((item)=>{
+            //     valueArr.push(options.find(option => option.value == item.code));
+            // })
+            return value //valueArr;
+        } else {
+            return options.find(option => option.value == value);
+        }
     }
     const colourStyles = {
         control: (baseStyles, { data, isDisabled, isFocused, isSelected }) => ({
@@ -45,6 +56,7 @@ export default function InputSelectGroupInline({ label, type, classes, id, name,
                         <Select
                             styles={colourStyles}
                             // classNamePrefix="select"
+                            isMulti={isMulti}
                             isSearchable={isSearchable}
                             // className={classNames(invalid ? 'border-red-800 focus:border-red-300 focus:ring-red-300' : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500', classes, "block w-full rounded-md shadow-sm sm:text-sm disabled:text-gray-800 disabled:bg-gray-50")}
                             onChange={handleChangeDate}
@@ -52,6 +64,7 @@ export default function InputSelectGroupInline({ label, type, classes, id, name,
                             getOptionLabel={(option) => option.name}
                             getOptionValue={(option) => option.value}
                             value={getDefaultValue()}
+                            defaultValue={getDefaultValue()}
                             isDisabled={disabled}
                             placeholder={placeholder}
                             id={id}

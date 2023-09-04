@@ -5,14 +5,19 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import { useEffect } from "react";
 import { useState } from "react";
 import { OperationsService } from "../api/operations.service";
-import { convertFilter } from "../../helpers/utils";
-import { CheckBadgeIcon } from "@heroicons/react/20/solid";
+import { convertFilter, renderOptions } from "../../helpers/utils";
+import { CheckBadgeIcon, EyeDropperIcon, FunnelIcon, GlobeAmericasIcon, MapIcon, ScissorsIcon } from "@heroicons/react/20/solid";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { CardBasic } from "../../components";
+import InputSelectGroupInline from "../../components/InputSelectGroupInline";
+import { BranchService } from "../api/branch.service";
+import { MasterService } from "../api/master.service";
+import { useRouter } from "next/router";
 
 const localizer = momentLocalizer(moment);
-const breadcrumbs = [
-  { index: 1, href: "/calendar-schedule", name: "DPK MANAGMENT SYSTEM" },
-];
+const breadcrumbs = [{ index: 1, href: '/operations', name: 'บันทึกการทำงาน' }, { index: 2, href: '/calendar-schedule', name: 'ตารางการทำงาน' }]
 export default function MyCalendar(props) {
+  const router = useRouter();
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -20,70 +25,43 @@ export default function MyCalendar(props) {
   const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
   const [myEventsList, setMyEventsList] = useState([]);
   const [events, setEvents] = useState([]);
-  const myEvents = [
-    {
-      title: "All Day Event very long title",
-      allDay: true,
-      start: new Date(),
-      end: new Date(),
-      color: "red",
-    },
-    {
-      title: "Long Event",
-      start: new Date(currentYear, currentMonth, randomDay),
-      end: new Date(currentYear, currentMonth, randomDay),
-    },
-
-    {
-      title: "DTS STARTS",
-      start: new Date(currentYear, currentMonth, randomDay),
-      end: new Date(currentYear, currentMonth, randomDay),
-    },
-
-    {
-      title: "DTS ENDS",
-      start: new Date(currentYear, currentMonth, randomDay),
-      end: new Date(currentYear, currentMonth, randomDay),
-    },
-
-    {
-      title: "Some Event",
-      start: new Date(currentYear, currentMonth, randomDay),
-      end: new Date(currentYear, currentMonth, randomDay),
-    },
-    {
-      title: "Conference",
-      start: new Date(currentYear, currentMonth, randomDay),
-      end: new Date(currentYear, currentMonth, randomDay),
-      desc: "Big conference for important people",
-    },
-    {
-      title: "Meeting",
-      start: new Date(2023, 6, 10, 10, 0),
-      end: new Date(2023, 6, 10, 12, 0),
-      desc: "Pre-meeting meeting, to prepare for the meeting",
-      color: "blue",
-    },
-    {
-      title: "Lunch",
-      start: new Date(2023, 6, 11, 10, 0),
-      end: new Date(2023, 6, 11, 12, 0),
-      desc: "Power lunch",
-      color: "green",
-    },
-  ];
+  const [mainBranchOption, setMainBranchOption] = useState([])
+  const [jobStatus, setJobStatus] = useState([])
+  const [taskOption, setTaskption] = useState([])
+  const [searchParam, setSearchParam] = useState({})
   useEffect(() => {
     async function fetchData() {
       await getOperationsList();
+      await getMainBranchList()
+      await getConfig('OPERATION_STATUS')
+      await getConfig('TASK')
     }
     fetchData();
   }, []);
+  useEffect(() => {
+    let tempEvents = [];
+    myEventsList.forEach((element) => {
+      const data = {
+        title: element.task.value1 + " (" + element.employee.firstName + " " + element.employee.lastName + ")", //element.patient.name + ', ' + element.patient.phone,
+        code: element.task.code,
+        desc: element.task.value1,
+        id: element.operationCode,
+        start: moment.utc(element.startDate).toDate(),
+        end: moment.utc(element.startDate).toDate().setHours(18),
+        color: _renderColor(element.task.code),
+        icon: <CheckBadgeIcon />,
+      };
+      tempEvents.push(data);
+      setEvents(tempEvents);
+    });
+  }, [myEventsList]);
   const getOperationsList = async (searchParam) => {
-    let param = {
-      limit: 1000,
-      offet: 0,
-    };
-    await OperationsService.getOperationsList(param)
+    // let param = searchParam
+    //  {
+    //   limit: 1000,
+    //   offet: 0,
+    // };
+    await OperationsService.getOperationsList(searchParam)
       .then((res) => {
         if (res.data.resultCode === 200) {
           setMyEventsList(res.data.resultData);
@@ -96,28 +74,95 @@ export default function MyCalendar(props) {
         console.log("==> list job3");
       });
   };
-  useEffect(() => {
-    let tempEvents = [];
-    myEventsList.forEach((element) => {
-      const data = {
-        title: element.task.value1 + " " + element.mainBranch.branchName, //element.patient.name + ', ' + element.patient.phone,
-        id: element.operationCode,
-        start: moment.utc(element.startDate).toDate(),
-        end: moment.utc(element.startDate).toDate(),
-        color: _renderColor(element.task.code),
-        icon: <CheckBadgeIcon />,
-      };
-      tempEvents.push(data);
-      setEvents(tempEvents);
-    });
-  }, [myEventsList]);
+  const getMainBranchList = async () => {
+    let param = {
+      branchType: 'MD0014'
+    }
+    await BranchService.getBranchList(param).then(res => {
+      if (res.data.resultCode === 200) {
+        setMainBranchOption(res.data.resultData)
+      } else {
+        setMainBranchOption([])
+      }
+    }).catch(err => {
+    })
+  }
+  const getConfig = async (configCategory) => {
+    let paramquery = {
+      subType: configCategory,
+    }
+    await MasterService.getConfig(paramquery).then(res => {
+      if (res.data.resultCode === 200) {
+        if (configCategory === 'OPERATION_STATUS') setJobStatus(res.data.resultData)
+        if (configCategory === 'TASK') setTaskption(res.data.resultData)
+      } else {
+        setJobStatus([])
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+  }
+  const handleChange = async (evt) => {
+    //BUG
+    const { name, value, checked, type } = evt.target;
+    setSearchParam(data => ({ ...data, [name]: value }));
+    let param = {
+      limit: 10000,
+      offset: 0
+    }
+    console.log("searchParam", searchParam)
+    if (searchParam.task) {
+      let split = ""
+      searchParam.task.map((ele) => {
+        split += ele.value + '|'
+      })
+      param.task = split
+    }
+    if (searchParam.employee) {
+      let split = ""
+      searchParam.employee.map((ele) => {
+        split += ele.value + '|'
+      })
+      param.employee = split
+    }
+    if (searchParam.operationStatus) {
+      let split = ""
+      searchParam.operationStatus.map((ele) => {
+        split += ele.value + '|'
+      })
+      param.operationStatus = split
+    }
+    if (searchParam.mainBranch) {
+      let split = ""
+      searchParam.mainBranch.map((ele) => {
+        split += ele.value + '|'
+      })
+      param.mainBranch = split
+    }
+    if (searchParam.subBranch) {
+      let split = ""
+      searchParam.subBranch.map((ele) => {
+        split += ele.value + '|'
+      })
+      param.subBranch = split
+    }
+
+    if (searchParam.startDate) {
+      param.startDate = searchParam.startDate
+    }
+    param.limit = 1000
+    param.offset = 0
+    // setSearchParam(param)
+     getOperationsList(param)
+  }
+
   const _renderColor = (name) => {
     let _option = "red";
     switch (name) {
-      case "MD0019":
+      case "MD0019": //ฉีดดิน
         _option = "#facc15";
         break;
-      case "MD0020":
+      case "MD0020"://ฉีดดิน
         _option = "#a3e635";
         break;
       case "MD0021":
@@ -144,30 +189,109 @@ export default function MyCalendar(props) {
       display: "block",
       fontSize: "10px",
     };
-    // return <CheckBadgeIcon className="h-4 w-4"></CheckBadgeIcon>
     return {
       style,
     };
   };
-  const EventComponent = ({ event }) => (
-    <div className="flex justify-between">
-    
-     {event.task.code} <CheckBadgeIcon className="h-4 w-4"></CheckBadgeIcon>{event.title}
-    </div>
-  );
+  const EventComponent = ({ event }) => {
+    const [showAllEvents, setShowAllEvents] = useState(false);
+    const maxEventsToShow = 3;
+    if (Array.isArray(event) && event.length > 0) {
+      const visibleEvents = showAllEvents ? event : event.slice(0, maxEventsToShow);
+
+      return (
+        <div>
+          <strong>
+            {showAllEvents
+              ? `All Events (${event.length})`
+              : `Up to ${maxEventsToShow} Events`}
+          </strong>
+          <ul>
+            {visibleEvents.map((singleEvent, index) => (
+              <li key={index}>
+                <strong>{singleEvent.title}</strong>
+                <p>{singleEvent.description}</p>
+              </li>
+            ))}
+          </ul>
+          {!showAllEvents && event.length > maxEventsToShow && (
+            <button onClick={() => setShowAllEvents(true)}>Show More</button>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex justify-between">
+          {event.code === 'MD0019' && <GlobeAmericasIcon className="h-4 w-4 text-black"></GlobeAmericasIcon>}
+          {event.code === 'MD0020' && <EyeDropperIcon className="h-4 w-4 text-black"></EyeDropperIcon>}
+          {event.code === 'MD0021' && <ScissorsIcon className="h-4 w-4 text-black"></ScissorsIcon>}
+          {event.code === 'MD0022' && <FunnelIcon className="h-4 w-4 text-black"></FunnelIcon>}
+          {event.code === 'MD0023' && <MapIcon className="h-4 w-4 text-black"></MapIcon>}
+          {/* <p className="text-black">{event.desc}</p> */}
+          <p className="text-black">{event.title}</p>
+        </div>
+      )
+    }
+  };
+
   return (
     <>
       <Layout>
         <Breadcrumbs title="Calendar Schedule" breadcrumbs={breadcrumbs} />
-        <div className="p-2">
+        <div className="px-1 py-1">
+          <div className="flex justify-end w-full max-w-screen pt-0">
+            <button type="button"
+              onClick={() => { router.push('/operations/detail'); }}
+              className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
+              สร้างบันทึก
+            </button>
+          </div>
+        </div>
+        <div className="px-2 pt-0">
+          <hr></hr>
+          <CardBasic>
+            <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-1 ">
+              <InputSelectGroupInline type="text" id="mainBranch" name="mainBranch" label="แปลงใหญ่"
+                options={renderOptions(mainBranchOption, "branchName", "branchCode")}
+                value={searchParam.mainBranch}
+                placeholder="ทั้งหมด"
+                onChange={handleChange}
+                isMulti
+              />
+              <InputSelectGroupInline type="text" id="task" name="task" label="งาน"
+                options={renderOptions(taskOption, "value1", "code")}
+                isMulti
+                isSearchable
+                value={searchParam.task}
+                placeholder="ทั้งหมด"
+                onChange={handleChange}
+              />
+              <InputSelectGroupInline type="text" id="operationStatus" name="operationStatus" label="สถานะงาน"
+                options={renderOptions(jobStatus, "value1", "code")}
+                isMulti
+                placeholder="ทั้งหมด"
+                isSearchable
+                value={searchParam.operationStatus}
+                onChange={handleChange}
+              />
+
+            </div>
+          </CardBasic>
+        </div>
+        <div className="p-2 calendar-container">
           <Calendar
             localizer={localizer}
-            events={events}
+            events={events || []}
             startAccessor="start"
             endAccessor="end"
-            step={60}
-            style={{ height: 600 }}
-            resizable
+            // step={60}
+            showAllEvents
+            // showAllEvents={false}
+            // max={5}
+            // timeslots={10}
+            // length={3}
+            views={['month']}
+            // resizable
             eventPropGetter={eventStyleGetter}
             components={{
               event: EventComponent,
