@@ -286,7 +286,7 @@ export default function ModalUpdateTimesheet(props) {
                                     {querySuccess &&
                                         <div className="flex flex-1 items-stretch">
                                             <div className='relative w-0 flex-1 mr-6 border-r'>
-                                                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
+                                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mr-6">
                                                     <InputGroupDate
                                                         type="date" id={"startDate"} name="startDate" label="วัน/เดือน/ปี"
                                                         format="YYYY-MM-DD"
@@ -371,7 +371,7 @@ export default function ModalUpdateTimesheet(props) {
                                                         <label className="block text-sm font-medium text-gray-700">
                                                             ประเภทค่าเเรง:
                                                         </label>
-                                                        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
+                                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
                                                             {wageType && wageType.map(function (item, inx) {
                                                                 return (
                                                                     <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
@@ -415,7 +415,7 @@ export default function ModalUpdateTimesheet(props) {
                                                         <label className="block text-sm font-medium text-gray-700">
                                                             สถานะงาน:
                                                         </label>
-                                                        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
+                                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-4 mt-4">
                                                             {operationStatus.map(function (item, inx) {
                                                                 return (
                                                                     <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}

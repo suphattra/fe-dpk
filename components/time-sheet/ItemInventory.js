@@ -66,8 +66,8 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
           return (
             <>
 
-              <div className="flex space-x-4 items-center" key={index}>
-                < div className="grid grid-cols-8 md:grid-cols-8 lg:grid-cols-8 gap-4">
+              <div className="flex space-x-4 items-center md:border-b lg:border-none " key={index}>
+                < div className="grid grid-cols-8 md:grid-cols-2 lg:grid-cols-8 gap-4 md:py-2 lg:py-0">
                   <div className="col-span-4">
                     <InputSelectGroupInline
                       type="text"
