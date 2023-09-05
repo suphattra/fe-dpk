@@ -22,6 +22,7 @@ import { MasterService } from "../api/master.service";
 import { useRouter } from "next/router";
 import ModalUpdateTimesheet from "../../components/time-sheet/ModalUpdateTimesheet";
 import ModalCreateTimesheet from "../../components/time-sheet/ModalCreateTimeSheet";
+import LoadingOverlay from "react-loading-overlay";
 
 const localizer = momentLocalizer(moment);
 const breadcrumbs = [
@@ -45,12 +46,14 @@ export default function MyCalendar(props) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [timesheetDetail, setTimesheetDetail] = useState({});
   const [dateSelect, setDateSelect] = useState(null);
+  const [loading, setLoading] = useState(true)
   useEffect(() => {
     async function fetchData() {
       await getOperationsList({ limit: 1000, offet: 0 });
       await getMainBranchList();
       await getConfig("OPERATION_STATUS");
       await getConfig("TASK");
+      setLoading(false)
     }
     fetchData();
   }, []);
@@ -275,114 +278,122 @@ export default function MyCalendar(props) {
   return (
     <>
       <Layout>
-        <Breadcrumbs title="Calendar Schedule" breadcrumbs={breadcrumbs} />
-        <div className="px-1 py-1">
-          <div className="flex justify-end w-full max-w-screen pt-0">
-            <button
-              type="button"
-              onClick={() => {
-                router.push("/operations/detail");
-              }}
-              className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
-            >
-              สร้างบันทึก
-            </button>
-          </div>
-        </div>
-        <div className="px-2 pt-0">
-          <hr></hr>
-          <CardBasic>
-            <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-1 ">
-              <InputSelectGroupInline
-                type="text"
-                id="mainBranch"
-                name="mainBranch"
-                label="แปลงใหญ่"
-                options={renderOptions(
-                  mainBranchOption,
-                  "branchName",
-                  "branchCode"
-                )}
-                value={searchParam.mainBranch}
-                placeholder="ทั้งหมด"
-                onChange={handleChange}
-              // isMulti
-              />
-              <InputSelectGroupInline
-                type="text"
-                id="task"
-                name="task"
-                label="งาน"
-                options={renderOptions(taskOption, "value1", "code")}
-                // isMulti
-                value={searchParam.task}
-                placeholder="ทั้งหมด"
-                onChange={handleChange}
-              />
-              <InputSelectGroupInline
-                type="text"
-                id="operationStatus"
-                name="operationStatus"
-                label="สถานะงาน"
-                options={renderOptions(jobStatus, "value1", "code")}
-                // isMulti
-                placeholder="ทั้งหมด"
-                value={searchParam.operationStatus}
-                onChange={handleChange}
-              />
+        <LoadingOverlay active={loading} className="h-[calc(100vh-4rem)]" spinner text='Loading...'
+          styles={{
+            overlay: (base) => ({ ...base, background: 'rgba(215, 219, 227, 0.6)' }), spinner: (base) => ({ ...base, }),
+            wrapper: {
+              overflowY: loading ? 'scroll' : 'scroll'
+            }
+          }}>
+          <Breadcrumbs title="Calendar Schedule" breadcrumbs={breadcrumbs} />
+          <div className="px-1 py-1">
+            <div className="flex justify-end w-full max-w-screen pt-0">
+              <button
+                type="button"
+                onClick={() => {
+                  router.push("/operations/detail");
+                }}
+                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
+              >
+                สร้างบันทึก
+              </button>
             </div>
-          </CardBasic>
-        </div>
-        <div className="p-2 calendar-container">
-          <Calendar
-            localizer={localizer}
-            events={events || []}
-            startAccessor="start"
-            endAccessor="end"
-            // step={60}
-            // showAllEvents
-            // showAllEvents={false}
-            // allDayMaxRows
-            // allDayAccessor
-            // max={5}
-            // timeslots={10}
-            // length={3}
-            views={["month"]}
-            popup
-            // drilldownView="agenda"
-            // resizable
-            // onShowMore={onShowMore}
-            eventPropGetter={eventStyleGetter}
-            components={{
-              event: EventComponent,
-            }}
-            onSelectEvent={onDoubleClickEvent}
-            // onDoubleClickEvent={onDoubleClickEvent}
-            // onSelecting={onSelecting}
-            selectable
-            onSelectSlot={onSelectSlot}
-          // selected={selected}
-          />
-        </div>
-        {showJobDetailForm && (
-          <ModalUpdateTimesheet
-            open={showJobDetailForm}
-            setOpen={onSetJobDetailModal}
-            mode={"edit"}
-            callbackLoad={callbackLoad}
-            // timesheet={timesheetDetail}
-            operationCode={timesheetDetail.operationCode}
-          />
-        )}
-        {showCreateForm && (
-          <ModalCreateTimesheet
-            open={showCreateForm}
-            dateSelect={dateSelect}
-            setOpen={onSeCreateFormModal}
-            callbackLoad={callbackLoad}
-            mode={"edit"}
-          />
-        )}
+          </div>
+          <div className="px-2 pt-0">
+            <hr></hr>
+            <CardBasic>
+              <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-1 ">
+                <InputSelectGroupInline
+                  type="text"
+                  id="mainBranch"
+                  name="mainBranch"
+                  label="แปลงใหญ่"
+                  options={renderOptions(
+                    mainBranchOption,
+                    "branchName",
+                    "branchCode"
+                  )}
+                  value={searchParam.mainBranch}
+                  placeholder="ทั้งหมด"
+                  onChange={handleChange}
+                // isMulti
+                />
+                <InputSelectGroupInline
+                  type="text"
+                  id="task"
+                  name="task"
+                  label="งาน"
+                  options={renderOptions(taskOption, "value1", "code")}
+                  // isMulti
+                  value={searchParam.task}
+                  placeholder="ทั้งหมด"
+                  onChange={handleChange}
+                />
+                <InputSelectGroupInline
+                  type="text"
+                  id="operationStatus"
+                  name="operationStatus"
+                  label="สถานะงาน"
+                  options={renderOptions(jobStatus, "value1", "code")}
+                  // isMulti
+                  placeholder="ทั้งหมด"
+                  value={searchParam.operationStatus}
+                  onChange={handleChange}
+                />
+              </div>
+            </CardBasic>
+          </div>
+          <div className="p-2 calendar-container">
+            <Calendar
+              localizer={localizer}
+              events={events || []}
+              startAccessor="start"
+              endAccessor="end"
+              // step={60}
+              // showAllEvents
+              // showAllEvents={false}
+              // allDayMaxRows
+              // allDayAccessor
+              // max={5}
+              // timeslots={10}
+              // length={3}
+              views={["month"]}
+              popup
+              // drilldownView="agenda"
+              // resizable
+              // onShowMore={onShowMore}
+              eventPropGetter={eventStyleGetter}
+              components={{
+                event: EventComponent,
+              }}
+              onSelectEvent={onDoubleClickEvent}
+              // onDoubleClickEvent={onDoubleClickEvent}
+              // onSelecting={onSelecting}
+              selectable
+              onSelectSlot={onSelectSlot}
+            // selected={selected}
+            />
+          </div>
+          {showJobDetailForm && (
+            <ModalUpdateTimesheet
+              open={showJobDetailForm}
+              setOpen={onSetJobDetailModal}
+              mode={"edit"}
+              callbackLoad={callbackLoad}
+              // timesheet={timesheetDetail}
+              operationCode={timesheetDetail.operationCode}
+            />
+          )}
+          {showCreateForm && (
+            <ModalCreateTimesheet
+              open={showCreateForm}
+              dateSelect={dateSelect}
+              setOpen={onSeCreateFormModal}
+              callbackLoad={callbackLoad}
+              mode={"edit"}
+            />
+          )}
+        </LoadingOverlay>
       </Layout>
     </>
   );
