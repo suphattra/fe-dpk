@@ -1,4 +1,5 @@
-import { Calendar, momentLocalizer } from "react-big-calendar";
+// import { BigCalendar, momentLocalizer } from "react-big-calendar";
+import BigCalendar, { momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import Layout from "../../layouts";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -20,16 +21,15 @@ import InputSelectGroupInline from "../../components/InputSelectGroupInline";
 import { BranchService } from "../api/branch.service";
 import { MasterService } from "../api/master.service";
 import { useRouter } from "next/router";
-import ModalUpdateTimesheet from "../../components/time-sheet/ModalUpdateTimesheet";
-import { useCallback } from "react";
-import { useRef } from "react";
 
 const localizer = momentLocalizer(moment);
+// BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
+// const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 const breadcrumbs = [
   { index: 1, href: "/operations", name: "บันทึกการทำงาน" },
   { index: 2, href: "/calendar-schedule", name: "ตารางการทำงาน" },
 ];
-export default function MyCalendar(props) {
+export default function MyCalendarBig(props) {
   const router = useRouter();
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -42,8 +42,6 @@ export default function MyCalendar(props) {
   const [jobStatus, setJobStatus] = useState([]);
   const [taskOption, setTaskption] = useState([]);
   const [searchParam, setSearchParam] = useState({});
-  const [showJobDetailForm, setShowJobDetailForm] = useState(false);
-  const [timesheetDetail, setTimesheetDetail] = useState({});
   useEffect(() => {
     async function fetchData() {
       await getOperationsList({ limit: 1000, offet: 0 });
@@ -66,7 +64,6 @@ export default function MyCalendar(props) {
           element.employee.lastName +
           ")", //element.patient.name + ', ' + element.patient.phone,
         code: element.task.code,
-        operationCode: element.operationCode,
         desc: element.task.value1,
         id: element.operationCode,
         start: moment.utc(element.startDate).toDate(),
@@ -196,73 +193,57 @@ export default function MyCalendar(props) {
   const EventComponent = ({ event }) => {
     const [showAllEvents, setShowAllEvents] = useState(false);
     const maxEventsToShow = 3;
-    // if (Array.isArray(event) && event.length > 0) {
-    //   const visibleEvents = showAllEvents
-    //     ? event
-    //     : event.slice(0, maxEventsToShow);
+    if (Array.isArray(event) && event.length > 0) {
+      const visibleEvents = showAllEvents
+        ? event
+        : event.slice(0, maxEventsToShow);
 
-    //   return (
-    //     <div>
-    //       <strong>
-    //         {showAllEvents
-    //           ? `All Events (${event.length})`
-    //           : `Up to ${maxEventsToShow} Events`}
-    //       </strong>
-    //       <ul>
-    //         {visibleEvents.map((singleEvent, index) => (
-    //           <li key={index}>
-    //             <strong>{singleEvent.title}</strong>
-    //             <p>{singleEvent.description}</p>
-    //           </li>
-    //         ))}
-    //       </ul>
-    //       {!showAllEvents && event.length > maxEventsToShow && (
-    //         <button onClick={() => setShowAllEvents(true)}>Show More</button>
-    //       )}
-    //     </div>
-    //   );
-    // } else {
-    return (
-      <div className="flex justify-between">
-        {event.code === "MD0019" && (
-          <GlobeAmericasIcon className="h-4 w-4 text-black"></GlobeAmericasIcon>
-        )}
-        {event.code === "MD0020" && (
-          <EyeDropperIcon className="h-4 w-4 text-black"></EyeDropperIcon>
-        )}
-        {event.code === "MD0021" && (
-          <ScissorsIcon className="h-4 w-4 text-black"></ScissorsIcon>
-        )}
-        {event.code === "MD0022" && (
-          <FunnelIcon className="h-4 w-4 text-black"></FunnelIcon>
-        )}
-        {event.code === "MD0023" && (
-          <MapIcon className="h-4 w-4 text-black"></MapIcon>
-        )}
-        {/* <p className="text-black">{event.desc}</p> */}
-        <p className="text-black">{event.title}</p>
-      </div>
-    );
-    // }
-  };
-  const onShowMore = () => {
-    console.log("onShowMore");
-  };
-  const onDoubleClickEvent = (evt) => {
-    console.log("onDoubleClickEvent", evt);
-    onSetJobDetailModal(true);
-    setTimesheetDetail(evt);
-  };
-  const onSetJobDetailModal = (value) => {
-    setShowJobDetailForm(value);
-  };
-    const onSelectSlot = (rank) => {
-      console.log("onSelectSlot", rank);
+      return (
+        <div>
+          <strong>
+            {showAllEvents
+              ? `All Events (${event.length})`
+              : `Up to ${maxEventsToShow} Events`}
+          </strong>
+          <ul>
+            {visibleEvents.map((singleEvent, index) => (
+              <li key={index}>
+                <strong>{singleEvent.title}</strong>
+                <p>{singleEvent.description}</p>
+              </li>
+            ))}
+          </ul>
+          {!showAllEvents && event.length > maxEventsToShow && (
+            <button onClick={() => setShowAllEvents(true)}>Show More</button>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex justify-between">
+          {event.code === "MD0019" && (
+            <GlobeAmericasIcon className="h-4 w-4 text-black"></GlobeAmericasIcon>
+          )}
+          {event.code === "MD0020" && (
+            <EyeDropperIcon className="h-4 w-4 text-black"></EyeDropperIcon>
+          )}
+          {event.code === "MD0021" && (
+            <ScissorsIcon className="h-4 w-4 text-black"></ScissorsIcon>
+          )}
+          {event.code === "MD0022" && (
+            <FunnelIcon className="h-4 w-4 text-black"></FunnelIcon>
+          )}
+          {event.code === "MD0023" && (
+            <MapIcon className="h-4 w-4 text-black"></MapIcon>
+          )}
+          {/* <p className="text-black">{event.desc}</p> */}
+          <p className="text-black">{event.title}</p>
+        </div>
+      );
     }
-  const clickRef = useRef(null);
-  const onSelecting = (evt) => {
-    console.log("onSelecting", evt);
   };
+  // const allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
+
   return (
     <>
       <Layout>
@@ -327,43 +308,37 @@ export default function MyCalendar(props) {
           </CardBasic>
         </div>
         <div className="p-2 calendar-container">
-          <Calendar
+          <BigCalendar
+          // localizer={localizer}
+            events={events}
+            step={60}
+            views={'month'}
+            
+            defaultDate={new Date(2015, 3, 1)}
+            popup={false}
+            // onShowMore={(events, date) =>
+            //   this.setState({ showModal: true, events })
+            // }
+          />
+          {/* <Calendar
             localizer={localizer}
             events={events || []}
             startAccessor="start"
             endAccessor="end"
             // step={60}
-            // showAllEvents
+            showAllEvents
             // showAllEvents={false}
-            // allDayMaxRows
-            // allDayAccessor
             // max={5}
             // timeslots={10}
             // length={3}
             views={["month"]}
-            popup
-            // drilldownView="agenda"
             // resizable
-            // onShowMore={onShowMore}
             eventPropGetter={eventStyleGetter}
             components={{
               event: EventComponent,
             }}
-            onDoubleClickEvent={onDoubleClickEvent}
-            onSelecting={onSelecting}
-            selectable
-            onSelectSlot={onSelectSlot}
-          />
+          /> */}
         </div>
-        {showJobDetailForm && (
-          <ModalUpdateTimesheet
-            open={showJobDetailForm}
-            setOpen={onSetJobDetailModal}
-            mode={"edit"}
-            // timesheet={timesheetDetail}
-            operationCode={timesheetDetail.operationCode}
-          />
-        )}
       </Layout>
     </>
   );
