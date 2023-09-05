@@ -155,7 +155,7 @@ export default function DetailOperation() {
                             เพิ่มบันทึก
                         </button>
                     </div>
-                    <footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
+                    <div className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
                         <div className="flex justify-center items-center overflow-y-auto p-4" >
                             <div className="flex justify-center items-center">
                                 <button type="button"
@@ -174,7 +174,7 @@ export default function DetailOperation() {
                             </div>
                         </div>
 
-                    </footer>
+                    </div>
 
                 </div>
             </LoadingOverlay >
