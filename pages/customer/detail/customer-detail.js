@@ -203,7 +203,7 @@ export default function CustomerDetail() {
         if (mode === 'edit') {
             await CustomerService.updateCustomer(id, customer).then(res => {
                 if (res.data.resultCode === "20000") {
-                    NotifyService.success('Update Success')
+                    NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
                     setMode("view")
                 } else {
                     NotifyService.error(res.data.developerMessage)
@@ -220,7 +220,7 @@ export default function CustomerDetail() {
             customer.acceptPrivacyFlag = 1
             await CustomerService.createCustomer(customer).then(res => {
                 if (res.data.resultCode === "20000") {
-                    NotifyService.success('Create Success')
+                    NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
                 } else {
                     NotifyService.error(res.data.developerMessage)
                 }

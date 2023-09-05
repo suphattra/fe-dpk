@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from 'react';
-import Pagination from "../Pagination";
+// import Pagination from "../Pagination";
 import moment from "moment";
 import ModalUpdateTimesheet from "./ModalUpdateTimesheet";
 import { OperationsService } from "../../pages/api/operations.service";
@@ -187,7 +187,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                             // timesheet={timesheetDetail}
                             operationCode={timesheetDetail.operationCode}
                         />}
-                        <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList} />
+                        {/* <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList} /> */}
                     </div>
                 </div>
             </LoadingOverlay>

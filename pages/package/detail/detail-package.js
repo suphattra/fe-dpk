@@ -135,7 +135,7 @@ export default function CreatePackage() {
             packages.pointLimit = packages.pointLimit ? packages.pointLimit : 0
             await PackageService.updatePackage(id, packages).then(res => {
                 if (res.data.resultCode === "20000") {
-                    NotifyService.success('Update Success')
+                    NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
                     setMode("view")
                 } else {
                     // setCustomer({})
@@ -150,7 +150,7 @@ export default function CreatePackage() {
             await PackageService.createPackage(packages).then(res => {
                 if (res.data.resultCode === "20000") {
                     setId(res.data.resultData)
-                    NotifyService.success('Create Success')
+                    NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
                     setMode("view")
                 } else {
                     NotifyService.error(res.data.developerMessage)

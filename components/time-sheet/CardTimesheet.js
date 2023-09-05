@@ -1,9 +1,8 @@
 import moment from "moment";
-import CardBasic from "../CardBasic";
 import InputGroupDate from "../InputGroupDate";
 import InputRadioGroup from "../InputRadioGroup";
 import InputSelectGroup from "../InputSelectGroup";
-import { _resObjConfig, convertFilter, isEmpty, renderOptions } from "../../helpers/utils";
+import { _resObjConfig, isEmpty, renderOptions } from "../../helpers/utils";
 import { useEffect, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import ItemInventory from "./ItemInventory";
@@ -13,7 +12,7 @@ import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
 import { BranchService } from "../../pages/api/branch.service";
 
-export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService ,mode}) {
+export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService, mode, dateSelect }) {
     const [openAddInventory, setAddInventory] = useState(false)
     const [otAmount, setOtAmount] = useState(timeSheet.otAmount ? timeSheet.otAmount : null)
     const [otRate, setOtRate] = useState(timeSheet.otRate ? timeSheet.otRate : null)
@@ -28,7 +27,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [querySucess, setQuerySucess] = useState(false)
     useEffect(() => {
         async function fetchData() {
-            await getEmployeeUnassignList();
+            let _date = dateSelect ? moment(new Date(dateSelect)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD')
+            await getEmployeeUnassignList(_date);
             await getConfigList('WAGE_TYPE');
             await getConfigList('OPERATION_STATUS');
             await getConfigList('TASK');
@@ -39,19 +39,19 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }
         fetchData()
     }, [])
-    
+
     useEffect(() => {
         calculatorOT()
     }, [otAmount, otRate])
 
-    useEffect(()=>{
+    useEffect(() => {
         let obj = []
         obj = mainBranchOption.find((ele => { return ele.branchCode === timeSheet.mainBranch.branchCode }))
         console.log(obj)
         if (!isEmpty(obj)) {
             setProductOption(obj.product)
         }
-    },[timeSheet.mainBranch.branchCode])
+    }, [timeSheet.mainBranch.branchCode])
 
     const getEmployeeUnassignList = async (date) => {
         let _date = moment(new Date(date)).format('YYYY-MM-DD')
@@ -128,23 +128,27 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         setAddInventory(e.target.checked)
         if (!e.target.checked) {
             onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
-        }else{
-            onChange({ target: { name: 'inventory', value: [{    
-                index: 1,
-                inventoryCode: "",
-                inventoryName: "",
-                unit: "",
-                pickupAmount: ""
-            }] } }, index, 'inventory')
+        } else {
+            onChange({
+                target: {
+                    name: 'inventory', value: [{
+                        index: 1,
+                        inventoryCode: "",
+                        inventoryName: "",
+                        unit: "",
+                        pickupAmount: ""
+                    }]
+                }
+            }, index, 'inventory')
         }
     }
     const callbackInventory = (e) => {
-        if(openAddInventory){
+        if (openAddInventory) {
             onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
-        }else{
+        } else {
             onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
         }
-       
+
     }
 
     const handleChange = (e, index, name) => {
@@ -201,11 +205,11 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }
         if (name === 'product') {
             let product = []
-            product =e.target.value
-            product.forEach((ele)=>{
+            product = e.target.value
+            product.forEach((ele) => {
                 ele.code = ele.value,
-                ele.value1 = ele.name,
-                ele.value2 = ele.value2
+                    ele.value1 = ele.name,
+                    ele.value2 = ele.value2
             })
             onChange({ target: { name: name, value: product } }, index, name)
         }
@@ -229,11 +233,11 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }
     }
 
-    const _convertValue = (value)=>{
-        if(!isEmpty(value)){
-            value.map((ele)=>{
+    const _convertValue = (value) => {
+        if (!isEmpty(value)) {
+            value.map((ele) => {
                 ele.value = ele.code,
-                ele.name = ele.value1
+                    ele.name = ele.value1
             })
             return value
         }
@@ -242,7 +246,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
 
     return (
         <div className="mt-4 flex flex-col">
-            {mode != 'edit' &&<div className="flex flex-row-reverse py-2 px-2 border border-gray-200 rounded-t-md">
+            {mode != 'edit' && <div className="flex flex-row-reverse py-2 px-2 border border-gray-200 rounded-t-md">
                 <button type="button"
                     className="flex justify-center inline-flex items-center rounded-md border border-transparent  text-xs font-medium text-black shadow-sm hover:bg-red-200 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-80"
                     onClick={(e) => deleteAddOnService(timeSheet.index)}
@@ -254,142 +258,142 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             <div className="rounded-md p-4 shadow-md">
                 {/* items-stretch overflow-hidden */}
                 {querySucess &&
-                <div className="flex flex-1 items-stretch">
-                    <div className='relative w-0 flex-1 mr-6 border-r'>
-                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
-                            <InputGroupDate
-                                type="date" id={"startDate" + timeSheet.index} name="startDate" label="วัน/เดือน/ปี"
-                                format="YYYY-MM-DD"
-                                onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
-                                value={timeSheet.startDate ? moment(new Date(timeSheet.startDate)).format('YYYY-MM-DD') : ""}
-                                required />
+                    <div className="flex flex-1 items-stretch">
+                        <div className='relative w-0 flex-1 mr-6 border-r'>
+                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
+                                <InputGroupDate
+                                    type="date" id={"startDate" + timeSheet.index} name="startDate" label="วัน/เดือน/ปี"
+                                    format="YYYY-MM-DD"
+                                    onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
+                                    value={timeSheet.startDate ? moment(new Date(timeSheet.startDate)).format('YYYY-MM-DD') : ""}
+                                    required />
 
-                            <InputSelectGroup type="text" id={"employee" + timeSheet.index} name="employee" label="พนักงาน"
-                                onChange={(e) => handleChange(e, index, "employee")}
-                                isSearchable
-                                options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
-                                value={timeSheet.employee.employeeCode}
-                                required />
-                            <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
-                                options={renderOptions(mainBranchOption, "branchName", "branchCode")}
-                                onChange={(e) => { onChangeMainBranch(e); handleChange(e, index, "mainBranch") }}
-                                isSearchable
-                                value={timeSheet.mainBranch.branchCode}
-                                required />
-                            <InputSelectGroup type="text" id={"subBranch" + timeSheet.index} name="subBranch" label="แปลงย่อย"
-                                options={renderOptions(subBranchOption, "branchName", "branchCode")}
-                                onChange={(e) => handleChange(e, index, "subBranch")}
-                                value={timeSheet.subBranch.branchCode}
-                                isSearchable
-                            />
-                            <InputSelectGroup type="text" id={"task" + timeSheet.index} name="task" label="งาน"
-                                options={renderOptions(taskOption, "value1", "code")}
-                                onChange={(e) => handleChange(e, index, "task")}
-                                isSearchable
-                                value={timeSheet.task.code}
-                                required />
-                            <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
-                                options={renderOptions(productOption, "value1", "code")}
-                                onChange={(e) => handleChange(e, index, "product")}
-                                value={_convertValue(timeSheet.product)}
-                                isMulti
-                                isSearchable />
-                            <div className="block w-full">
-                                <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
-                                    {"หมายเหตุ:"}
-                                </label>
-                                <textarea
-                                    value={timeSheet.remark}
-                                    onChange={(e) => onChange(e, index, "remark")}
-                                    id="remark" name="หมายเหตุ"
-                                    rows={2}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
+                                <InputSelectGroup type="text" id={"employee" + timeSheet.index} name="employee" label="พนักงาน"
+                                    onChange={(e) => handleChange(e, index, "employee")}
+                                    isSearchable
+                                    options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
+                                    value={timeSheet.employee.employeeCode}
+                                    required />
+                                <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
+                                    options={renderOptions(mainBranchOption, "branchName", "branchCode")}
+                                    onChange={(e) => { onChangeMainBranch(e); handleChange(e, index, "mainBranch") }}
+                                    isSearchable
+                                    value={timeSheet.mainBranch.branchCode}
+                                    required />
+                                <InputSelectGroup type="text" id={"subBranch" + timeSheet.index} name="subBranch" label="แปลงย่อย"
+                                    options={renderOptions(subBranchOption, "branchName", "branchCode")}
+                                    onChange={(e) => handleChange(e, index, "subBranch")}
+                                    value={timeSheet.subBranch.branchCode}
+                                    isSearchable
                                 />
-
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 ml-2 py-4 mr-6">
-                            <InputRadioGroup
-                                type={"checkbox"}
-                                name="status"
-                                id={"addInventory" + timeSheet.index}
-                                label={"เบิกสินค้าคงคลัง"}
-                                onChange={checkInventory}
-                            />
-                        </div>
-                        {openAddInventory &&
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
-                                    <ItemInventory extraInventory={timeSheet.inventory}
-                                        inventoryOption={inventoryOption}
-                                        callbackInventory={(e) => callbackInventory(e,openAddInventory)} />
-
-                                </div>
-                            </>}
-                    </div>
-                    <div className="relative w-0 flex-1">
-                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-                            <div class="col-span-2">
-
-                                <label className="block text-sm font-medium text-gray-700">
-                                    ประเภทค่าเเรง:
-                                </label>
-                                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
-                                    {wageType && wageType.map(function (item, inx) {
-                                        return (
-                                            <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                id={"wageType_" + inx + timeSheet.index} name={"wageType" + timeSheet.index} label={item.value1}
-                                                onChange={(e) => handleChange(e, index, "wageType")}
-                                                value={item.code}
-                                                checked={item.code === timeSheet.wageType.code ? true : false} />
-                                        )
-                                    })}
+                                <InputSelectGroup type="text" id={"task" + timeSheet.index} name="task" label="งาน"
+                                    options={renderOptions(taskOption, "value1", "code")}
+                                    onChange={(e) => handleChange(e, index, "task")}
+                                    isSearchable
+                                    value={timeSheet.task.code}
+                                    required />
+                                <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
+                                    options={renderOptions(productOption, "value1", "code")}
+                                    onChange={(e) => handleChange(e, index, "product")}
+                                    value={_convertValue(timeSheet.product)}
+                                    isMulti
+                                    isSearchable />
+                                <div className="block w-full">
+                                    <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
+                                        {"หมายเหตุ:"}
+                                    </label>
+                                    <textarea
+                                        value={timeSheet.remark}
+                                        onChange={(e) => onChange(e, index, "remark")}
+                                        id="remark" name="หมายเหตุ"
+                                        rows={2}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
+                                    />
 
                                 </div>
                             </div>
-                            <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => onChange(e, index, "taskAmount")}
-                                value={timeSheet.taskAmount} />
-                            <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => onChange(e, index, "taskPaymentRate")}
-                                value={timeSheet.taskPaymentRate} />
-                            <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => { setOtAmount(e.target.value), onChange(e, index, "otAmount") }}
-                                value={otAmount}
-                            />
-                            <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => { setOtRate(e.target.value), onChange(e, index, "otRate") }}
-                                value={otRate}
-                            />
-                            <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => handleChange(e, index, "otTotal")}
-                                value={timeSheet.otTotal}
-                                disabled
-                            />
-                            <div class="col-span-2">
-                                <label className="block text-sm font-medium text-gray-700">
-                                    สถานะงาน:
-                                </label>
-                                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
-                                    {operationStatus.map(function (item, inx) {
-                                        return (
-                                            <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                id={"operationStatus_" + inx + timeSheet.index} name={"operationStatus" + timeSheet.index} label={item.value1}
-                                                onChange={(e) => handleChange(e, index, "operationStatus")}
-                                                value={item.code}
-                                                checked={item.code === timeSheet.operationStatus.code ? true : false} />
-                                        )
-                                    })}
+                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 ml-2 py-4 mr-6">
+                                <InputRadioGroup
+                                    type={"checkbox"}
+                                    name="status"
+                                    id={"addInventory" + timeSheet.index}
+                                    label={"เบิกสินค้าคงคลัง"}
+                                    onChange={checkInventory}
+                                />
+                            </div>
+                            {openAddInventory &&
+                                <>
+                                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
+                                        <ItemInventory extraInventory={timeSheet.inventory}
+                                            inventoryOption={inventoryOption}
+                                            callbackInventory={(e) => callbackInventory(e, openAddInventory)} />
+
+                                    </div>
+                                </>}
+                        </div>
+                        <div className="relative w-0 flex-1">
+                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                <div class="col-span-2">
+
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        ประเภทค่าเเรง:
+                                    </label>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-2 mt-4">
+                                        {wageType && wageType.map(function (item, inx) {
+                                            return (
+                                                <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                    id={"wageType_" + inx + timeSheet.index} name={"wageType" + timeSheet.index} label={item.value1}
+                                                    onChange={(e) => handleChange(e, index, "wageType")}
+                                                    value={item.code}
+                                                    checked={item.code === timeSheet.wageType.code ? true : false} />
+                                            )
+                                        })}
+
+                                    </div>
+                                </div>
+                                <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
+                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                    onChange={(e) => onChange(e, index, "taskAmount")}
+                                    value={timeSheet.taskAmount} />
+                                <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
+                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                    onChange={(e) => onChange(e, index, "taskPaymentRate")}
+                                    value={timeSheet.taskPaymentRate} />
+                                <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
+                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                    onChange={(e) => { setOtAmount(e.target.value), onChange(e, index, "otAmount") }}
+                                    value={otAmount}
+                                />
+                                <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
+                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                    onChange={(e) => { setOtRate(e.target.value), onChange(e, index, "otRate") }}
+                                    value={otRate}
+                                />
+                                <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
+                                    mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                    onChange={(e) => handleChange(e, index, "otTotal")}
+                                    value={timeSheet.otTotal}
+                                    disabled
+                                />
+                                <div class="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        สถานะงาน:
+                                    </label>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-4">
+                                        {operationStatus.map(function (item, inx) {
+                                            return (
+                                                <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                    id={"operationStatus_" + inx + timeSheet.index} name={"operationStatus" + timeSheet.index} label={item.value1}
+                                                    onChange={(e) => handleChange(e, index, "operationStatus")}
+                                                    value={item.code}
+                                                    checked={item.code === timeSheet.operationStatus.code ? true : false} />
+                                            )
+                                        })}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>}
+                    </div>}
             </div>
         </div >
 

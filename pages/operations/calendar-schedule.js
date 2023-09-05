@@ -5,7 +5,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import { useEffect } from "react";
 import { useState } from "react";
 import { OperationsService } from "../api/operations.service";
-import { convertFilter, renderOptions } from "../../helpers/utils";
+import { renderOptions } from "../../helpers/utils";
 import {
   CheckBadgeIcon,
   EyeDropperIcon,
@@ -21,8 +21,7 @@ import { BranchService } from "../api/branch.service";
 import { MasterService } from "../api/master.service";
 import { useRouter } from "next/router";
 import ModalUpdateTimesheet from "../../components/time-sheet/ModalUpdateTimesheet";
-import { useCallback } from "react";
-import { useRef } from "react";
+import ModalCreateTimesheet from "../../components/time-sheet/ModalCreateTimeSheet";
 
 const localizer = momentLocalizer(moment);
 const breadcrumbs = [
@@ -43,7 +42,9 @@ export default function MyCalendar(props) {
   const [taskOption, setTaskption] = useState([]);
   const [searchParam, setSearchParam] = useState({});
   const [showJobDetailForm, setShowJobDetailForm] = useState(false);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [timesheetDetail, setTimesheetDetail] = useState({});
+  const [dateSelect, setDateSelect] = useState(null);
   useEffect(() => {
     async function fetchData() {
       await getOperationsList({ limit: 1000, offet: 0 });
@@ -109,7 +110,7 @@ export default function MyCalendar(props) {
           setMainBranchOption([]);
         }
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getConfig = async (configCategory) => {
     let paramquery = {
@@ -256,13 +257,21 @@ export default function MyCalendar(props) {
   const onSetJobDetailModal = (value) => {
     setShowJobDetailForm(value);
   };
-    const onSelectSlot = (rank) => {
-      console.log("onSelectSlot", rank);
-    }
-  const clickRef = useRef(null);
-  const onSelecting = (evt) => {
-    console.log("onSelecting", evt);
+  const onSeCreateFormModal = (value) => {
+    setShowCreateForm(value);
   };
+  const callbackLoad = async () => {
+    await getOperationsList({ limit: 1000, offet: 0 });
+  }
+  const onSelectSlot = (evt) => {
+    console.log("onSelecting", evt);
+    if (evt.action === 'doubleClick') {
+      console.log("doubleClick", evt);
+      setDateSelect(evt.start)
+      setShowCreateForm(true)
+    }
+  }
+
   return (
     <>
       <Layout>
@@ -297,7 +306,7 @@ export default function MyCalendar(props) {
                 value={searchParam.mainBranch}
                 placeholder="ทั้งหมด"
                 onChange={handleChange}
-                // isMulti
+              // isMulti
               />
               <InputSelectGroupInline
                 type="text"
@@ -349,10 +358,12 @@ export default function MyCalendar(props) {
             components={{
               event: EventComponent,
             }}
-            onDoubleClickEvent={onDoubleClickEvent}
-            onSelecting={onSelecting}
+            onSelectEvent={onDoubleClickEvent}
+            // onDoubleClickEvent={onDoubleClickEvent}
+            // onSelecting={onSelecting}
             selectable
             onSelectSlot={onSelectSlot}
+          // selected={selected}
           />
         </div>
         {showJobDetailForm && (
@@ -360,8 +371,18 @@ export default function MyCalendar(props) {
             open={showJobDetailForm}
             setOpen={onSetJobDetailModal}
             mode={"edit"}
+            callbackLoad={callbackLoad}
             // timesheet={timesheetDetail}
             operationCode={timesheetDetail.operationCode}
+          />
+        )}
+        {showCreateForm && (
+          <ModalCreateTimesheet
+            open={showCreateForm}
+            dateSelect={dateSelect}
+            setOpen={onSeCreateFormModal}
+            callbackLoad={callbackLoad}
+            mode={"edit"}
           />
         )}
       </Layout>

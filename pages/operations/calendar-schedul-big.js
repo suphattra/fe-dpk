@@ -1,12 +1,12 @@
 // import { BigCalendar, momentLocalizer } from "react-big-calendar";
-import BigCalendar, { momentLocalizer } from "react-big-calendar";
+// import { momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import Layout from "../../layouts";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { useEffect } from "react";
 import { useState } from "react";
 import { OperationsService } from "../api/operations.service";
-import { convertFilter, renderOptions } from "../../helpers/utils";
+import { renderOptions } from "../../helpers/utils";
 import {
   CheckBadgeIcon,
   EyeDropperIcon,
@@ -22,7 +22,7 @@ import { BranchService } from "../api/branch.service";
 import { MasterService } from "../api/master.service";
 import { useRouter } from "next/router";
 
-const localizer = momentLocalizer(moment);
+// const localizer = momentLocalizer(moment);
 // BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 // const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 const breadcrumbs = [
@@ -106,7 +106,7 @@ export default function MyCalendarBig(props) {
           setMainBranchOption([]);
         }
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getConfig = async (configCategory) => {
     let paramquery = {
@@ -278,7 +278,7 @@ export default function MyCalendarBig(props) {
                 value={searchParam.mainBranch}
                 placeholder="ทั้งหมด"
                 onChange={handleChange}
-                // isMulti
+              // isMulti
               />
               <InputSelectGroupInline
                 type="text"
@@ -308,7 +308,7 @@ export default function MyCalendarBig(props) {
           </CardBasic>
         </div>
         <div className="p-2 calendar-container">
-          <BigCalendar
+          {/* <BigCalendar
           // localizer={localizer}
             events={events}
             step={60}
@@ -319,7 +319,7 @@ export default function MyCalendarBig(props) {
             // onShowMore={(events, date) =>
             //   this.setState({ showModal: true, events })
             // }
-          />
+          /> */}
           {/* <Calendar
             localizer={localizer}
             events={events || []}

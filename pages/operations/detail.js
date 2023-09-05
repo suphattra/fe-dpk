@@ -87,7 +87,7 @@ export default function DetailOperation() {
         }
         await OperationsService.createOperations(dataList).then(res => {
             if (res.data.resultCode === 200) {
-                NotifyService.success('Create Success')
+                NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
                 router.push('/operations');
             } else {
                 NotifyService.error(res.data.resultDescription)

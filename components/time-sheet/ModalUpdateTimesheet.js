@@ -1,10 +1,8 @@
 import { Fragment, useState, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import CardTimesheet from './CardTimesheet';
 import moment from 'moment/moment';
 import { OperationsService } from '../../pages/api/operations.service';
 import { EmployeeService } from '../../pages/api/employee.service';
-// import CardTimesheetForm from './CardTimesheetForm';
 import InputSelectGroup from '../InputSelectGroup';
 import { _resObjConfig, renderOptions } from '../../helpers/utils';
 import { isEmpty } from 'lodash';
@@ -18,7 +16,7 @@ import { InventoryService } from '../../pages/api/inventory.service';
 import { NotifyService } from '../../pages/api/notify.service';
 export default function ModalUpdateTimesheet(props) {
 
-    const { open, setOpen, mode, operationCode, jobEntry, timesheet } = props;
+    const { open, setOpen, mode, operationCode, jobEntry, timesheet, callbackLoad } = props;
     const [timesheetDetail, setTimesheetDetail] = useState({})
     const [querySuccess, setQuerySuccess] = useState(false)
     const [employeesOption, setEmployeesOption] = useState([])
@@ -248,8 +246,9 @@ export default function ModalUpdateTimesheet(props) {
         }
         await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
             if (res.data.resultCode === 200) {
-                NotifyService.success('Update Success')
+                NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
                 setOpen(false)
+                callbackLoad()
             } else {
                 NotifyService.error(res.data.resultDescription)
             }
