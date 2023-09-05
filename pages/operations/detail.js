@@ -131,7 +131,7 @@ export default function DetailOperation() {
     }
     return (
         <Layout>
-            <LoadingOverlay active={loading} className="h-[calc(100vh-4rem)]" spinner text='Loading...'
+            <LoadingOverlay active={loading} className="h-[calc(100vh-0rem)]" spinner text='Loading...'
                 styles={{
                     overlay: (base) => ({ ...base, background: 'rgba(215, 219, 227, 0.6)' }), spinner: (base) => ({ ...base, }),
                     wrapper: {
