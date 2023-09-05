@@ -315,7 +315,6 @@ export default function MyCalendar(props) {
                 label="งาน"
                 options={renderOptions(taskOption, "value1", "code")}
                 // isMulti
-                isSearchable
                 value={searchParam.task}
                 placeholder="ทั้งหมด"
                 onChange={handleChange}
@@ -328,7 +327,6 @@ export default function MyCalendar(props) {
                 options={renderOptions(jobStatus, "value1", "code")}
                 // isMulti
                 placeholder="ทั้งหมด"
-                isSearchable
                 value={searchParam.operationStatus}
                 onChange={handleChange}
               />
