@@ -12,9 +12,18 @@ import { isEmpty } from "lodash";
 export default function CardEmployee({ index, employee, onChange, deleteAddOnService, mode }) {
     const [listFile, setListFile] = useState([])
     const [titleOption, setTitleOption] = useState([])
+    const [typeOption, setTypeOption] = useState([])
+    const [genderOption, setGenderOption] = useState([])
+    const [nationalityOption, setNationaliyOption] = useState([])
+    const [roleOption, setRoleOption] = useState([])
+
     useEffect(() => {
         async function fetchData() {
             await getConfigList('TITLE');
+            await getConfigList('GENDER');
+            await getConfigList('NATIONALITY');
+            await getConfigList('TYPE');
+            await getConfigList('ROLE');
         }
         fetchData()
     }, [])
@@ -31,8 +40,19 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
             }
             obj = _resObjConfig(e.target.value, _option)
             onChange({ target: { name: name, value: obj } }, index, name)
-
         }
+        if (name === 'gender') {
+            let _option = []
+            switch (name) {
+                case "gender":
+                    _option = genderOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+
     }
     const getConfigList = async (code) => {
         let param = {
@@ -40,9 +60,18 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
         }
         await MasterService.getConfig(param).then(res => {
             if (res.data.resultCode === 200) {
+                console.log(res.data)
                 if (code === 'TITLE') setTitleOption(res.data.resultData)
+                if (code === 'GENDER') setGenderOption(res.data.resultData)
+                if (code === 'NATIONALITY') setNationaliyOption(res.data.resultData)
+                if (code === 'TYPE') setTypeOption(res.data.resultData)
+                if (code === 'ROLE') setRoleOption(res.data.resultData)
             } else {
                 if (code === 'TITLE') setTitleOption([])
+                if (code === 'GENDER') setGenderOption([])
+                if (code === 'NATIONALITY') setNationaliyOption([])
+                if (code === 'TYPE') setTypeOption([])
+                if (code === 'ROLE') setRoleOption([])
             }
         }).catch(err => {
         })
@@ -79,18 +108,26 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
                                 value={employee.firstName}
                                 required
                             />
-                            <InputGroupMask type="text" label="นามสกุล"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                            <InputGroup type="text" label="นามสกุล"
                                 required
-                                onChange={(e) => onChange(e, index)}
+                                id="lastName"
+                                name="lastName"
+                                value={employee.lastName}
+                                onChange={(e) => onChange(e, index, "lastName")}
                             />
-                            <InputGroupMask type="text" label="ชื่อเล่น"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => onChange(e, index)}
+                            <InputGroup type="text" label="ชื่อเล่น"
+                                required
+                                id="nickName"
+                                name="nickName"
+                                value={employee.nickName}
+                                onChange={(e) => onChange(e, index, "nickName")}
                             />
-                            <InputSelectGroup type="text" n label="เพศ"
-                                onChange={(e) => handleChange(e, index)}
+                            <InputSelectGroup type="text" label="เพศ"
+                                id={"gender" + employee.index}
+                                options={renderOptions(genderOption, "value1", "code")}
+                                onChange={(e) => handleChange(e, index, "gender")}
                                 isSearchable
+                                value={employee.gender?.code}
                                 required />
                             <InputGroupDate
                                 type="date" label="วันเกิด"
@@ -98,13 +135,13 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
                             />
 
                             <InputSelectGroup type="text" label="สัญชาติ"
-                                onChange={(e) => handleChange(e, index)}
+                                onChange={(e) => handleChange(e, index, "GENDER")}
                                 isSearchable
-
+                                options={renderOptions(nationalityOption, "value1", "code")}
                                 required />
                             <InputGroupMask type="text" label="เบอร์โทรติดต่อ 1"
                                 mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => onChange(e, index)}
+                                onChange={(e) => onChange(e, index, "GENDER")}
                             />
                             <InputGroupMask type="text" label="เบอร์โทรติดต่อ 2"
                                 mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
@@ -114,8 +151,9 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
                         <hr className="mt-5 mb-2"></hr>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
                             <InputSelectGroup type="text" label="ประเภทพนักงาน"
-                                onChange={(e) => handleChange(e, index)}
+                                onChange={(e) => handleChange(e, index, "TYPE")}
                                 isSearchable
+                                options={renderOptions(typeOption, "value1", "code")}
                                 required />
                             <div className="grid grid-cols-12 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-6">
                                 <ListFile
@@ -123,8 +161,9 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
                                 />
                             </div>
                             <InputSelectGroup type="text" label="ตำแหน่งงาน"
-                                onChange={(e) => handleChange(e, index)}
+                                onChange={(e) => handleChange(e, index, "ROLE")}
                                 isSearchable
+                                options={renderOptions(roleOption, "value1", "code")}
                                 required />
 
                             <div className="block w-full">

@@ -345,6 +345,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                                     id={"wageType_" + inx + timeSheet.index} name={"wageType" + timeSheet.index} label={item.value1}
                                                     onChange={(e) => handleChange(e, index, "wageType")}
                                                     value={item.code}
+                                                    required
                                                     checked={item.code === timeSheet.wageType.code ? true : false} />
                                             )
                                         })}
@@ -354,10 +355,12 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => onChange(e, index, "taskAmount")}
+                                    required
                                     value={timeSheet.taskAmount} />
                                 <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => onChange(e, index, "taskPaymentRate")}
+                                    required
                                     value={timeSheet.taskPaymentRate} />
                                 <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
@@ -383,6 +386,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                         {operationStatus.map(function (item, inx) {
                                             return (
                                                 <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                    required
                                                     id={"operationStatus_" + inx + timeSheet.index} name={"operationStatus" + timeSheet.index} label={item.value1}
                                                     onChange={(e) => handleChange(e, index, "operationStatus")}
                                                     value={item.code}

@@ -3,12 +3,15 @@ import { Bars3Icon, DocumentTextIcon, Squares2X2Icon, TicketIcon, UserIcon, User
 import { useRouter } from 'next/router';
 import { Transition } from '@headlessui/react'
 import Link from 'next/link';
+import { BuildingStorefrontIcon, CalendarDaysIcon, ChartBarIcon, ClipboardDocumentListIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 const navigation = [
-    { name: 'Dashboard', icon: Squares2X2Icon, href: '/dashboard', current: true },
-    { name: 'บันทึกการทำงาน', icon: DocumentTextIcon, href: '/operations', count: 3, current: false },
-    { name: 'พนักงาน', icon: UserIcon, href: '/employee', count: 4, current: false },
-    { name: 'สาขา&แปลงงาน', icon: UsersIcon, href: '/branches', count: 4, current: false },
-    { name: 'Package', icon: TicketIcon, href: '/package', current: false }
+    { icon: ChartBarIcon, href: '/dashboard', name: 'Dashboard', current: true },
+    { icon: CalendarDaysIcon, href: '/operations', name: 'บันทึกการทำงาน', count: 3, current: false },
+    { icon: UsersIcon, name: 'พนักงาน', href: '/employee', count: 4, current: false },
+    { icon: BuildingStorefrontIcon, name: 'สาขา & แปลงงาน', href: '/branches', count: 4, current: false },
+    { icon: ClipboardDocumentListIcon, name: 'สินค้า & ทรัพย์สิน', href: '/package', current: false },
+    { icon: Cog6ToothIcon, name: 'Master data', href: '/package', current: false }
+
 ]
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -41,7 +44,7 @@ export default function Sidebar({ sidebarOpenCallback }) {
                     <div className='h-screen  bg-gray-100'>
                         <nav className="mt-1 flex-1 space-y-1 px-2 py-1" aria-label="Sidebar">
                             {navigation.map((item) => (
-                                <Link href={item.href}  key={item.name}>
+                                <Link href={item.href} key={item.name}>
                                     <a
                                         key={item.name}
                                         // href={item.href}
@@ -50,14 +53,14 @@ export default function Sidebar({ sidebarOpenCallback }) {
                                             'group flex items-center px-2 py-2 text-sm font-bold rounded-md'
                                         )}
                                     >
-                                        <span className={classNames(sidebarOpen ? '' : 'hidden', "flex-1")}>{item.name}</span>
                                         <item.icon
                                             className={classNames(
                                                 activeRoute(item.href) ? 'text-gray-300' : 'text-gray-400 group-hover:text-indigo-600',
-                                                'ml-5 mr-0 flex-shrink-0 h-6 w-6'
+                                                'mr-3 mr-0 flex-shrink-0 h-6 w-6'
                                             )}
                                             aria-hidden="true"
                                         />
+                                        <span className={classNames(sidebarOpen ? '' : 'hidden', "flex-1")}>{item.name}</span>
                                     </a>
                                 </Link>
                             ))}
