@@ -336,7 +336,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 <div class="col-span-2">
 
                                     <label className="block text-sm font-medium text-gray-700">
-                                        ประเภทค่าเเรง:
+                                        ประเภทค่าเเรง 
+                                        <span style={{color:"#991B1E"}}> *</span>
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
                                         {wageType && wageType.map(function (item, inx) {
@@ -380,7 +381,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                 />
                                 <div class="col-span-2">
                                     <label className="block text-sm font-medium text-gray-700">
-                                        สถานะงาน:
+                                        สถานะงาน
+                                        <span style={{color:"#991B1E"}}> *</span>
                                     </label>
                                     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-4 mt-4">
                                         {operationStatus.map(function (item, inx) {

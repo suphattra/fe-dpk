@@ -369,7 +369,8 @@ export default function ModalUpdateTimesheet(props) {
                                                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
                                                     <div class="col-span-2">
                                                         <label className="block text-sm font-medium text-gray-700">
-                                                            ประเภทค่าเเรง:
+                                                            ประเภทค่าเเรง
+                                                            <span style={{ color: "#991B1E" }}> *</span>
                                                         </label>
                                                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
                                                             {wageType && wageType.map(function (item, inx) {
@@ -387,10 +388,12 @@ export default function ModalUpdateTimesheet(props) {
 
                                                     <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        required
                                                         onChange={(e) => onChange(e, "taskAmount")}
                                                         value={timesheetDetail.taskAmount} />
                                                     <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        required
                                                         onChange={(e) => onChange(e, "taskPaymentRate")}
                                                         value={timesheetDetail.taskPaymentRate} />
                                                     <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
@@ -413,7 +416,9 @@ export default function ModalUpdateTimesheet(props) {
                                                     />
                                                     <div class="col-span-2">
                                                         <label className="block text-sm font-medium text-gray-700">
-                                                            สถานะงาน:
+                                                            สถานะงาน
+                                                            <span style={{ color: "#991B1E" }}> *</span>
+
                                                         </label>
                                                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-4 mt-4">
                                                             {operationStatus.map(function (item, inx) {
@@ -432,25 +437,28 @@ export default function ModalUpdateTimesheet(props) {
                                         </div>
                                     }
                                 </div>
+
                                 {/* <CardTimesheet index={0} timeSheet={timesheetDetail} onChange={onChange} deleteAddOnService={deleteAddOnService} mode={mode} /> */}
-                                <footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
-                                    <div className="flex justify-center items-center overflow-y-auto p-4" >
-                                        <div className="flex justify-center items-center">
-                                            <button type="button"
-                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                                onClick={() => { setOpen(false) }}
-                                            >
-                                                ยกเลิก
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                                onClick={handleSave}
-                                            >
-                                                บันทึก
-                                            </button>
+                                < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
+                                    {mode === "edit" &&
+                                        <div className="flex justify-center items-center overflow-y-auto p-4" >
+                                            <div className="flex justify-center items-center">
+                                                <button type="button"
+                                                    className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
+                                                    onClick={() => { setOpen(false) }}
+                                                >
+                                                    ยกเลิก
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                    onClick={handleSave}
+                                                >
+                                                    บันทึก
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    }
                                 </footer>
 
                             </Dialog.Panel>
@@ -458,6 +466,6 @@ export default function ModalUpdateTimesheet(props) {
                     </div>
                 </div>
             </Dialog>
-        </Transition.Root>
+        </Transition.Root >
     )
 }

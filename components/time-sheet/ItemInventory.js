@@ -73,7 +73,8 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       type="text"
                       id="inventory"
                       name="inventory"
-                      label="สินค้าคงคลัง:"
+                      label="สินค้าคงคลัง"
+                      required
                       options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
                       value={extra.inventoryCode}
                       onChange={(e) => {
@@ -86,7 +87,8 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       type="text"
                       id="pickupAmount"
                       name="pickupAmount"
-                      label="จำนวน:"
+                      label="จำนวน"
+                      required
                       classes=""
                       value={extra.pickupAmount}
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}

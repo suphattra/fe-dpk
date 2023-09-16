@@ -15,7 +15,7 @@ import {
   ScissorsIcon,
 } from "@heroicons/react/20/solid";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { CardBasic } from "../../components";
+import { CardBasic, InputSelectGroup } from "../../components";
 import InputSelectGroupInline from "../../components/InputSelectGroupInline";
 import { BranchService } from "../api/branch.service";
 import { MasterService } from "../api/master.service";
@@ -72,7 +72,7 @@ export default function MyCalendar(props) {
         id: element.operationCode,
         start: moment.utc(element.startDate).toDate(),
         end: moment.utc(element.startDate).toDate().setHours(18),
-        color: _renderColor(element.task.code),
+        color: "#EEE4FF",
         icon: <CheckBadgeIcon />,
       };
       tempEvents.push(data);
@@ -225,21 +225,7 @@ export default function MyCalendar(props) {
     // } else {
     return (
       <div className="flex justify-between">
-        {event.code === "MD0019" && (
-          <GlobeAmericasIcon className="h-4 w-4 text-black"></GlobeAmericasIcon>
-        )}
-        {event.code === "MD0020" && (
-          <EyeDropperIcon className="h-4 w-4 text-black"></EyeDropperIcon>
-        )}
-        {event.code === "MD0021" && (
-          <ScissorsIcon className="h-4 w-4 text-black"></ScissorsIcon>
-        )}
-        {event.code === "MD0022" && (
-          <FunnelIcon className="h-4 w-4 text-black"></FunnelIcon>
-        )}
-        {event.code === "MD0023" && (
-          <MapIcon className="h-4 w-4 text-black"></MapIcon>
-        )}
+
         {/* <p className="text-black">{event.desc}</p> */}
         <p className="text-black">{event.title}</p>
       </div>
@@ -314,7 +300,7 @@ export default function MyCalendar(props) {
                 name="task"
                 label="งาน"
                 options={renderOptions(taskOption, "value1", "code")}
-                // isMulti
+                // isMulti  
                 value={searchParam.task}
                 placeholder="ทั้งหมด"
                 onChange={handleChange}
@@ -325,7 +311,7 @@ export default function MyCalendar(props) {
                 name="operationStatus"
                 label="สถานะงาน"
                 options={renderOptions(jobStatus, "value1", "code")}
-                // isMulti
+                // isMulti  
                 placeholder="ทั้งหมด"
                 value={searchParam.operationStatus}
                 onChange={handleChange}
@@ -370,7 +356,7 @@ export default function MyCalendar(props) {
           <ModalUpdateTimesheet
             open={showJobDetailForm}
             setOpen={onSetJobDetailModal}
-            mode={"edit"}
+            mode={"view"}
             callbackLoad={callbackLoad}
             // timesheet={timesheetDetail}
             operationCode={timesheetDetail.operationCode}

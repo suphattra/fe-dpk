@@ -100,7 +100,7 @@ export default function Job() {
             configCode: '',
             status: ''
         }
-        await MasterService.getMastersConfig(paramquery).then(res => {
+        await MasterService.getConfig(paramquery).then(res => {
             if (res.data.resultCode === "20000") {
                 if (configCategory === 'JOB_STATUS') setJobStatus(res.data.resultData.configs)
                 if (configCategory === 'CUSTOMER_TYPE') setCustomerType(res.data.resultData.configs)

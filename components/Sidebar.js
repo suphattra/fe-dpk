@@ -10,7 +10,7 @@ const navigation = [
     { icon: UsersIcon, name: 'พนักงาน', href: '/employee', count: 4, current: false },
     { icon: BuildingStorefrontIcon, name: 'สาขา & แปลงงาน', href: '/branches', count: 4, current: false },
     { icon: ClipboardDocumentListIcon, name: 'สินค้า & ทรัพย์สิน', href: '/package', current: false },
-    { icon: Cog6ToothIcon, name: 'Master data', href: '/package', current: false }
+    // { icon: Cog6ToothIcon, name: 'Master data', href: '/package', current: false }
 
 ]
 function classNames(...classes) {
