@@ -34,7 +34,7 @@ export default function Pagination({
                     Showing
                     {/* + lengthList.length */}
                     {/* <span className='font-medium'> {currentPage * postsPerPage} </span> */}
-                    <span className='font-medium'>  {currentPage === pageNumbers.length ? totalPosts : lengthList.length * currentPage} </span>
+                    <span className='font-medium'>  {currentPage === pageNumbers.length ? totalPosts : lengthList?.length * currentPage} </span>
                     of
                     <span className='font-medium'> {totalPosts} </span>
                     results
