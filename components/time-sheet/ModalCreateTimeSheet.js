@@ -75,10 +75,11 @@ export default function ModalCreateTimesheet(props) {
         await OperationsService.createOperations(dataList).then(res => {
             if (res.data.resultCode === 200) {
                 NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
+                window.location.reload()
                 setOpen(false)
                 callbackLoad()
             } else {
-                NotifyService.error(res.data.resultDescription)
+                NotifyService.error(res.data.message)
             }
         })
     }

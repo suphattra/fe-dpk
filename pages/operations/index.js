@@ -18,7 +18,7 @@ const initial = {
         // employee: [],
         // task: [],
         desc :'DESC',
-        sort:'startDate',
+        sort:'updatedDate',
         limit: 10,
         offset: 0
     },
