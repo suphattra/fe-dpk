@@ -42,6 +42,7 @@ export default function Job() {
         setSearchParam(initial.search)
         setOperationsList([])
         setCurrentPage(1);
+        await handleSearch(); 
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;

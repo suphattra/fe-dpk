@@ -149,7 +149,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     <div className="flex justify-center items-center overflow-y-auto p-4" >
                         <button type="button"
                             className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                            onClick={handleReset}>
+                           onClick={handleReset}> 
                             ล้าง
                         </button>
                         <button type="button"

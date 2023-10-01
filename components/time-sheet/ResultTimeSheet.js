@@ -156,8 +156,8 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                     <span className={`inline-flex items-center rounded-md  px-2.5 py-0.5 text-sm font-medium text-black-400`}>
                                                         <svg className={`mr-1.5 h-2 w-2  `} fill="currentColor" viewBox="0 0 8 8">
                                                         </svg>
-                                                        {job.otAmount} * {job.otRate}
                                                     </span>
+                                                    {job.otAmount && job.otRate ? `${job.otAmount} * ${job.otRate}` : `${job.otAmount || ''} ${job.otRate || ''}`}
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{job.startDate ? moment(job.startDate).format('DD/MM/YYYY') : ""}</td>
 
