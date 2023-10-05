@@ -140,10 +140,18 @@ export default function MyCalendar(props) {
     };
     console.log("searchParam", searchParam);
     if (name === "task") {
-      param.task = value;
+      let split = ""
+      value.map((ele) => {
+          split += ele.value + '|'
+      })
+      param.task = split;
     }
     if (name === "operationStatus") {
-      param.operationStatus = value;
+      let split = ""
+      value.map((ele) => {
+          split += ele.value + '|'
+      })
+      param.operationStatus = split;
     }
     if (name === "mainBranch") {
       param.mainBranch = value;
@@ -300,7 +308,7 @@ export default function MyCalendar(props) {
                 name="task"
                 label="งาน"
                 options={renderOptions(taskOption, "value1", "code")}
-                // isMulti  
+                isMulti  
                 value={searchParam.task}
                 placeholder="ทั้งหมด"
                 onChange={handleChange}
@@ -311,7 +319,7 @@ export default function MyCalendar(props) {
                 name="operationStatus"
                 label="สถานะงาน"
                 options={renderOptions(jobStatus, "value1", "code")}
-                // isMulti  
+                isMulti  
                 placeholder="ทั้งหมด"
                 value={searchParam.operationStatus}
                 onChange={handleChange}
