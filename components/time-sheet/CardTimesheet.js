@@ -12,7 +12,7 @@ import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
 import { BranchService } from "../../pages/api/branch.service";
 
-export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService, mode, dateSelect }) {
+export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService, mode, dateSelect, onErrors, fieldRegister=()=>{} }) {
     const [openAddInventory, setAddInventory] = useState(false)
     const [otAmount, setOtAmount] = useState(timeSheet.otAmount ? timeSheet.otAmount : null)
     const [otRate, setOtRate] = useState(timeSheet.otRate ? timeSheet.otRate : null)
@@ -25,6 +25,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [subBranchOption, setSubBranchOption] = useState([])
     const [productOption, setProductOption] = useState([])
     const [querySucess, setQuerySucess] = useState(false)
+    const [errors, setErrors] = useState({})
+
     useEffect(() => {
         async function fetchData() {
             let _date = dateSelect ? moment(new Date(dateSelect)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD')
@@ -43,6 +45,10 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     useEffect(() => {
         calculatorOT()
     }, [otAmount, otRate])
+
+    useEffect(()=>{
+        setErrors(onErrors)
+    },[onErrors])
 
     useEffect(() => {
         let obj = []
@@ -266,6 +272,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     format="YYYY-MM-DD"
                                     onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
                                     value={timeSheet.startDate ? moment(new Date(timeSheet.startDate)).format('YYYY-MM-DD') : ""}
+                                    invalid={errors?.startDate?errors?.startDate[timeSheet.index]:false}
                                     required />
 
                                 <InputSelectGroup type="text" id={"employee" + timeSheet.index} name="employee" label="พนักงาน"
@@ -273,11 +280,13 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     isSearchable
                                     options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
                                     value={timeSheet.employee.employeeCode}
+                                    invalid={errors?.employee? errors?.employee[timeSheet.index]:false}
                                     required />
                                 <InputSelectGroup type="text" id={"mainBranch" + timeSheet.index} name="mainBranch" label="แปลงใหญ่"
                                     options={renderOptions(mainBranchOption, "branchName", "branchCode")}
                                     onChange={(e) => { onChangeMainBranch(e); handleChange(e, index, "mainBranch") }}
                                     isSearchable
+                                    invalid={errors?.mainBranch? errors?.mainBranch[timeSheet.index]:false}
                                     value={timeSheet.mainBranch.branchCode}
                                     required />
                                 <InputSelectGroup type="text" id={"subBranch" + timeSheet.index} name="subBranch" label="แปลงย่อย"
@@ -291,6 +300,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     onChange={(e) => handleChange(e, index, "task")}
                                     isSearchable
                                     value={timeSheet.task.code}
+                                    invalid={errors?.task? errors?.task[timeSheet.index]:false}
                                     required />
                                 <InputSelectGroup type="text" id={"product" + timeSheet.index} name="product" label="ผลผลิต"
                                     options={renderOptions(productOption, "value1", "code")}
@@ -357,12 +367,16 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => onChange(e, index, "taskAmount")}
                                     required
-                                    value={timeSheet.taskAmount} />
+                                    value={timeSheet.taskAmount} 
+                                    invalid={errors?.taskAmount? errors?.taskAmount[timeSheet.index]:false}
+                                />
                                 <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => onChange(e, index, "taskPaymentRate")}
                                     required
-                                    value={timeSheet.taskPaymentRate} />
+                                    value={timeSheet.taskPaymentRate} 
+                                    invalid={errors?.taskPaymentRate? errors?.taskPaymentRate[timeSheet.index]:false}
+                                />
                                 <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => { setOtAmount(e.target.value), onChange(e, index, "otAmount") }}

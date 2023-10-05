@@ -64,9 +64,9 @@ export default function DetailOperation() {
         index: 1,
         startDate: moment(new Date).format('YYYY-MM-DD'),
         employee: {},
-        mainBranch: initial.mainBranch,
+        mainBranch: {},//initial.mainBranch,
         subBranch: initial.subBranch,
-        task: initial.task,
+        task: {},//initial.task,
         inventory: initial.inventory,
         wageType: initial.wageType,
         operationStatus: initial.operationStatus
@@ -75,32 +75,75 @@ export default function DetailOperation() {
     }
     const validationSchema = createValidationSchema();
     const formOptions = { resolver: yupResolver(validationSchema) };
-    const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm(formOptions);
+    const { register, handleSubmit, setValue, getValues, setError, clearErrors, formState: { errors } } = useForm(formOptions);
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
     const handleSave = async () => {
-        setLoading(true)
-        console.log(timeSheetForm)
-        let dataList = {
-            dataList: timeSheetForm
-        }
-        await OperationsService.createOperations(dataList).then(res => {
-            if (res.data.resultCode === 200) {
-                NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
-                window.location.reload()
-                router.push('/operations');
-            } else {
-                NotifyService.error(res.data.message)
+
+        const errorList = [];
+        
+        for(let timesheet of timeSheetForm){
+            if(!timesheet.startDate){
+                errorList.push({ field: `startDate[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-        })
-        setLoading(false)
+            if(!timesheet.employee){
+                errorList.push({ field: `employee[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+            if(!timesheet.mainBranch.branchCode){
+                errorList.push({ field: `mainBranch[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+            if(!timesheet.task.code){
+                errorList.push({ field: `task[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+            if(!timesheet.wageType){
+                errorList.push({ field: `wageType[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+            if(!timesheet.operationStatus){
+                errorList.push({ field: `operationStatus[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+            if(!timesheet.taskAmount){
+                errorList.push({ field: `taskAmount[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+            if(!timesheet.taskPaymentRate){
+                errorList.push({ field: `taskPaymentRate[${timesheet.index}]`, type: "custom", message: "custom message" });
+            }
+        }
+
+        if (errorList.length === 0) {
+            setLoading(true)
+            console.log(timeSheetForm)
+            let dataList = {
+                dataList: timeSheetForm
+            }
+            await OperationsService.createOperations(dataList).then(res => {
+                if (res.data.resultCode === 200) {
+                    NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
+                    window.location.reload()
+                    router.push('/operations');
+                } else {
+                    NotifyService.error(res.data.message)
+                }
+            })
+            setLoading(false)
+        }else{
+            errorList.forEach(({ field, type, message }) => {
+                setError(field, { type, message });
+            });
+        }
+
     }
     const onChange = (e, index, name,) => {
         console.log('dddddddddddddd', e, index, name)
         let _newValue = [...timeSheetForm]
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
+
+        if(errors){
+            if(e.target.value){
+                clearErrors(`${name}[${_newValue[index].index}]`);
+            }
+        }
     }
 
     const deleteAddOnService = (rowIndex) => {
@@ -120,9 +163,9 @@ export default function DetailOperation() {
             index: lastElement.index + 1,
             startDate: moment(new Date).format('YYYY-MM-DD'),
             employee: initial.employee,
-            mainBranch: initial.mainBranch,
+            mainBranch: {},//initial.mainBranch,
             subBranch: initial.subBranch,
-            task: initial.task,
+            task: {},//initial.task,
             inventory: initial.inventory,
             wageType: initial.wageType,
             operationStatus: initial.operationStatus
@@ -144,7 +187,7 @@ export default function DetailOperation() {
                     <form className="space-y-4" id='inputForm'>
                         {timeSheetForm && timeSheetForm.map((timeSheet, index) => {
                             return (
-                                <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} />
+                                <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} onErrors={errors}/>
                             )
                         })}
                     </form>
