@@ -28,6 +28,7 @@ export default function Job() {
     const [loading, setLoading] = useState(true)
     const [searchParam, setSearchParam] = useState(initial.search)
     const [operationsList, setOperationsList] = useState(initial.jobList)
+    const [operationsListExcel, setOperationsListExcel] = useState(initial.jobList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }]
@@ -35,12 +36,14 @@ export default function Job() {
     useEffect(() => {
         async function fetchData() {
             await getOperationsList(searchParam);
+            await getOperationsListReport(searchParam);
         }
         fetchData();
     }, []);
     const handleReset = async () => {
         setSearchParam(initial.search)
         setOperationsList([])
+        setOperationsListExcel([])
         setCurrentPage(1);
         await handleSearch(); 
     }
@@ -93,6 +96,7 @@ export default function Job() {
         setParamSearch(param)
         console.log(param)
         getOperationsList(param);
+        getOperationsListReport(param)
     }
     const getOperationsList = async (searchParam) => {
         setLoading(true)
@@ -103,6 +107,23 @@ export default function Job() {
                 setTotal(res.data.total)
             } else {
                 setOperationsList([])
+            }
+            setLoading(false)
+        }).catch(err => {
+            console.log("==> list job3")
+            setLoading(false)
+        })
+    }
+    const getOperationsListReport = async (searchParam) => {
+        setLoading(true)
+        let param = convertFilter(searchParam)
+        param.limit= 100000
+        await OperationsService.getOperationsList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setOperationsListExcel(res.data.resultData)
+                setTotal(res.data.total)
+            } else {
+                setOperationsListExcel([])
             }
             setLoading(false)
         }).catch(err => {
@@ -131,7 +152,7 @@ export default function Job() {
                     }}>
 
                     <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs>
-                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} />
+                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} operationsList={operationsListExcel}/>
                     <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort}/>
                 </LoadingOverlay>
             </Layout>

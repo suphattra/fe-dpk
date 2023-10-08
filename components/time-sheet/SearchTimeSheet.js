@@ -1,3 +1,5 @@
+import React from 'react';
+import * as XLSX from 'xlsx';
 import { useRouter } from "next/router";
 import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate } from "../../components";
 import { renderOptions } from "../../helpers/utils";
@@ -5,7 +7,8 @@ import { MasterService } from "../../pages/api/master.service";
 import { useEffect, useState } from "react";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { BranchService } from "../../pages/api/branch.service";
-export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus }) {
+import moment from 'moment';
+export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus, operationsList }) {
     const router = useRouter();
     const [jobStatus, setJobStatus] = useState([])
     const [employeesOption, setEmployeesOption] = useState([])
@@ -75,6 +78,29 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         }).catch(err => {
         })
     }
+    const exportToExcel = () => {
+        const newArrayExport = operationsList.map((item, index) => {
+            const newColumn = {
+                'ลำดับ': index + 1,
+                'วัน/เดือน/ปี': item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : "",
+                'พนักงาน': item.employee.firstName + ' ' + item.employee.lastName,
+                'แปลงใหญ่': item.mainBranch.branchName,
+                'แปลงย่อย': item.task.value1,
+                'จำนวนงาน': item.taskAmount,
+                'ค่าแรง': item.taskPaymentRate,
+                'OT': item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}`,
+                'ประเภทค่าแรง': item.wageType.value1,
+                'หมายเหตุ': item.remark,
+            };
+            return newColumn;
+        });
+
+        var myFile = 'รายงานบันทึกการทำงาน.xlsx';
+        var myWorkSheet = XLSX.utils.json_to_sheet(newArrayExport);
+        var myWorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(myWorkBook, myWorkSheet, 'data');
+        XLSX.writeFile(myWorkBook, myFile);
+    }
 
     return (
         <>
@@ -85,7 +111,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                         บันทึกการทำงาน
                     </div> */}
                     <button type="button"
-                        onClick={() => { router.push('job/detail/create-job'); }}
+                        onClick={exportToExcel}
                         className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
                         สร้างรายงาน
                     </button>
@@ -149,7 +175,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     <div className="flex justify-center items-center overflow-y-auto p-4" >
                         <button type="button"
                             className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                           onClick={handleReset}> 
+                            onClick={handleReset}>
                             ล้าง
                         </button>
                         <button type="button"
