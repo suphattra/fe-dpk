@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css'
 export default function Home() {
   const router = useRouter();
   useEffect(() => {
-    router.push('calendar-schedule');
+    router.push('operations');
   }, [])
   return (
     <div className={styles.container}>
