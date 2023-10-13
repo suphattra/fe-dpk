@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 
-export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption }) {
+export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled }) {
   const [inventoryList, setInventoryList] = useState([]);
   useEffect(() => {
     setInventoryList(extraInventory);
@@ -75,6 +75,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       name="inventory"
                       label="สินค้าคงคลัง"
                       required
+                      disabled={disabled}
                       options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
                       value={extra.inventoryCode}
                       onChange={(e) => {
@@ -90,6 +91,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       label="จำนวน"
                       required
                       classes=""
+                      disabled={disabled}
                       value={extra.pickupAmount}
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                       onChange={(e) => {
@@ -104,7 +106,8 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                     <button
                       type="button"
                       onClick={() => deleteInventory(extra.index)}
-                      className="bg-white hover:bg-gray-100 border border-gray-200 font-medium text-gray-500 rounded-lg text-sm px-1 py-1 text-center inline-flex items-center mt-0"
+                      disabled={disabled}
+                      className="bg-white hover:bg-gray-100 border border-gray-200 font-medium text-gray-500 rounded-lg text-sm px-1 py-1 text-center inline-flex items-center mt-0 disabled:text-gray-800 disabled:bg-gray-50 disabled:text-gray-500"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -131,6 +134,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
         <div className="flex justify-end mb-4">
           <button
             type="button"
+            disabled={disabled}
             className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-white-800 px-6 py-1.5 text-xs font-medium text-black shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-white-500 focus:ring-offset-0 disabled:opacity-80"
             onClick={insertInventory}
           >

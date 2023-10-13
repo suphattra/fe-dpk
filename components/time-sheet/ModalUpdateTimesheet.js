@@ -191,6 +191,8 @@ export default function ModalUpdateTimesheet(props) {
                             branchType: obj.branchType
                         }
                         setTimesheetDetail(data => ({ ...data, [name]: branch }));
+                    } else {
+                        setTimesheetDetail(data => ({ ...data, [name]: {} }));
                     }
                 } else
                     if (name === 'product') {
@@ -291,6 +293,7 @@ export default function ModalUpdateTimesheet(props) {
                                                     <InputGroupDate
                                                         type="date" id={"startDate"} name="startDate" label="วัน/เดือน/ปี"
                                                         format="YYYY-MM-DD"
+                                                        disabled={mode == 'view' ? true : false}
                                                         onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
                                                         value={timesheetDetail.startDate ? moment(new Date(timesheetDetail.startDate)).format('YYYY-MM-DD') : ""}
                                                         required />
@@ -299,6 +302,7 @@ export default function ModalUpdateTimesheet(props) {
                                                         onChange={(e) => {
                                                             onChange(e, "employee")
                                                         }}
+                                                        disabled={mode == 'view' ? true : false}
                                                         isSearchable
                                                         value={timesheetDetail.employee?.employeeCode}
                                                         required />
@@ -308,6 +312,7 @@ export default function ModalUpdateTimesheet(props) {
                                                             onChangeMainBranch(e);
                                                             onChange(e, "mainBranch")
                                                         }}
+                                                        disabled={mode == 'view' ? true : false}
                                                         isSearchable
                                                         value={timesheetDetail.mainBranch?.branchCode}
                                                         required />
@@ -316,12 +321,14 @@ export default function ModalUpdateTimesheet(props) {
                                                         onChange={(e) => onChange(e, "subBranch")}
                                                         value={timesheetDetail.subBranch?.branchCode}
                                                         isSearchable
+                                                        disabled={mode == 'view' ? true : false}
                                                     />
                                                     <InputSelectGroup type="text" id={"task"} name="task" label="งาน"
                                                         options={renderOptions(taskOption, "value1", "code")}
                                                         onChange={(e) => {
                                                             onChange(e, "task")
                                                         }}
+                                                        disabled={mode == 'view' ? true : false}
                                                         isSearchable
                                                         value={timesheetDetail.task?.code}
                                                         required />
@@ -329,6 +336,7 @@ export default function ModalUpdateTimesheet(props) {
                                                         options={renderOptions(productOption, "value1", "code")}
                                                         onChange={(e) => onChange(e, "product")}
                                                         value={_convertValue(timesheetDetail.product)}
+                                                        disabled={mode == 'view' ? true : false}
                                                         isMulti
                                                         isSearchable />
                                                     <div className="block w-full">
@@ -336,6 +344,7 @@ export default function ModalUpdateTimesheet(props) {
                                                             {"หมายเหตุ:"}
                                                         </label>
                                                         <textarea
+                                                            disabled={mode == 'view' ? true : false}
                                                             value={timesheetDetail.remark}
                                                             onChange={(e) => onChange(e, "remark")}
                                                             id="remark" name="หมายเหตุ"
@@ -354,6 +363,7 @@ export default function ModalUpdateTimesheet(props) {
                                                         id={"addInventory"}
                                                         label={"เบิกสินค้าคงคลัง"}
                                                         onChange={checkInventory}
+                                                        disabled={mode == 'view' ? true : false}
                                                     />
                                                 </div>
                                                 {openAddInventory &&
@@ -361,7 +371,8 @@ export default function ModalUpdateTimesheet(props) {
                                                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
                                                             <ItemInventory extraInventory={timesheetDetail.inventory}
                                                                 inventoryOption={inventoryOption}
-                                                                callbackInventory={(e) => callbackInventory(e)} />
+                                                                callbackInventory={(e) => callbackInventory(e)}
+                                                                disabled={mode == 'view' ? true : false} />
 
                                                         </div>
                                                     </>}
@@ -380,6 +391,7 @@ export default function ModalUpdateTimesheet(props) {
                                                                         id={"wageType_" + inx} name={"wageType"} label={item.value1}
                                                                         onChange={(e) => onChange(e, "wageType")}
                                                                         value={item.code}
+                                                                        disabled={mode == 'view' ? true : false}
                                                                         checked={item.code === timesheetDetail.wageType.code ? true : false} />
                                                                 )
                                                             })}
@@ -390,23 +402,27 @@ export default function ModalUpdateTimesheet(props) {
                                                     <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                                         required
+                                                        disabled={mode == 'view' ? true : false}
                                                         onChange={(e) => onChange(e, "taskAmount")}
                                                         value={timesheetDetail.taskAmount} />
                                                     <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                                         required
+                                                        disabled={mode == 'view' ? true : false}
                                                         onChange={(e) => onChange(e, "taskPaymentRate")}
                                                         value={timesheetDetail.taskPaymentRate} />
                                                     <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                                         onChange={(e) => { setOtAmount(e.target.value), onChange(e, "otAmount") }}
                                                         // value={otAmount}
+                                                        disabled={mode == 'view' ? true : false}
                                                         value={timesheetDetail.otAmount}
                                                     />
                                                     <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                                         onChange={(e) => { setOtRate(e.target.value), onChange(e, "otRate") }}
                                                         // value={otRate}
+                                                        disabled={mode == 'view' ? true : false}
                                                         value={timesheetDetail.otRate}
                                                     />
                                                     <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
@@ -425,6 +441,7 @@ export default function ModalUpdateTimesheet(props) {
                                                             {operationStatus.map(function (item, inx) {
                                                                 return (
                                                                     <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                                        disabled={mode == 'view' ? true : false}
                                                                         id={"operationStatus_" + inx} name={"operationStatus"} label={item.value1}
                                                                         onChange={(e) => onChange(e, "operationStatus")}
                                                                         value={item.code}
@@ -441,25 +458,25 @@ export default function ModalUpdateTimesheet(props) {
 
                                 {/* <CardTimesheet index={0} timeSheet={timesheetDetail} onChange={onChange} deleteAddOnService={deleteAddOnService} mode={mode} /> */}
                                 < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
-                                    {mode === "edit" &&
-                                        <div className="flex justify-center items-center overflow-y-auto p-4" >
-                                            <div className="flex justify-center items-center">
-                                                <button type="button"
-                                                    className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                                    onClick={() => { setOpen(false) }}
-                                                >
-                                                    ยกเลิก
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                                    onClick={handleSave}
-                                                >
-                                                    บันทึก
-                                                </button>
-                                            </div>
+
+                                    <div className="flex justify-center items-center overflow-y-auto p-4" >
+                                        <div className="flex justify-center items-center">
+                                            <button type="button"
+                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
+                                                onClick={() => { setOpen(false) }}
+                                            >
+                                                {mode === "edit" ? "ยกเลิก" : "ปิดหน้าต่าง"}
+                                            </button>
+                                            {mode === "edit" && <button
+                                                type="button"
+                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                onClick={handleSave}
+                                            >
+                                                บันทึก
+                                            </button>}
                                         </div>
-                                    }
+                                    </div>
+
                                 </footer>
 
                             </Dialog.Panel>
