@@ -1,5 +1,4 @@
 import React from 'react';
-import * as XLSX from 'xlsx';
 import { useRouter } from "next/router";
 import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate } from "../../components";
 import { renderOptions } from "../../helpers/utils";
@@ -8,6 +7,7 @@ import { useEffect, useState } from "react";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { BranchService } from "../../pages/api/branch.service";
 import moment from 'moment';
+import DownloadExcel from '../DownloadExcel';
 export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus, operationsList }) {
     const router = useRouter();
     const [jobStatus, setJobStatus] = useState([])
@@ -15,6 +15,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
     const [taskOption, setTaskption] = useState([])
     const [mainBranchOption, setMainBranchOption] = useState([])
     const [subBranchOption, setSubBranchOption] = useState([])
+    const [reportData, setReportData] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -23,6 +24,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             await getEmployeeList()
             await getMainBranchList()
             await getSubBranchList()
+            await initExport()
         }
         fetchData();
     }, []);
@@ -78,30 +80,55 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         }).catch(err => {
         })
     }
-    const exportToExcel = () => {
-        const newArrayExport = operationsList.map((item, index) => {
-            const newColumn = {
-                'ลำดับ': index + 1,
-                'วัน/เดือน/ปี': item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : "",
-                'พนักงาน': item.employee.firstName + ' ' + item.employee.lastName,
-                'แปลงใหญ่': item.mainBranch.branchName,
-                'แปลงย่อย': item.task.value1,
-                'จำนวนงาน': item.taskAmount,
-                'ค่าแรง': item.taskPaymentRate,
-                'OT': item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}`,
-                'ประเภทค่าแรง': item.wageType.value1,
-                'หมายเหตุ': item.remark,
-            };
-            return newColumn;
-        });
+    const initExport = () => {
+        const styleHeader = { fill: { fgColor: { rgb: '6aa84f' } }, font: { bold: true }, alignment: { horizontal: 'center' } };
+        const styleData = { font: { bold: false }, alignment: { horizontal: 'center' } };
+        const column = [
+            { title: 'ลำดับ', style: styleHeader },
+            { title: 'วัน/เดือน/ปี', style: styleHeader },
+            { title: 'พนักงาน', style: styleHeader },
+            { title: 'แปลงใหญ่', style: styleHeader },
+            { title: 'แปลงย่อย', style: styleHeader },
+            { title: 'งาน', style: styleHeader },
+            { title: 'จำนวนงาน', style: styleHeader },
+            { title: 'ค่าแรง', style: styleHeader },
+            { title: 'OT', style: styleHeader },
+            { title: 'รวมเงิน OT', style: styleHeader },
+            { title: 'ประเภทค่าแรง', style: styleHeader },
+            { title: 'หมายเหตุ', style: styleHeader },
+        ];
+        let dataRecord = [];
+        if (operationsList.length > 0) {
+            dataRecord = operationsList.map((item, index) => {
+                return [
+                    { value: index + 1, style: styleData },
+                    { value: item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : '' },
+                    { value: item.employee.firstName + ' ' + item.employee.lastName, },
+                    { value: item.mainBranch.branchName ? item.mainBranch.branchName : '' },
+                    { value: item.subBranch.branchName ? item.subBranch.branchName : '' },
+                    { value: item.task.value1 ? item.task.value1 : '' },
+                    { value: item.taskAmount ? item.taskAmount : '', style: styleData },
+                    { value: item.taskPaymentRate ? item.taskPaymentRate : '', style: styleData },
+                    { value: item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}` , style: styleData },
+                    { value: item.otTotal ? item.otTotal : '', style: styleData  },
+                    { value: item.wageType.value1 ? item.wageType.value1 : '' },
+                    { value: item.remark ? item.remark : '' },
+                ]
+            })
+        }
+        let multiDataSet = [];
 
-        var myFile = 'download.csv';
-        var myWorkSheet = XLSX.utils.json_to_sheet(newArrayExport);
-        var myWorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(myWorkBook, myWorkSheet, 'data');
-        XLSX.writeFile(myWorkBook, myFile);
+        if (dataRecord.length > 0) {
+            multiDataSet = [
+                {
+                    columns: column,
+                    data: dataRecord,
+                },
+            ]
+        }
+        setReportData(multiDataSet);
     }
-
+    
     return (
         <>
             <div className="md:container md:mx-auto">
@@ -110,11 +137,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     {/* <div className="block justify-left w-full pt-4">
                         บันทึกการทำงาน
                     </div> */}
-                    <button type="button"
-                        onClick={exportToExcel}
-                        className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
-                        สร้างรายงาน
-                    </button>
+                    <DownloadExcel reportData={reportData} name="สร้างรายงาน" filename="รายงานการบันทึกการทำงาน" />
                     <button type="button"
                         onClick={() => { router.push('operations/calendar-schedule'); }}
                         className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
