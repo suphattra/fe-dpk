@@ -1,13 +1,14 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
 import { useRouter } from "next/router";
-import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate } from "../../components";
+import { CardBasic, InputGroup, InputSelectGroup, InputGroupDate, InputGroupMultipleDate } from "../../components";
 import { renderOptions } from "../../helpers/utils";
 import { MasterService } from "../../pages/api/master.service";
 import { useEffect, useState } from "react";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { BranchService } from "../../pages/api/branch.service";
 import moment from 'moment';
+
 export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus, operationsList }) {
     const router = useRouter();
     const [jobStatus, setJobStatus] = useState([])
@@ -169,8 +170,18 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             placeholder="ทั้งหมด"
                             onChange={handleChange}
                         />
-
-                        <InputGroupDate type="text" id="startDate" name="startDate" label="วัน/เดือน/ปี" onChange={handleChange} value={searchParam.startDate ? searchParam.startDate : ""} format="YYYY-MM-DD" />
+                        <InputGroupMultipleDate 
+                            type="text" 
+                            id="dates" 
+                            name="dates" 
+                            label="วัน/เดือน/ปี" 
+                            onChange={handleChange} 
+                            // value={[searchParam.startDate ? searchParam.startDate : "", searchParam.endDate ? searchParam.endDate : ""]}  
+                            startDate={searchParam.startDate ? searchParam.startDate : ""}
+                            endDate={searchParam.endDate ? searchParam.endDate : ""}
+                            format="YYYY-MM-DD" 
+                        />
+                        {/* <InputGroupDate type="text" id="startDate" name="startDate" label="วัน/เดือน/ปี" onChange={handleChange} value={searchParam.startDate ? searchParam.startDate : ""} format="YYYY-MM-DD" /> */}
                     </div>
                     <div className="flex justify-center items-center overflow-y-auto p-4" >
                         <button type="button"

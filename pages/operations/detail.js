@@ -136,6 +136,12 @@ export default function DetailOperation() {
     const onChange = (e, index, name,) => {
         console.log('dddddddddddddd', e, index, name)
         let _newValue = [...timeSheetForm]
+        switch (name) {
+            case "task":
+                _newValue[index]['taskPaymentRate'] = e.target?.value?.value2 || 0
+                break;
+            default:
+        }
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
 
