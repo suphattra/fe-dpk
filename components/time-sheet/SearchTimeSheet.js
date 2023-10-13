@@ -95,7 +95,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             return newColumn;
         });
 
-        var myFile = 'download.xlsx';
+        var myFile = 'download.csv';
         var myWorkSheet = XLSX.utils.json_to_sheet(newArrayExport);
         var myWorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(myWorkBook, myWorkSheet, 'data');
