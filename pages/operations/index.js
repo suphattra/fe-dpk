@@ -57,7 +57,7 @@ export default function Job() {
             setSearchParam(data => ({ ...data, [name]: value }));
         }
     }
-    const handleSearch = async (searchParam) => {
+    const handleSearch = async () => {
         let param = {}
         console.log("searchParam", searchParam)
         if (searchParam.task) {
