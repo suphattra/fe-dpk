@@ -2,16 +2,20 @@ import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import Select, { StylesConfig } from 'react-select';
 // const refInput = React.createRef();
-export default function InputSelectGroup({ label, type, classes,placeholder ,id, name, onChange, value, options, disabled, readOnly, invalid, required, ref, msgError, isSearchable, isMulti }) {
+export default function InputSelectGroup({ label, type, classes, placeholder, id, name, onChange, value, options, disabled, readOnly, invalid, required, ref, msgError, isSearchable, isMulti }) {
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
     const handleChangeDate = (e) => {
-        console.log(e)
         if (isMulti) {
             onChange({ target: { name: name, value: e } })
         } else {
-            onChange({ target: { name: name, value: e.value } })
+            if (e) {
+                onChange({ target: { name: name, value: e.value } })
+            } else {
+                onChange({ target: { name: name, value: '' } })
+            }
+
         }
 
     };
@@ -23,7 +27,7 @@ export default function InputSelectGroup({ label, type, classes,placeholder ,id,
             //     valueArr.push(options.find(option => option.value == item.code));
             // })
             return value //valueArr;
-        }else{
+        } else {
             return options.find(option => option.value == value);
         }
     }
@@ -52,11 +56,13 @@ export default function InputSelectGroup({ label, type, classes,placeholder ,id,
                 <Select
                     styles={colourStyles}
                     // classNamePrefix="select"
+                    // isClearable
                     isSearchable={isSearchable}
                     isMulti={isMulti}
                     // className={classNames(invalid ? 'border-red-800 focus:border-red-300 focus:ring-red-300' : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500', classes, "block w-full rounded-md shadow-sm sm:text-sm disabled:text-gray-800 disabled:bg-gray-50")}
                     onChange={handleChangeDate}
-                    options={options}
+                    // options={options}
+                    options={isMulti ? options : [{ value: '', name: 'Please Select', isDisabled: required ? true : false }, ...options]}
                     getOptionLabel={(option) => option.name}
                     getOptionValue={(option) => option.value}
                     value={getDefaultValue()}
@@ -83,7 +89,7 @@ InputSelectGroup.propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     options: PropTypes.array,
     invalid: PropTypes.bool,
-    placeholder:PropTypes.bool,
+    placeholder: PropTypes.bool,
 };
 InputSelectGroup.defaultProps = {
     type: "select",

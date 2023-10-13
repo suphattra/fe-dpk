@@ -120,7 +120,7 @@ export default function DetailOperation() {
                 if (res.data.resultCode === 200) {
                     NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
                     router.push('/operations');
-                    window.location.reload()
+                    // window.location.reload()
                 } else {
                     NotifyService.error(res.data.message)
                 }

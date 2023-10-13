@@ -247,7 +247,7 @@ export default function ModalUpdateTimesheet(props) {
         await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
             if (res.data.resultCode === 200) {
                 NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
-                window.location.reload()
+                // window.location.reload()
                 setOpen(false)
                 callbackLoad()
             } else {

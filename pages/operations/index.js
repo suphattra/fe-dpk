@@ -46,7 +46,8 @@ export default function Job() {
         setOperationsList([])
         setOperationsListExcel([])
         setCurrentPage(1);
-        await handleSearch();
+        getOperationsList(initial.search);
+        getOperationsListReport(initial.search)
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
@@ -56,7 +57,7 @@ export default function Job() {
             setSearchParam(data => ({ ...data, [name]: value }));
         }
     }
-    const handleSearch = async () => {
+    const handleSearch = async (searchParam) => {
         let param = {}
         console.log("searchParam", searchParam)
         if (searchParam.task) {
@@ -160,8 +161,8 @@ export default function Job() {
                     }}>
 
                     <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs>
-                   <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} operationsList={operationsListExcel} />
-                   <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort} />
+                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} operationsList={operationsListExcel} />
+                    <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort} callBack={handleSearch} />
                 </LoadingOverlay>
             </Layout>
         </>

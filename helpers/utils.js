@@ -1,12 +1,12 @@
 export function renderConfigOptions(options, blank) {
     var result = []
     if (options === undefined || options.length <= 0) {
-        result.unshift({ value: '', name: 'Please Select' })
+        // result.unshift({ value: '', name: 'Please Select' })
         return result
     } else {
         result = options.map(item => ({ value: item.configCode, name: item.configValue }));
         if (blank) return result
-        result.unshift({ value: '', name: 'Please Select' })
+        // result.unshift({ value: '', name: 'Please Select' })
         return result
     }
 }
@@ -16,12 +16,12 @@ export function renderOptions(options, name, value, addOn, name2) {
 
     if (options === undefined || options.length <= 0) {
 
-        result.unshift({ value: '', name: 'Please Select' })
+        // result.unshift({ value: '', name: 'Please Select'})
         return result
     } else {
         result = options.map(item => ({ value: item[value], name: addOn ? item[name] + " " + item[addOn] : item[name] }));
 
-        result.unshift({ value: '', name: 'Please Select' })
+        // result.unshift({ value: '', name: 'Please Select' })
         return result
     }
 }

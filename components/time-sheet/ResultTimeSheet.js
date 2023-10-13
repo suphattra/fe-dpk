@@ -185,6 +185,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                 open={showJobDetailForm}
                                 setOpen={onSetJobDetailModal}
                                 mode={"edit"}
+                                callbackLoad={callBack}
                                 // timesheet={timesheetDetail}
                                 operationCode={timesheetDetail.operationCode}
                             />}
