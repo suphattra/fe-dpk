@@ -12,6 +12,7 @@ LoadingOverlay.propTypes = undefined
 const initial = {
     search: {
         startDate: '',// moment(new Date).format('YYYY-MM-DD'),
+        endDate: '',
         // jobNo: '',
         // customerName: '',
         // recepientName: '',
@@ -49,7 +50,11 @@ export default function Job() {
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
-        setSearchParam(data => ({ ...data, [name]: value }));
+        if(name === "dates"){
+            setSearchParam(data => ({ ...data, ...value }));
+        }else{
+            setSearchParam(data => ({ ...data, [name]: value }));
+        }
     }
     const handleSearch = async () => {
         let param = {}
@@ -92,6 +97,9 @@ export default function Job() {
 
         if (searchParam.startDate) {
             param.startDate = searchParam.startDate
+        }
+        if (searchParam.endDate) {
+            param.endDate = searchParam.endDate
         }
         setParamSearch(param)
         console.log(param)

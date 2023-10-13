@@ -119,8 +119,8 @@ export default function DetailOperation() {
             await OperationsService.createOperations(dataList).then(res => {
                 if (res.data.resultCode === 200) {
                     NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
-                    window.location.reload()
                     router.push('/operations');
+                    window.location.reload()
                 } else {
                     NotifyService.error(res.data.message)
                 }
@@ -136,6 +136,12 @@ export default function DetailOperation() {
     const onChange = (e, index, name,) => {
         console.log('dddddddddddddd', e, index, name)
         let _newValue = [...timeSheetForm]
+        switch (name) {
+            case "task":
+                _newValue[index]['taskPaymentRate'] = e.target?.value?.value2 || 0
+                break;
+            default:
+        }
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
 
