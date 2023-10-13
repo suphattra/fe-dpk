@@ -24,10 +24,13 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             await getEmployeeList()
             await getMainBranchList()
             await getSubBranchList()
-            await initExport()
+
         }
         fetchData();
     }, []);
+    useEffect(() => {
+         initExport()
+    }, [operationsList]);
     const getConfig = async (configCategory) => {
         let paramquery = {
             subType: configCategory,
@@ -80,7 +83,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         }).catch(err => {
         })
     }
-    const initExport = () => {
+    const initExport = async () => {
         const styleHeader = { fill: { fgColor: { rgb: '6aa84f' } }, font: { bold: true }, alignment: { horizontal: 'center' } };
         const styleData = { font: { bold: false }, alignment: { horizontal: 'center' } };
         const column = [
@@ -98,7 +101,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             { title: 'หมายเหตุ', style: styleHeader },
         ];
         let dataRecord = [];
-        if (operationsList.length > 0) {
+        if (operationsList && operationsList.length > 0) {
             dataRecord = operationsList.map((item, index) => {
                 return [
                     { value: index + 1, style: styleData },
@@ -109,8 +112,8 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     { value: item.task.value1 ? item.task.value1 : '' },
                     { value: item.taskAmount ? item.taskAmount : '', style: styleData },
                     { value: item.taskPaymentRate ? item.taskPaymentRate : '', style: styleData },
-                    { value: item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}` , style: styleData },
-                    { value: item.otTotal ? item.otTotal : '', style: styleData  },
+                    { value: item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}`, style: styleData },
+                    { value: item.otTotal ? item.otTotal : '', style: styleData },
                     { value: item.wageType.value1 ? item.wageType.value1 : '' },
                     { value: item.remark ? item.remark : '' },
                 ]
@@ -128,7 +131,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         }
         setReportData(multiDataSet);
     }
-    
+
     return (
         <>
             <div className="md:container md:mx-auto">
@@ -137,7 +140,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     {/* <div className="block justify-left w-full pt-4">
                         บันทึกการทำงาน
                     </div> */}
-                    <DownloadExcel reportData={reportData} name="สร้างรายงาน" filename="รายงานการบันทึกการทำงาน" />
+                    {reportData.length > 0 && <DownloadExcel reportData={reportData} name="สร้างรายงาน" filename="รายงานการบันทึกการทำงาน" />}
                     <button type="button"
                         onClick={() => { router.push('operations/calendar-schedule'); }}
                         className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
@@ -192,16 +195,16 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             placeholder="ทั้งหมด"
                             onChange={handleChange}
                         />
-                        <InputGroupMultipleDate 
-                            type="text" 
-                            id="dates" 
-                            name="dates" 
-                            label="วัน/เดือน/ปี" 
-                            onChange={handleChange} 
+                        <InputGroupMultipleDate
+                            type="text"
+                            id="dates"
+                            name="dates"
+                            label="วัน/เดือน/ปี"
+                            onChange={handleChange}
                             // value={[searchParam.startDate ? searchParam.startDate : "", searchParam.endDate ? searchParam.endDate : ""]}  
                             startDate={searchParam.startDate ? searchParam.startDate : ""}
                             endDate={searchParam.endDate ? searchParam.endDate : ""}
-                            format="YYYY-MM-DD" 
+                            format="YYYY-MM-DD"
                         />
                         {/* <InputGroupDate type="text" id="startDate" name="startDate" label="วัน/เดือน/ปี" onChange={handleChange} value={searchParam.startDate ? searchParam.startDate : ""} format="YYYY-MM-DD" /> */}
                     </div>

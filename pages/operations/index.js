@@ -18,8 +18,8 @@ const initial = {
         // recepientName: '',
         // employee: [],
         // task: [],
-        desc :'DESC',
-        sort:'updatedDate',
+        desc: 'DESC',
+        sort: 'updatedDate',
         limit: 10,
         offset: 0
     },
@@ -46,13 +46,13 @@ export default function Job() {
         setOperationsList([])
         setOperationsListExcel([])
         setCurrentPage(1);
-        await handleSearch(); 
+        await handleSearch();
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
-        if(name === "dates"){
+        if (name === "dates") {
             setSearchParam(data => ({ ...data, ...value }));
-        }else{
+        } else {
             setSearchParam(data => ({ ...data, [name]: value }));
         }
     }
@@ -125,7 +125,7 @@ export default function Job() {
     const getOperationsListReport = async (searchParam) => {
         setLoading(true)
         let param = convertFilter(searchParam)
-        param.limit= 100000
+        param.limit = 100000
         await OperationsService.getOperationsList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setOperationsListExcel(res.data.resultData)
@@ -144,9 +144,9 @@ export default function Job() {
         setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
         getOperationsList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
     }
-    const onsort = async (sort,desc)=>{
-        setSearchParam(data => ({ ...data, sort: sort ,desc :desc ? 'DESC' : 'ASC' }));
-        getOperationsList({ ...paramSearch, sort: sort ,desc :desc ? 'DESC' : 'ASC'})
+    const onsort = async (sort, desc) => {
+        setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
+        getOperationsList({ ...paramSearch, sort: sort, desc: desc ? 'DESC' : 'ASC' })
     }
     return (
         <>
@@ -160,8 +160,8 @@ export default function Job() {
                     }}>
 
                     <Breadcrumbs title="บันทึกการทำงาน" breadcrumbs={breadcrumbs}></Breadcrumbs>
-                    <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} operationsList={operationsListExcel}/>
-                    <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort}/>
+                   <SearchTimeSheet handleReset={handleReset} handleChange={handleChange} searchParam={searchParam} handleSearch={handleSearch} operationsList={operationsListExcel} />
+                   <ResultTimeSheet operationsList={operationsList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort} />
                 </LoadingOverlay>
             </Layout>
         </>
