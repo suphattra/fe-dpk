@@ -71,10 +71,13 @@ export default function InputSelectGroupInline({ label, type, classes, id, name,
                             name={name}
                         />
                     </div>
-                    {msgError && msgError[name] && <p>This is a required field</p>}
                 </div>
             </div>
-            {invalid && <span className="text-sm font-medium tracking-tight text-red-800">This field is required</span>}
+            <div className="md:flex md:items-end md:justify-center mb">
+                <div class="md:w-3/3">
+                    {invalid && <span className="text-sm font-medium tracking-tight text-red-800">This field is required</span>}
+                </div>
+            </div>
         </div>
     )
 }

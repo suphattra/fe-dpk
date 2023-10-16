@@ -45,14 +45,14 @@ const initial = {
         }
     },
     inventory: [
-    //     {
-    //     index: 1,
-    //     inventoryCode: "",
-    //     inventoryName: "",
-    //     unit: "",
-    //     pickupAmount: ""
-    // }
-]
+        //     {
+        //     index: 1,
+        //     inventoryCode: "",
+        //     inventoryName: "",
+        //     unit: "",
+        //     pickupAmount: ""
+        // }
+    ]
 }
 export default function DetailOperation() {
     const breadcrumbs = [{ index: 1, href: '/operations', name: 'บันทึกการทำงาน' }, { index: 2, href: '/operations', name: 'สร้างบันทึก' }]
@@ -82,33 +82,40 @@ export default function DetailOperation() {
     const handleSave = async () => {
 
         const errorList = [];
-        
-        for(let timesheet of timeSheetForm){
-            if(!timesheet.startDate){
+
+        for (let timesheet of timeSheetForm) {
+            if (!timesheet.startDate) {
                 errorList.push({ field: `startDate[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.employee){
+            if (!timesheet.employee) {
                 errorList.push({ field: `employee[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.mainBranch.branchCode){
+            if (!timesheet.mainBranch.branchCode) {
                 errorList.push({ field: `mainBranch[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.task.code){
+            if (!timesheet.task.code) {
                 errorList.push({ field: `task[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.wageType){
+            if (!timesheet.wageType) {
                 errorList.push({ field: `wageType[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.operationStatus){
+            if (!timesheet.operationStatus) {
                 errorList.push({ field: `operationStatus[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.taskAmount){
+            if (!timesheet.taskAmount) {
                 errorList.push({ field: `taskAmount[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if(!timesheet.taskPaymentRate){
+            if (!timesheet.taskPaymentRate) {
                 errorList.push({ field: `taskPaymentRate[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
+            if (timesheet.inventory.length > 0) {
+                for (let inventory of timesheet.inventory) {
+                    errorList.push({ field: `inventory[${inventory.index}]`, type: "custom", message: "custom message" });
+                }
+              
+            }
         }
+        console.log(errorList)
 
         if (errorList.length === 0) {
             setLoading(true)
@@ -126,7 +133,7 @@ export default function DetailOperation() {
                 }
             })
             setLoading(false)
-        }else{
+        } else {
             errorList.forEach(({ field, type, message }) => {
                 setError(field, { type, message });
             });
@@ -145,11 +152,6 @@ export default function DetailOperation() {
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
 
-        if(errors){
-            if(e.target.value){
-                clearErrors(`${name}[${_newValue[index].index}]`);
-            }
-        }
     }
 
     const deleteAddOnService = (rowIndex) => {
@@ -193,7 +195,7 @@ export default function DetailOperation() {
                     <form className="space-y-4" id='inputForm'>
                         {timeSheetForm && timeSheetForm.map((timeSheet, index) => {
                             return (
-                                <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} onErrors={errors}/>
+                                <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} onErrors={errors} />
                             )
                         })}
                     </form>

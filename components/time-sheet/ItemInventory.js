@@ -6,11 +6,17 @@ import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 
-export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled }) {
+export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled, errors }) {
   const [inventoryList, setInventoryList] = useState([]);
+  const [errorsList, setErrorsList] = useState([]);
   useEffect(() => {
     setInventoryList(extraInventory);
   }, [extraInventory]);
+
+  useEffect(() => {
+    console.log(errors)
+    setErrorsList(errors);
+  }, [errors]);
 
   const insertInventory = async () => {
     let lastElement =
@@ -71,10 +77,12 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                   <div className="col-span-4">
                     <InputSelectGroupInline
                       type="text"
-                      id="inventory"
+                      // id="inventory"
+                      id={"inventory" + index + 1}
                       name="inventory"
                       label="สินค้าคงคลัง"
                       required
+                      invalid={errorsList?.inventory ? errorsList?.inventory[index + 1] : false}
                       disabled={disabled}
                       options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
                       value={extra.inventoryCode}
