@@ -3,7 +3,7 @@ import LoadingOverlay from "react-loading-overlay"
 import { useForm } from "react-hook-form";
 import { CardBasic, InputGroup, InputGroupDate, InputRadioGroup, InputSelectGroup } from "../../components";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { renderOptions } from "../../helpers/utils";
 import CardTimesheet from "../../components/time-sheet/CardTimesheet";
@@ -69,7 +69,8 @@ export default function DetailOperation() {
         task: {},//initial.task,
         inventory: initial.inventory,
         wageType: initial.wageType,
-        operationStatus: initial.operationStatus
+        operationStatus: initial.operationStatus,
+        inventory: []
     }])
     const createValidationSchema = () => {
     }
@@ -108,14 +109,17 @@ export default function DetailOperation() {
             if (!timesheet.taskPaymentRate) {
                 errorList.push({ field: `taskPaymentRate[${timesheet.index}]`, type: "custom", message: "custom message" });
             }
-            if (timesheet.inventory.length > 0) {
+            if (timesheet.inventory?.length > 0) {
                 for (let inventory of timesheet.inventory) {
-                    errorList.push({ field: `inventory[${inventory.index}]`, type: "custom", message: "custom message" });
+                    if (!inventory.inventoryCode) {
+                        errorList.push({ field: `inventory[${timesheet.index}].inventoryCode[${inventory.index}]`, type: "custom", message: "custom message" });
+                    }
+                    if (!inventory.pickupAmount) {
+                        errorList.push({ field: `inventory[${timesheet.index}].pickupAmount[${inventory.index}]`, type: "custom", message: "custom message" });
+                    }
                 }
-              
             }
         }
-        console.log(errorList)
 
         if (errorList.length === 0) {
             setLoading(true)
@@ -146,12 +150,30 @@ export default function DetailOperation() {
         switch (name) {
             case "task":
                 _newValue[index]['taskPaymentRate'] = e.target?.value?.value2 || 0
+                clearErrors(`taskPaymentRate[${_newValue[index].index}]`)
                 break;
             default:
         }
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
 
+        if(errors){
+            if(e.target.value){
+                if((name === "inventory" || name === "pickupAmount") && e.target.value?.length > 0){
+                    for(let inventory of e.target.value){
+                        if(inventory?.inventoryCode){
+                            clearErrors(`${name}[${_newValue[index].index}].inventoryCode[${inventory.index}]`)
+                        }
+                        if(inventory?.pickupAmount){
+                            clearErrors(`${name}[${_newValue[index].index}].pickupAmount[${inventory.index}]`)
+                        }
+                    }
+                }else{
+                    clearErrors(`${name}[${_newValue[index].index}]`);
+                }
+            }
+
+        }
     }
 
     const deleteAddOnService = (rowIndex) => {
@@ -181,6 +203,13 @@ export default function DetailOperation() {
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)
     }
+
+    useEffect(()=>{
+        if(timeSheetForm?.length == 0){
+            clearErrors()
+        }
+    },[timeSheetForm])
+
     return (
         <Layout>
             <LoadingOverlay active={loading} className="h-[calc(100vh-0rem)]" spinner text='Loading...'
