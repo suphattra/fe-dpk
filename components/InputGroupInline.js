@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 
-export default function InputGroupInline({ label, type, classes, id, name, onChange, value, placeholder, disabled, readOnly, invalid, required, ref }) {
+export default function InputGroupInline({ label, type, classes, id, name, onChange, value, placeholder, disabled, readOnly, invalid, required, ref, unit }) {
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
@@ -15,20 +15,26 @@ export default function InputGroupInline({ label, type, classes, id, name, onCha
             </div>
             <div class="md:w-2/3">
                 <div className="mt-1">
-                    <input
-                        type={type}
-                        name={name}
-                        id={id}
-                        value={value}
-                        onChange={onChange}
-                        placeholder={placeholder}
-                        disabled={disabled}
-                        readOnly={readOnly}
-                        defaultValue={value}
-                        // {...ref}
-                        // ref={{ ...ref }}
-                        className={classNames(invalid ? 'border-red-800 focus:border-red-500 focus:ring-red-500 ' : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ', classes, "block w-full rounded-md shadow-sm sm:text-sm disabled:text-gray-800 disabled:bg-gray-50 disabled:text-gray-500")}
-                    />
+                    <div className={classNames(unit ? "relative mt-2 rounded-md shadow-sm" : "")}>
+                        <input
+                            type={type}
+                            name={name}
+                            id={id}
+                            value={value}
+                            onChange={onChange}
+                            placeholder={placeholder}
+                            disabled={disabled}
+                            readOnly={readOnly}
+                            defaultValue={value}
+                            // {...ref}
+                            // ref={{ ...ref }}
+                            className={classNames(invalid ? 'border-red-800 focus:border-red-500 focus:ring-red-500 ' : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ', classes, "block w-full rounded-md shadow-sm sm:text-sm disabled:text-gray-800 disabled:bg-gray-50 disabled:text-gray-500")}
+                        />
+                        {unit && <div class="absolute inset-y-2 right-0 flex items-center">
+                            <label for="currency" className="h-full border-l border-gray-300 bg-transparent py-1 pl-4 pr-4 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-xs" >
+                                {unit}</label>
+                        </div>}
+                    </div>
                 </div>
             </div>
             {invalid && <span className="text-sm font-medium tracking-tight text-red-800">This field is required</span>}

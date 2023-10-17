@@ -60,48 +60,35 @@ export default function Search({ handleSearch, handleReset, handleChange, search
             <div className="md:container md:mx-auto">
                 <div className="flex justify-end w-full max-w-screen pt-4" aria-label="Breadcrumb">
                     <button type="button"
-                        onClick={() => { router.push('driver/detail/driver-detail?mode=create'); }}
-                        className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                        <PlusCircleIcon className="h-4 w-4 mr-2" />NEW
+                        onClick={() => { router.push('branches/detail'); }}
+                        className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
+                        สร้างสาขาและแปลงงาน
                     </button>
                 </div>
-                <CardBasic title="Search Criteria">
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-                        <InputGroup type="text" id="phone" name="phone" label="Phone:" onChange={handleChange} value={searchParam.phone} />
-                        <InputSelectGroup type="select" id="driverType" name="driverType" label="Driver Type:"
-                            value={searchParam.driverType}
-                            onChange={handleChange}
-                            options={renderConfigOptions(driverType)} />
-                        <InputGroup type="text" id="name" name="name" label="Driver Name:" onChange={handleChange} value={searchParam.name} />
-                        <InputSelectGroup type="select" id="status" name="status" label="Status" value={searchParam.status} onChange={handleChange}
-                            options={[{ name: 'All', value: '' }, { name: 'Active', value: 'A' }, { name: 'Inactive', value: 'S' }]} />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-10 lg:grid-cols-10 gap-4 mb-4">
-                        <label htmlFor="shipmentDate" className="block text-sm font-medium text-gray-700">
-                            Job Type:
-                        </label>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 gap-4 mb-4">
-                        {jobType.map((item) => (
-                            <InputRadioGroup classes="h-4 w-4" key={item.configCode}
-                                checked={selectjobType && ((selectjobType.find(e => (e === item.configCode)))) ? true : false}
-                                type={"checkbox"} id={item.configCode}
-                                name="jobType" value={item.configCode} label={item.configValue}
-                                onChange={e => { handleChangeJobType(e.target.checked, e.target.value, item.configValue, undefined) }}
-                            />
-                        ))}
-                    </div>
-                    <div className="flex justify-center items-center overflow-y-auto py-2" >
-                        <button type="button"
-                            className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                            onClick={handleResetCriteria}>
-                            Reset
-                        </button>
-                        <button type="button"
-                            className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-blue-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            onClick={handleSearch}>
-                            Search
-                        </button>
+                <CardBasic title="">
+                    <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
+                        <div className="flex items-center justify-end text-sm">
+                            คำค้นหา
+                        </div>
+                        <div className="flex items-center">
+                            <InputGroup type="text" id="employeeFullName" name="employeeFullName" onChange={handleChange} value={searchParam.employeeFullName} />
+                        </div>
+                        <div className="flex justify-flex-start items-center overflow-y-auto p-4" >
+
+                            <button type="button"
+                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
+                                onClick={handleSearch}
+                            >
+                                ค้นหา
+                            </button>
+                            <button type="button"
+                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-xs font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
+                                onClick={handleReset}
+                            >
+                                ล้าง
+                            </button>
+
+                        </div>
                     </div>
                 </CardBasic>
             </div>

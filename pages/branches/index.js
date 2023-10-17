@@ -3,6 +3,10 @@ import Layout from "../../layouts";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { useState } from "react";
 import Search from "../../components/branches/search";
+import ResultBranch from "../../components/branches/ResultTimeSheet";
+import { BranchService } from "../api/branch.service";
+import { convertFilter } from "../../helpers/utils";
+import { useEffect } from "react";
 
 const breadcrumbs = [{ index: 1, href: '/branches', name: 'ข้อมูลสาขา' }]
 const initial = {
@@ -17,6 +21,14 @@ export default function Branches() {
     const [loading, setLoading] = useState(false)
     const [searchParam, setSearchParam] = useState(initial.search)
     const [branchList, setBranchList] = useState(initial.branchList)
+    const [total, setTotal] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
+    useEffect(() => {
+        async function fetchData() {
+            await getBranchList(searchParam);
+        }
+        fetchData();
+    }, []);
     const handleChange = (evt) => {
 
         const { name, value, checked, type } = evt.target;
@@ -31,6 +43,31 @@ export default function Branches() {
     const handleSearch = async () => {
         //get list
     }
+    const getBranchList = async (searchParam) => {
+        setLoading(true)
+        let param = convertFilter(searchParam)
+        await BranchService.getBranchList(param).then(res => {
+            if (res.data.resultCode === 200) {
+                setBranchList(res.data.resultData)
+                setTotal(res.data.total)
+            } else {
+                setBranchList([])
+            }
+            setLoading(false)
+        }).catch(err => {
+            console.log("==> list job3")
+            setLoading(false)
+        })
+    }
+    const paginate = async (pageNumber) => {
+        setCurrentPage(pageNumber);
+        setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
+        // getBranchList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
+    }
+    const onsort = async (sort, desc) => {
+        setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
+        // getBranchList({ ...paramSearch, sort: sort, desc: desc ? 'DESC' : 'ASC' })
+    }
     return (
         <Layout>
             <LoadingOverlay active={loading} className="h-[calc(100vh-4rem)]" spinner text='Loading...'
@@ -40,8 +77,9 @@ export default function Branches() {
                         overflowY: loading ? 'scroll' : 'scroll'
                     }
                 }}>
-                <Breadcrumbs title="ข้อมูลสาขา" breadcrumbs={breadcrumbs} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset}/>
+                <Breadcrumbs title="ข้อมูลสาขา" breadcrumbs={breadcrumbs} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
                 <Search searchParam={searchParam} />
+                <ResultBranch branchList={branchList} total={total} paginate={paginate} currentPage={currentPage} onSort={onsort} callBack={handleSearch} />
             </LoadingOverlay>
         </Layout>
     )
