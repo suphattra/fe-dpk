@@ -140,7 +140,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     {/* <div className="block justify-left w-full pt-4">
                         บันทึกการทำงาน
                     </div> */}
-                    {reportData.length > 0 && <DownloadExcel reportData={reportData} name="สร้างรายงาน" filename="รายงานการบันทึกการทำงาน" />}
+                    {reportData.length > 0 && <DownloadExcel reportData={reportData} name="สร้างรายงาน" filename="รายงานบันทึกการทำงาน" />}
                     <button type="button"
                         onClick={() => { router.push('operations/calendar-schedule'); }}
                         className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2">
