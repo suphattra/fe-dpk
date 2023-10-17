@@ -12,7 +12,7 @@ import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
 import { BranchService } from "../../pages/api/branch.service";
 
-export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService, mode, dateSelect, onErrors, fieldRegister = () => { } }) {
+export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService, mode, dateSelect, onErrors }) {
     const [openAddInventory, setAddInventory] = useState(false)
     const [otAmount, setOtAmount] = useState(timeSheet.otAmount ? timeSheet.otAmount : null)
     const [otRate, setOtRate] = useState(timeSheet.otRate ? timeSheet.otRate : null)
@@ -148,11 +148,11 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             }, index, 'inventory')
         }
     }
-    const callbackInventory = (e) => {
+    const callbackInventory = (e, index) => {
         if (openAddInventory) {
-            onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
+            onChange({ target: { name: 'inventory', value: e } }, index - 1, 'inventory')
         } else {
-            onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
+            onChange({ target: { name: 'inventory', value: [] } }, index - 1, 'inventory')
         }
 
     }
@@ -336,11 +336,12 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                             {openAddInventory &&
                                 <>
                                     <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
-                                        <ItemInventory extraInventory={timeSheet.inventory}
+                                        <ItemInventory
+                                            extraInventory={timeSheet.inventory}
                                             inventoryOption={inventoryOption}
-                                            errors={errors}
-                                            callbackInventory={(e) => callbackInventory(e, openAddInventory)} />
-
+                                            errors={errors?.inventory ? errors?.inventory[timeSheet.index] : false}
+                                            callbackInventory={(e) => callbackInventory(e ,timeSheet.index)} 
+                                        />
                                     </div>
                                 </>}
                         </div>

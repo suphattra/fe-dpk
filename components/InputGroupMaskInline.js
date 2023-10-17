@@ -22,7 +22,7 @@ export default function InputGroupMaskInline({
     return classes.filter(Boolean).join(" ");
   }
 
-  return (
+  return (<>
     <div className="md:flex md:items-center mb">
       <div className="md:w-1/3 text-right mr-2">
         <label htmlFor={id} className="block text-sm font-medium text-gray-700">
@@ -55,13 +55,13 @@ export default function InputGroupMaskInline({
           />
         </div>
       </div>
-      {invalid && (
-        <span className="text-sm font-medium tracking-tight text-red-800">
-          This field is required
-        </span>
-      )}
     </div>
-  );
+    {invalid && (
+      <span className="text-sm font-medium tracking-tight text-red-800">
+        This field is required
+      </span>
+    )}
+  </>);
 }
 InputGroupMaskInline.propTypes = {
   classes: PropTypes.string,

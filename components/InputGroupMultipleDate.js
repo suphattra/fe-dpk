@@ -46,7 +46,6 @@ export default function InputGroupMultipleDate({ label, type, classes, id, name,
     useEffect(() => {
         const [start, end] = value
         setSelect([start ? new Date(start) : "", end ? new Date(end) : ""])
-        console.log("test ==>")
     }, [value])
 
     useEffect(() => {

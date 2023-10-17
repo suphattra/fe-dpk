@@ -8,7 +8,8 @@ import InputGroupMaskInline from "../InputGroupMaskInline";
 
 export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled, errors }) {
   const [inventoryList, setInventoryList] = useState([]);
-  const [errorsList, setErrorsList] = useState([]);
+  const [errorsList, setErrorsList] = useState({});
+
   useEffect(() => {
     setInventoryList(extraInventory);
   }, [extraInventory]);
@@ -39,7 +40,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
     setInventoryList(_newValue);
     callbackInventory(_newValue)
   };
-  const onChange = (e, index, name) => {
+  const handleOnChange = (e, index, name) => {
     if (name === 'inventory') {
       let obj = {}
       obj = inventoryOption.find((ele => { return ele.inventoryCode === e.target.value }))
@@ -48,20 +49,23 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
         _newValue[index]['inventoryCode'] = obj.inventoryCode;
         _newValue[index]['inventoryName'] = obj.inventoryName;
         _newValue[index]['unit'] = obj.unit;
-        setInventoryList(_newValue);
+        // setInventoryList(_newValue);
+        callbackInventory(_newValue)
       } else {
         let _newValue = [...inventoryList];
         _newValue[index]['inventoryCode'] = '';
         _newValue[index]['inventoryName'] = '';
         _newValue[index]['unit'] = '';
-        setInventoryList(_newValue);
+        // setInventoryList(_newValue);
+        callbackInventory(_newValue)
       }
 
     } else {
       console.log("onChange", e.target.value, index, name);
       let _newValue = [...inventoryList];
       _newValue[index][name] = e.target.value;
-      setInventoryList(_newValue);
+      // setInventoryList(_newValue);
+      callbackInventory(_newValue)
     }
 
   };
@@ -82,12 +86,12 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       name="inventory"
                       label="สินค้าคงคลัง"
                       required
-                      invalid={errorsList?.inventory ? errorsList?.inventory[index + 1] : false}
+                      invalid={errorsList?.inventoryCode?errorsList?.inventoryCode[extra.index]:false}
                       disabled={disabled}
                       options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
                       value={extra.inventoryCode}
                       onChange={(e) => {
-                        onChange(e, index, "inventory");
+                        handleOnChange(e, index, "inventory");
                       }}
                     />
                   </div>
@@ -100,10 +104,11 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       required
                       classes=""
                       disabled={disabled}
+                      invalid={errorsList?.pickupAmount?errorsList?.pickupAmount[extra.index]:false}
                       value={extra.pickupAmount}
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                       onChange={(e) => {
-                        onChange(e, index, "pickupAmount");
+                        handleOnChange(e, index, "pickupAmount");
                       }}
                     />
                   </div>
