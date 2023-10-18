@@ -15,7 +15,7 @@ export default function InputGroupInline({ label, type, classes, id, name, onCha
             </div>
             <div class="md:w-2/3">
                 <div className="mt-1">
-                    <div className={classNames(unit ? "relative mt-2 rounded-md shadow-sm" : "")}>
+                    <div className={classNames(unit ? "relative mt-1 rounded-md shadow-sm" : "")}>
                         <input
                             type={type}
                             name={name}

@@ -12,8 +12,7 @@ export default function InputGroupMask({ label, type, classes, id, name, onChang
                 {label} {required ? <span className="text-red-800">*</span> : <></>}
             </label>
             <div className="mt-1">
-                <div className={classNames(unit ? "relative mt-2 rounded-md shadow-sm" : "")}>
-
+                <div className={classNames(unit ? "relative mt-1 rounded-md shadow-sm" : "")}>
                     <MaskedInput
                         type={type}
                         name={name}
