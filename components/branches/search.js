@@ -65,7 +65,7 @@ export default function Search({ handleSearch, handleReset, handleChange, search
                         สร้างสาขาและแปลงงาน
                     </button>
                 </div>
-                <CardBasic title="">
+                {/* <CardBasic title="">
                     <div className="flex justify-center grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
                         <div className="flex items-center justify-end text-sm">
                             คำค้นหา
@@ -90,7 +90,7 @@ export default function Search({ handleSearch, handleReset, handleChange, search
 
                         </div>
                     </div>
-                </CardBasic>
+                </CardBasic> */}
             </div>
         </>
     )

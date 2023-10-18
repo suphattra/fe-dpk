@@ -50,14 +50,14 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
         _newValue[index]['inventoryName'] = obj.inventoryName;
         _newValue[index]['unit'] = obj.unit;
         // setInventoryList(_newValue);
-        callbackInventory(_newValue)
+        callbackInventory(_newValue, name)
       } else {
         let _newValue = [...inventoryList];
         _newValue[index]['inventoryCode'] = '';
         _newValue[index]['inventoryName'] = '';
         _newValue[index]['unit'] = '';
         // setInventoryList(_newValue);
-        callbackInventory(_newValue)
+        callbackInventory(_newValue, name)
       }
 
     } else {
@@ -65,7 +65,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
       let _newValue = [...inventoryList];
       _newValue[index][name] = e.target.value;
       // setInventoryList(_newValue);
-      callbackInventory(_newValue)
+      callbackInventory(_newValue, name)
     }
 
   };
@@ -86,7 +86,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       name="inventory"
                       label="สินค้าคงคลัง"
                       required
-                      invalid={errorsList?.inventoryCode?errorsList?.inventoryCode[extra.index]:false}
+                      invalid={errorsList?.inventoryCode ? errorsList?.inventoryCode[extra.index] : false}
                       disabled={disabled}
                       options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
                       value={extra.inventoryCode}
@@ -95,16 +95,17 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       }}
                     />
                   </div>
-                  <div className="col-span-2">
+                  <div className="col-span-3">
                     <InputGroupMaskInline
                       type="text"
                       id="pickupAmount"
                       name="pickupAmount"
                       label="จำนวน"
+                      unit={extra.unit ? extra.unit : "หน่วย"}
                       required
                       classes=""
                       disabled={disabled}
-                      invalid={errorsList?.pickupAmount?errorsList?.pickupAmount[extra.index]:false}
+                      invalid={errorsList?.pickupAmount ? errorsList?.pickupAmount[extra.index] : false}
                       value={extra.pickupAmount}
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                       onChange={(e) => {
@@ -112,9 +113,9 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       }}
                     />
                   </div>
-                  <div className="col-span-1 pt-2 text-left">
+                  {/* <div className="col-span-1 pt-2 text-left">
                     <p className="block text-sm font-medium text-gray-700">{extra.unit}</p>
-                  </div>
+                  </div> */}
                   <div className="col-span-1 m-0 pt-2">
                     <button
                       type="button"

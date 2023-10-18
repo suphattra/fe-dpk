@@ -47,12 +47,23 @@ export default function ModalCreateTimesheet(props) {
     const { register, handleSubmit, setValue, getValues, setError, clearErrors, formState: { errors } } = useForm(formOptions);
     const onChange = (e, index,) => {
         const { name, value, checked, type } = e.target;
-        console.log(value)
         setTimeSheetForm((data) => ({ ...data, [name]: value }));
         if (errors) {
             if (e.target.value) {
-                clearErrors(`${name}[1]`);
+                if ((name === "inventory" || name === "pickupAmount") && e.target.value?.length > 0) {
+                    for (let inventory of e.target.value) {
+                        if (inventory?.inventoryCode) {
+                            clearErrors(`${name}[1].inventoryCode[${inventory.index}]`)
+                        }
+                        if (inventory?.pickupAmount) {
+                            clearErrors(`${name}[1].pickupAmount[${inventory.index}]`)
+                        }
+                    }
+                } else {
+                    clearErrors(`${name}[1]`);
+                }
             }
+
         }
     }
     const handleSave = async () => {
@@ -80,6 +91,16 @@ export default function ModalCreateTimesheet(props) {
         }
         if (!timeSheetForm.taskPaymentRate) {
             errorList.push({ field: `taskPaymentRate[1]`, type: "custom", message: "custom message" });
+        }
+        if (timeSheetForm.inventory?.length > 0) {
+            for (let inventory of timeSheetForm.inventory) {
+                if (!inventory.inventoryCode) {
+                    errorList.push({ field: `inventory[1].inventoryCode[${inventory.index}]`, type: "custom", message: "custom message" });
+                }
+                if (!inventory.pickupAmount) {
+                    errorList.push({ field: `inventory[1].pickupAmount[${inventory.index}]`, type: "custom", message: "custom message" });
+                }
+            }
         }
         if (errorList.length === 0) {
             let temp = [];

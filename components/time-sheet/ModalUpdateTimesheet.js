@@ -4,8 +4,7 @@ import moment from 'moment/moment';
 import { OperationsService } from '../../pages/api/operations.service';
 import { EmployeeService } from '../../pages/api/employee.service';
 import InputSelectGroup from '../InputSelectGroup';
-import { _resObjConfig, renderOptions } from '../../helpers/utils';
-import { isEmpty } from 'lodash';
+import { _resObjConfig, isEmpty, renderOptions } from '../../helpers/utils';
 import InputGroupDate from '../InputGroupDate';
 import { BranchService } from '../../pages/api/branch.service';
 import { MasterService } from '../../pages/api/master.service';
@@ -14,6 +13,8 @@ import InputGroupMask from '../InputGroupMask';
 import ItemInventory from './ItemInventory';
 import { InventoryService } from '../../pages/api/inventory.service';
 import { NotifyService } from '../../pages/api/notify.service';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 export default function ModalUpdateTimesheet(props) {
 
     const { open, setOpen, mode, operationCode, jobEntry, timesheet, callbackLoad } = props;
@@ -31,6 +32,11 @@ export default function ModalUpdateTimesheet(props) {
     const [otAmount, setOtAmount] = useState(null)
     const [otRate, setOtRate] = useState(null)
     const [loading, setLoading] = useState(false)
+    const createValidationSchema = () => {
+    }
+    const validationSchema = createValidationSchema();
+    const formOptions = { resolver: yupResolver(validationSchema) };
+    const { register, handleSubmit, setValue, getValues, setError, clearErrors, formState: { errors } } = useForm(formOptions);
     useEffect(() => {
         async function fetchData() {
             await getEmployeeUnassignList();
@@ -53,15 +59,17 @@ export default function ModalUpdateTimesheet(props) {
     const getOperationDetail = async (operationCode) => {
         await OperationsService.getOperationsDetail(operationCode).then(res => {
             if (res.data.resultCode === 200) {
-                console.log(res.data.resultData)
-                setTimesheetDetail(res.data.resultData[0])
-                setQuerySuccess(true)
                 //default data
                 console.log('gdueduie', res.data.resultData[0].mainBranch.branchCode)
                 if (res.data.resultData[0].inventory.length > 0) {
+                    res.data.resultData[0].inventory.forEach((inventory, index) => {
+                        inventory.index = index + 1;
+                    })
+
                     setAddInventory(true)
                 }
-
+                setTimesheetDetail(res.data.resultData[0])
+                setQuerySuccess(true)
             } else {
                 setTimesheetDetail({})
                 setQuerySuccess(false)
@@ -235,28 +243,86 @@ export default function ModalUpdateTimesheet(props) {
             setTimesheetDetail(data => ({ ...data, ['inventory']: [] }));
         }
     }
-    const callbackInventory = (e) => {
+    const callbackInventory = (e, name) => {
         setTimesheetDetail(data => ({ ...data, ['inventory']: e }));
         // onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
+        if (errors) {
+            if (e) {
+                if ((name === "inventory" || name === "pickupAmount") && e.length > 0) {
+                    for (let inventory of e) {
+                        console.log(inventory)
+                        if (inventory?.inventoryCode) {
+                            clearErrors(`inventory[1].inventoryCode[${inventory.index}]`)
+                        }
+                        if (inventory?.pickupAmount) {
+                            clearErrors(`inventory[1].pickupAmount[${inventory.index}]`)
+                        }
+                    }
+                } else {
+                    clearErrors(`${name}[1]`);
+                }
+            }
+        }
     }
 
     const handleSave = async () => {
-        setLoading(true)
-        console.log(timesheetDetail)
-        let dataList = {
-            dataList: timesheetDetail
+        const errorList = [];
+        if (!timesheetDetail.startDate) {
+            errorList.push({ field: `startDate[1]`, type: "custom", message: "custom message" });
         }
-        await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
-            if (res.data.resultCode === 200) {
-                NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
-                // window.location.reload()
-                setOpen(false)
-                callbackLoad()
-            } else {
-                NotifyService.error(res.data.message)
+        if (!timesheetDetail.employee) {
+            errorList.push({ field: `employee[1]`, type: "custom", message: "custom message" });
+        }
+        if (!timesheetDetail.mainBranch.branchCode) {
+            errorList.push({ field: `mainBranch[1]`, type: "custom", message: "custom message" });
+        }
+        if (!timesheetDetail.task.code) {
+            errorList.push({ field: `task[1]`, type: "custom", message: "custom message" });
+        }
+        if (!timesheetDetail.wageType) {
+            errorList.push({ field: `wageType[1]`, type: "custom", message: "custom message" });
+        }
+        if (!timesheetDetail.operationStatus) {
+            errorList.push({ field: `operationStatus[1]`, type: "custom", message: "custom message" });
+        }
+        if (!timesheetDetail.taskAmount) {
+            errorList.push({ field: `taskAmount[1]`, type: "custom", message: "custom message" });
+        }
+        if (!timesheetDetail.taskPaymentRate) {
+            errorList.push({ field: `taskPaymentRate[1]`, type: "custom", message: "custom message" });
+        }
+        if (timesheetDetail.inventory?.length > 0) {
+            for (let inventory of timesheetDetail.inventory) {
+                if (isEmpty(inventory.inventoryCode)) {
+                    errorList.push({ field: `inventory[1].inventoryCode[${inventory.index}]`, type: "custom", message: "custom message" });
+                }
+                if (isEmpty(inventory.pickupAmount)) {
+                    errorList.push({ field: `inventory[1].pickupAmount[${inventory.index}]`, type: "custom", message: "custom message" });
+                }
             }
-        })
-        setLoading(false)
+        }
+        if (errorList.length === 0) {
+            setLoading(true)
+            let dataList = {
+                dataList: timesheetDetail
+            }
+            await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
+                if (res.data.resultCode === 200) {
+                    NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
+                    // window.location.reload()
+                    setOpen(false)
+                    callbackLoad()
+                } else {
+                    NotifyService.error(res.data.message)
+                }
+            })
+            setLoading(false)
+        } else {
+            console.log(errorList)
+            errorList.forEach(({ field, type, message }) => {
+                setError(field, { type, message });
+            });
+        }
     }
     return (
         <Transition.Root show={open} as={Fragment}>
@@ -294,8 +360,9 @@ export default function ModalUpdateTimesheet(props) {
                                                         type="date" id={"startDate"} name="startDate" label="วัน/เดือน/ปี"
                                                         format="YYYY-MM-DD"
                                                         disabled={mode == 'view' ? true : false}
-                                                        onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
+                                                        onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, 1, "startDate") }}
                                                         value={timesheetDetail.startDate ? moment(new Date(timesheetDetail.startDate)).format('YYYY-MM-DD') : ""}
+                                                        invalid={errors?.startDate ? errors?.startDate[1] : false}
                                                         required />
                                                     <InputSelectGroup type="text" id={"employee"} name="employee" label="พนักงาน"
                                                         options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
@@ -371,7 +438,8 @@ export default function ModalUpdateTimesheet(props) {
                                                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
                                                             <ItemInventory extraInventory={timesheetDetail.inventory}
                                                                 inventoryOption={inventoryOption}
-                                                                callbackInventory={(e) => callbackInventory(e)}
+                                                                callbackInventory={(e, name) => callbackInventory(e, name)}
+                                                                errors={errors?.inventory ? errors?.inventory[1] : false}
                                                                 disabled={mode == 'view' ? true : false} />
 
                                                         </div>
@@ -402,12 +470,14 @@ export default function ModalUpdateTimesheet(props) {
                                                     <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                                         required
+                                                        invalid={errors?.taskAmount ? errors?.taskAmount[1] : false}
                                                         disabled={mode == 'view' ? true : false}
                                                         onChange={(e) => onChange(e, "taskAmount")}
                                                         value={timesheetDetail.taskAmount} />
                                                     <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
                                                         mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                                         required
+                                                        invalid={errors?.taskPaymentRate ? errors?.taskPaymentRate[1] : false}
                                                         disabled={mode == 'view' ? true : false}
                                                         onChange={(e) => onChange(e, "taskPaymentRate")}
                                                         value={timesheetDetail.taskPaymentRate} />
