@@ -13,8 +13,9 @@ import moment from 'moment'
 import { OperationsService } from "../api/operations.service";
 import { NotifyService } from "../api/notify.service";
 import CardBranch from "../../components/branches/CardBranch";
+import { BranchService } from "../api/branch.service";
 const initial = {
-    areaSize: {},
+    areaSize: "",
     address: "",
     task: {},
     employee: {},
@@ -35,7 +36,7 @@ export default function DetailBranch() {
         index: 1,
         branchName: "",
         branchType: initial.branchType,
-        product: {},//initial.task,
+        product: [],//initial.task,
         supervisor: {},
         areaSize: initial.areaSize,
         address: initial.address,
@@ -60,35 +61,16 @@ export default function DetailBranch() {
             if (!branch.branchName) {
                 errorList.push({ field: `branchName[${branch.index}]`, type: "custom", message: "custom message" });
             }
-            // if (!branch.employee) {
-            //     errorList.push({ field: `employee[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (!branch.mainBranch.branchCode) {
-            //     errorList.push({ field: `mainBranch[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (!branch.task.code) {
-            //     errorList.push({ field: `task[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (!branch.wageType) {
-            //     errorList.push({ field: `wageType[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (!branch.operationStatus) {
-            //     errorList.push({ field: `operationStatus[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (!branch.taskAmount) {
-            //     errorList.push({ field: `taskAmount[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (!branch.taskPaymentRate) {
-            //     errorList.push({ field: `taskPaymentRate[${branch.index}]`, type: "custom", message: "custom message" });
-            // }
-            // if (branch.inventory.length > 0) {
-            //     for (let inventory of branch.inventory) {
-            //         errorList.push({ field: `inventory[${inventory.index}]`, type: "custom", message: "custom message" });
-            //     }
-
-            // }
+            if (!branch.branchType.code) {
+                errorList.push({ field: `branchType[${branch.index}]`, type: "custom", message: "custom message" });
+            }
+            if (branch.product.length <= 0) {
+                errorList.push({ field: `product[${branch.index}]`, type: "custom", message: "custom message" });
+            }
+            if (!branch.supervisor.employeeCode) {
+                errorList.push({ field: `supervisor[${branch.index}]`, type: "custom", message: "custom message" });
+            }
         }
-        console.log(errorList)
 
         if (errorList.length === 0) {
             setLoading(true)
@@ -96,10 +78,10 @@ export default function DetailBranch() {
             let dataList = {
                 dataList: branchForm
             }
-            await OperationsService.createOperations(dataList).then(res => {
+            await BranchService.createBranch(dataList).then(res => {
                 if (res.data.resultCode === 200) {
                     NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
-                    router.push('/operations');
+                    router.push('/branches');
                     // window.location.reload()
                 } else {
                     NotifyService.error(res.data.message)
@@ -114,17 +96,16 @@ export default function DetailBranch() {
 
     }
     const onChange = (e, index, name,) => {
-        console.log('dddddddddddddd', e, index, name)
+        console.log('dddddddddddddd', e.target.value, index, name)
         let _newValue = [...branchForm]
-        switch (name) {
-            case "task":
-                _newValue[index]['taskPaymentRate'] = e.target?.value?.value2 || 0
-                break;
-            default:
-        }
         _newValue[index][name] = e.target.value
         setBranchForm(_newValue)
 
+        if (errors) {
+            if (e.target.value) {
+                clearErrors(`${name}[${_newValue[index].index}]`);
+            }
+        }
     }
 
     const deleteAddOnService = (rowIndex) => {
@@ -187,7 +168,7 @@ export default function DetailBranch() {
                             <div className="flex justify-center items-center">
                                 <button type="button"
                                     className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                    onClick={() => { router.push('/operations'); }}
+                                    onClick={() => { router.push('/branches'); }}
                                 >
                                     ยกเลิก
                                 </button>

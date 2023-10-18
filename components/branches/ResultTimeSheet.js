@@ -6,6 +6,7 @@ import moment from "moment";
 import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
+import { isEmpty } from "../../helpers/utils";
 
 export default function ResultBranch({ branchList, total, paginate, currentPage, callBack, onSort }) {
     const [showJobDetailForm, setShowJobDetailForm] = useState(false)
@@ -60,7 +61,12 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
     const sortTable = async (name) => {
         onSort(name, sort)
     }
-
+    const arrayToCommaDelimeter = (data, key) => {
+        let result = data.map(function (val) {
+            return `${val[key] ? val[key] : ''}`;
+        }).join(', ');
+        return result;
+    }
     return (
         <div className="md:container md:mx-auto">
             <LoadingOverlay active={loading}
@@ -125,7 +131,7 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
                                                     {item.branchName}
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.branchType.value1}</td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.branchType.value1}</td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{arrayToCommaDelimeter(item.product, 'value1')}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.supervisor.firstName} {item.supervisor.lastName}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.areaSize}</td>
 

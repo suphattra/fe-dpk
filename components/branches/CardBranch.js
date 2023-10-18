@@ -2,19 +2,24 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { useEffect } from "react";
 import InputGroup from "../InputGroup";
-import { renderOptions } from "../../helpers/utils";
+import { _resObjConfig, renderOptions } from "../../helpers/utils";
 import InputSelectGroup from "../InputSelectGroup";
 import { MasterService } from "../../pages/api/master.service";
+import InputGroupMask from "../InputGroupMask";
+import { EmployeeService } from "../../pages/api/employee.service";
+import { isEmpty } from "lodash";
 
 export default function CardBranch({ index, branch, onChange, deleteAddOnService, mode, dateSelect, onErrors, fieldRegister = () => { } }) {
     const [querySucess, setQuerySucess] = useState(false)
     const [errors, setErrors] = useState({})
     const [branchType, setBranchType] = useState([])
     const [productType, setProductType] = useState([])
+    const [supervisorList, setSupervisorList] = useState([])
     useEffect(() => {
         async function fetchData() {
             await getConfigList('TYPE');
             await getConfigList('PRODUCTIVITY');
+            await getEmployeeList()
             setQuerySucess(true)
         }
         fetchData()
@@ -38,6 +43,78 @@ export default function CardBranch({ index, branch, onChange, deleteAddOnService
         }).catch(err => {
         })
     }
+    const getEmployeeList = async () => {
+        let search = {
+            employeeFullName: '',
+            limit: 10000,
+            offset: 0,
+            status: 'Active'
+        }
+        await EmployeeService.getEmployeeList(search).then(res => {
+            if (res.data.resultCode === 200) {
+                setSupervisorList(res.data.resultData)
+            } else {
+                setSupervisorList([])
+            }
+        }).catch(err => {
+        })
+    }
+    const handleChange = (e, index, name) => {
+        let obj = {}
+        if (name === 'branchType' || name === 'supervisor') {
+            let _option = []
+            switch (name) {
+                case "branchType":
+                    _option = branchType
+                    break;
+                // case "product":
+                //     _option = productType
+                //     break;
+                case "supervisor":
+                    _option = supervisorList
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'supervisor') {
+            obj = supervisorList.find((ele => { return ele.employeeCode === e.target.value }))
+            if (!isEmpty(obj)) {
+                let emp = {
+                    _id: obj._id,
+                    employeeCode: obj.employeeCode,
+                    title: obj.title,
+                    firstName: obj.firstName,
+                    lastName: obj.lastName,
+                    nickName: obj.nickName,
+                    gender: obj.gender,
+                }
+                onChange({ target: { name: name, value: emp } }, index, name)
+            }
+
+        }
+        if (name === 'product') {
+            let product = []
+            product = e.target.value
+            product.forEach((ele) => {
+                ele.code = ele.value
+                ele.value1 = ele.name
+                // ele.value2 = ele.value2
+            })
+            onChange({ target: { name: name, value: product } }, index, name)
+        }
+    }
+    const _convertValue = (value) => {
+        if (!isEmpty(value)) {
+            value.map((ele) => {
+                ele.value = ele.code
+                ele.name = ele.name
+            })
+            return value
+        }
+        return value
+    }
     return (
         <div className="mt-4 flex flex-col">
             {mode != 'edit' && <div className="flex flex-row-reverse py-2 px-2 border border-gray-200 rounded-t-md">
@@ -54,41 +131,43 @@ export default function CardBranch({ index, branch, onChange, deleteAddOnService
                     <InputGroup type="text" label="ชื่อสาขา/แปลง"
                         id="branchName"
                         name="branchName"
-                        onChange={(e) => onChange(e, "firstName")}
+                        onChange={(e) => onChange(e, index, "branchName")}
                         value={branch.branchName}
                         required
                         invalid={errors?.branchName ? errors?.branchName[branch.index] : false}
                     />
                     <InputSelectGroup type="text" id={"branch" + branch.index} name="branchType" label="ประเภท"
-                        onChange={(e) => onChange(e, index, "branch")}
+                        onChange={(e) => handleChange(e, index, "branchType")}
                         isSearchable
                         options={renderOptions(branchType, "value1", "code")}
                         value={branch.branchType.code}
-                        invalid={errors?.branch ? errors?.branch[branch.index] : false}
+                        invalid={errors?.branchType ? errors?.branchType[branch.index] : false}
                         required />
-                    <InputSelectGroup type="text" id={"branch" + branch.index} name="branch" label="ผลผลิต"
-                        onChange={(e) => onChange(e, index, "branch")}
+                    <InputSelectGroup type="text" id={"branch" + branch.index} name="product" label="ผลผลิต"
+                        onChange={(e) => handleChange(e, index, "product")}
                         isSearchable
+                        isMulti
                         options={renderOptions(productType, "value1", "code")}
-                        value={branch.product.code}
-                        invalid={errors?.branch ? errors?.branch[branch.index] : false}
+                        // value={branch.product.code}
+                        value={_convertValue(branch.product)}
+                        invalid={errors?.product ? errors?.product[branch.index] : false}
                         required />
                 </div>
                 <div className="grid grid-cols-3 md:grid-cols-1 lg:grid-cols-3 gap-4 mr-6 mt-4">
-                    <InputSelectGroup type="text" id={"branch" + branch.index} name="branch" label="ผู้ดูแล"
-                        onChange={(e) => onChange(e, index, "branch")}
+                    <InputSelectGroup type="text" id={"branch" + branch.index} name="supervisor" label="ผู้ดูแล"
+                        onChange={(e) => handleChange(e, index, "supervisor")}
                         isSearchable
-                        options={renderOptions([], "firstName", "employeeCode", "lastName")}
-                    // value={branch.branch.employeeCode}
-                    />
-                    <InputGroup type="text" label="ขนาดพื้นที่"
-                        unit={"ไร่"}
-                        id="lastName"
-                        name="lastName"
-                        onChange={(e) => onChange(e, "firstName")}
-                        value={branch.lastName}
+                        options={renderOptions(supervisorList, "firstName", "employeeCode", "lastName")}
+                        value={branch.supervisor.employeeCode}
                         required
-                        invalid={errors?.branch ? errors?.branch[branch.index] : false}
+                        invalid={errors?.supervisor ? errors?.supervisor[branch.index] : false}
+                    />
+                    <InputGroupMask type="text" id="areaSize" name="areaSize" label="ขนาดพื้นที่"
+                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                        onChange={(e) => onChange(e, index, "areaSize")}
+                        required
+                        value={branch.areaSize}
+                        unit={"ไร่"}
                     />
 
                     <div className="block w-full">
