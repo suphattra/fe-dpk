@@ -7,6 +7,7 @@ import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
 import { isEmpty } from "../../helpers/utils";
+import ModalUpdateBranch from "./ModalUpdateBranch";
 
 export default function ResultBranch({ branchList, total, paginate, currentPage, callBack, onSort }) {
     const [showJobDetailForm, setShowJobDetailForm] = useState(false)
@@ -152,14 +153,14 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
                                     ))}
                                 </tbody>
                             </table>
-                            {/* {showJobDetailForm && <ModalUpdateTimesheet
+                            {showJobDetailForm && <ModalUpdateBranch
                                 open={showJobDetailForm}
                                 setOpen={onSetJobDetailModal}
                                 mode={"edit"}
-                                callbackLoad={callBack}
-                                // timesheet={timesheetDetail}
-                                operationCode={timesheetDetail.operationCode}
-                            />} */}
+                                // callbackLoad={callBack}
+                                // // timesheet={timesheetDetail}
+                                branchCode={timesheetDetail.branchCode}
+                            />}
                             <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={branchList} />
                         </div>
                     </div>
