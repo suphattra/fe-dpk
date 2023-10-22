@@ -10,6 +10,7 @@ import { EmployeeService } from "../../pages/api/employee.service";
 import { isEmpty } from "lodash";
 import ItemProduct from "./ItemProduct";
 import ItemIncome from "./ItemIncome";
+import ListFile from "../ListFile";
 
 export default function CardBranch({
   index,
@@ -26,6 +27,8 @@ export default function CardBranch({
   const [branchType, setBranchType] = useState([]);
   const [productType, setProductType] = useState([]);
   const [supervisorList, setSupervisorList] = useState([]);
+  // const [files, setFiles] = useState([]);
+  const [listFile, setListFile] = useState([])
   useEffect(() => {
     async function fetchData() {
       await getConfigList("TYPE");
@@ -119,6 +122,23 @@ export default function CardBranch({
       "annualIncome"
     );
   };
+  const handleFileChange = async (e) => {
+    e.preventDefault();
+    const files = e.target.files
+    if (files.length > 0) {
+        let param = {
+            index: listFile.length + 1,
+            file: files[0],
+            fileName: files[0].name,
+            fileSizeKb: files[0].size,
+            recordStatus: 'A',
+            filePath: files[0].name,
+            action: 'add'
+        };
+        setListFile([...listFile, param])
+    }
+
+}
   return (
     <div className="mt-4 flex flex-col">
       {mode != "edit" && (
@@ -294,6 +314,19 @@ export default function CardBranch({
               callbackIncome={(e) => callbackIncome(e, branch.index)}
             />
           </div>
+          <hr />
+          <label htmlFor="" className="block text-sm font-medium text-gray-700">แผนผังแปลง:</label>
+
+<div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-4 mb-4 mt-6">
+    <label className="block">
+        <input type="file" className="block w-full text-sm text-gray-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            onChange={e => { handleFileChange(e) }} 
+            disabled={mode === 'view'}
+        />
+        <span className="sr-only">Choose File</span>
+    </label>
+</div>
+          <ListFile data={listFile}/>
         </div>
       )}
     </div>
