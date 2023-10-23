@@ -3,10 +3,10 @@ import Layout from "../../layouts";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { useState } from "react";
 import Search from "../../components/branches/search";
-import ResultBranch from "../../components/branches/ResultTimeSheet";
 import { BranchService } from "../api/branch.service";
 import { convertFilter } from "../../helpers/utils";
 import { useEffect } from "react";
+import ResultBranch from "../../components/branches/ResultBranch";
 
 const breadcrumbs = [{ index: 1, href: '/branches', name: 'ข้อมูลสาขา' }]
 const initial = {
@@ -41,7 +41,6 @@ export default function Branches() {
         setBranchList([])
     }
     const handleSearch = async () => {
-        //get list
         getBranchList(searchParam);
     }
     const getBranchList = async (searchParam) => {

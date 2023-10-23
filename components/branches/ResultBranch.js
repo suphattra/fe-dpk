@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useState } from 'react';
 import Pagination from "../Pagination";
 import moment from "moment";
-// import ModalUpdateTimesheet from "./ModalUpdateTimesheet";
 import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
