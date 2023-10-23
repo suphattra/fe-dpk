@@ -266,7 +266,7 @@ export default function CardBranch({
                 value={branch.address}
                 onChange={(e) => onChange(e, index, "address")}
                 id="address"
-                name="บริเวณที่ตั้ง"
+                name="address"
                 rows={2}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
               />
@@ -282,7 +282,7 @@ export default function CardBranch({
                 value={branch.remark}
                 onChange={(e) => onChange(e, index, "remark")}
                 id="remark"
-                name="หมายเหตุ"
+                name="remark"
                 rows={2}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
               />

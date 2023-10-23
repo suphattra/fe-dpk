@@ -17,6 +17,7 @@ export default function ModalUpdateBranch(props) {
     const [querySuccess, setQuerySuccess] = useState(false)
     const { open, setOpen, mode, branchCode, jobEntry, timesheet, callbackLoad } = props;
     const [branchDetail, setBranchDetail] = useState({})
+    const [loading, setLoading] = useState(false)
     const createValidationSchema = () => { };
     const validationSchema = createValidationSchema();
     const formOptions = { resolver: yupResolver(validationSchema) };
@@ -132,6 +133,21 @@ export default function ModalUpdateBranch(props) {
         }
         console.log(errorList)
         if (errorList.length === 0) {
+            setLoading(true)
+            let dataList = {
+                dataList: branchDetail
+            }
+            await BranchService.updateBranch(branchCode, branchDetail).then(res => {
+                if (res.data.resultCode === 200) {
+                    NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
+                    // window.location.reload()
+                    setOpen(false)
+                    callbackLoad()
+                } else {
+                    NotifyService.error(res.data.message)
+                }
+            })
+            setLoading(false)
         } else {
             errorList.forEach(({ field, type, message }) => {
                 setError(field, { type, message });

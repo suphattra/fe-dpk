@@ -157,7 +157,7 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
                                 open={showJobDetailForm}
                                 setOpen={onSetJobDetailModal}
                                 mode={"edit"}
-                                // callbackLoad={callBack}
+                                callbackLoad={callBack}
                                 // // timesheet={timesheetDetail}
                                 branchCode={timesheetDetail.branchCode}
                             />}

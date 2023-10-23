@@ -42,6 +42,7 @@ export default function Branches() {
     }
     const handleSearch = async () => {
         //get list
+        getBranchList(searchParam);
     }
     const getBranchList = async (searchParam) => {
         setLoading(true)
