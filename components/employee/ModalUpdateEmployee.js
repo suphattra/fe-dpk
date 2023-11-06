@@ -72,6 +72,7 @@ export default function ModalUpdateEmployee(props) {
     await EmployeeService.updateEmployee(employeeCode, employeeDetail).then(res => {
       if (res.data.resultCode === 200) {
         NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
+        window.location.reload()
         setOpen(false)
       } else {
         NotifyService.error(res.data.resultDescription)

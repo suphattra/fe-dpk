@@ -5,9 +5,11 @@ import { Fragment, useState } from "react";
 import Pagination from "../../components/Pagination";
 import ModalUpdateEmployee from "./ModalUpdateEmployee";
 import moment from "moment";
+import { BarsArrowDownIcon, BarsArrowUpIcon } from "@heroicons/react/20/solid";
 
-export default function Result({ employeesList, total, currentPage, paginate }) {
+export default function Result({ employeesList, total, currentPage, paginate,onSort }) {
     const router = useRouter();
+    const [sort, setSort] = useState(true)
     const [open, setOpen] = useState(false)
     const [showModalDetialEmp, setShowModalDetialEmp] = useState(false)
     const [employeeDetail, setEmployeeDetail] = useState({})
@@ -25,6 +27,9 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
     const onSetOpenModalEdit = (value) => {
         setShowModalDetialEmp(value)
     }
+    const sortTable = async (name) => {
+        onSort(name, sort)
+    }
     return (
         <div className="md:container md:mx-auto">
             <div className="mt-8 flex flex-col">
@@ -35,25 +40,53 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th scope="col" className="text-center py-3.5 pl-4 pr-3 text-sm font-semibold text-gray-900 sm:pl-6">
-                                            ชื่อ-นามสกุล
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.firstName'); setSort(!sort) }}>  ชื่อ-นามสกุล
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                          
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                            ชื่อเล่น
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.nickName'); setSort(!sort) }}>  ชื่อเล่น
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                            
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                            เพศ
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.gender.value1'); setSort(!sort) }}>  เพศ
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                            
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                            สัญชาติ
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.nationality.value1'); setSort(!sort) }}>  สัญชาติ
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                            
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                            วัน/เดือน/ปี เกิด
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.employeeType.value1'); setSort(!sort) }}>  ประเภทพนักงาน
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                        
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                            ประภทพนักงาน
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.employeeRole.value1'); setSort(!sort) }}>  ตำแหน่ง
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                        
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                                            ตำแหน่ง
+                                        <div class="flex items-center " onClick={() => { sortTable('employee.phoneContact1'); setSort(!sort) }}>  เบอร์โทรติดต่อ
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+                                               
+                                            </div>
+                                          
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
 
@@ -69,24 +102,27 @@ export default function Result({ employeesList, total, currentPage, paginate }) 
                                 <tbody className="divide-y divide-gray-200 bg-white">
                                     {employeesList?.map((employees) => (
                                         <tr>
-                                            <td className="whitespace-nowrap text-center py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                            <td className="whitespace-nowrap  py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                                                 {employees.firstName} {employees.lastName}
                                             </td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.nickName}</td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.gender.value1}</td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.nationality.value1}</td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.birthDate ? moment(new Date(employees.birthDate)).format('YYYY-MM-DD') : ""}</td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.employeeRole.value1}</td>
-                                            <td className="whitespace-nowrap text-center px-3 py-4 text-sm text-gray-500">{employees.employeeType.value1}</td>
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{employees.nickName}</td>
+                                            <td className="whitespace-nowrap  px-3 py-4 text-sm text-gray-500">{employees.gender.value1}</td>
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{employees.nationality.value1}</td>
+                                            <td className="whitespace-nowrap  px-3 py-4 text-sm text-gray-500">{employees.employeeType.value1}</td>
+                                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{employees.employeeRole.value1}</td>
+                                            <td className="whitespace-nowrap  px-3 py-4 text-sm text-gray-500">{employees.phoneContact1}</td>
 
 
                                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                                <EyeIcon className="text-indigo-600 hover:text-indigo-900 h-6 w-6 cursor-pointer"
-                                                onClick={() => { 
-                                                    onSetOpenModalEdit(true)
-                                                    setEmployeeDetail(employees)
-                                                }}
-                                                /><span className="sr-only">, </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer"
+                                                        onClick={() => {
+                                                            onSetOpenModalEdit(true)
+                                                            setEmployeeDetail(employees)
+                                                        }}
+                                                    >
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                                                    </svg>
+                                                <span className="sr-only">, </span>
                                             </td>
 
                                             <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">

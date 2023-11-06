@@ -21,6 +21,9 @@ export default function Driver() {
     const [employeesList, setEmployeesList] = useState(initial.employeesList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
+    const [paramSearch, setParamSearch] = useState({})
+
+
     useEffect(() => {
         async function fetchData() {
             getEmployeeList()
@@ -34,11 +37,19 @@ export default function Driver() {
     }
     const handleReset = async () => {
         setSearchParam(initial.search)
-        setEmployeesList([])
+        getEmployeeList()
+        setCurrentPage(1);
+    }
+
+    const paginate = async (pageNumber) => {
+        setCurrentPage(pageNumber);
+        setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
+        getEmployeeList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
     }
     const handleSearch = async () => {
         searchParam.employeeFullName = searchParam.employeeFullName.trim()
         getEmployeeList(searchParam);
+        setParamSearch(param)
     }
 
     const getEmployeeList = async (searchParam) => {
@@ -52,6 +63,12 @@ export default function Driver() {
         }).catch(err => {
         })
     }
+
+    const onsort = async (sort, desc) => {
+        setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
+        getEmployeeList({ ...paramSearch, sort: sort, desc: desc ? 'DESC' : 'ASC' })
+    }
+
     return (
         <Layout>
             <LoadingOverlay active={loading} className="h-[calc(100vh-4rem)]" spinner text='Loading...'
@@ -63,7 +80,7 @@ export default function Driver() {
                 }}>
                 <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
                 <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
-                <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} />
+                <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} onSort={onsort} paginate={paginate}/>
             </LoadingOverlay>
         </Layout>
     )
