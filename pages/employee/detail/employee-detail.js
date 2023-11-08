@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 import moment from "moment";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { EmployeeService } from "../../api/employee.service";
-
+import { NotifyService } from "../../api/notify.service";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 LoadingOverlay.propTypes = undefined
 export default function EmployeeDetail() {
     const breadcrumbs = [{ index: 1, href: '/employee', name: 'บันทึกการทำงาน' }, { index: 2, href: '/employee', name: 'สร้างบันทึก' }]
@@ -17,57 +19,144 @@ export default function EmployeeDetail() {
         index: 1,
         startDate: moment(new Date).format('YYYY-MM-DD'),
         title: {},
-        // mainBranch: "",
-        // subBranch: "",
-        // task: "",
-        // inventory: "",
-        // wageType: "",
-        // operationStatus: ""
+        firstName: "",
+        gender: {},
+        nationality: {},
+        employeeType: {},
+        employeeRole: {},
+        startDate: moment().format('YYYY-MM-DD'),
+        endDate: null
     }])
     const createValidationSchema = () => {
     }
     const validationSchema = createValidationSchema();
-    // const formOptions = { resolver: yupResolver(validationSchema) };
-    // const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm(formOptions);
-    // function classNames(...classes) {
-    //     return classes.filter(Boolean).join(' ')
+    const formOptions = { resolver: yupResolver(validationSchema) };
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        getValues,
+        setError,
+        clearErrors,
+        formState: { errors },
+    } = useForm(formOptions);
 
-    
-    // }
-    // const handleSave = async () => {
-
-    // }
+    function classNames(...classes) {
+        return classes.filter(Boolean).join(' ')
+    }
 
     const handleSave = async () => {
-     
-            await EmployeeService.createEmployee(dataList).then(res => {
-                if (res.data.resultCode === 200) {
-                    NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
-                    // window.location.reload()
-                    setOpen(false)
-                    callbackLoad()
-                } else {
-                    NotifyService.error(res.data.message)
-                }
-            })
-        
-    }
-    // const onChange = (e, index, name,) => {
-    //     console.log('dddddddddddddd', e, index, name)
-    //     let _newValue = [...addEmployeeForm]
-    //     _newValue[index][name] = e.target.value
-    //     setAddEmployeeForm(_newValue)
-    // }
+        const errorList = [];
+        console.log(addEmployeeForm)
+        for (let employee of addEmployeeForm) {
+            if (!employee.title.code) {
+                errorList.push({
+                    field: `title[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.firstName) {
+                errorList.push({
+                    field: `firstName[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.lastName) {
+                errorList.push({
+                    field: `lastName[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.gender.code) {
+                errorList.push({
+                    field: `gender[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.nationality.code) {
+                errorList.push({
+                    field: `nationality[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.employeeType.code) {
+                errorList.push({
+                    field: `employeeType[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.employeeRole.code) {
+                errorList.push({
+                    field: `employeeRole[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+            if (!employee.startDate) {
+                errorList.push({
+                    field: `startDate[${employee.index}]`,
+                    type: "custom",
+                    message: "custom message",
+                });
+            }
+        }
+        console.log(errorList)
+        if (errorList.length === 0) {
+            // await EmployeeService.createEmployee(dataList).then(res => {
+            //     if (res.data.resultCode === 200) {
+            //         NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
+            //         // window.location.reload()
+            //         setOpen(false)
+            //         callbackLoad()
+            //     } else {
+            //         NotifyService.error(res.data.message)
+            //     }
+            // })
+        } else {
+            errorList.forEach(({ field, type, message }) => {
+                setError(field, { type, message });
+            });
+        }
 
+
+    }
     const onChange = (e, index, name) => {
         console.log('dddddddddddddd', e, index, name);
-    
+
         let _newValue = [...addEmployeeForm];
-        
-        // ตรวจสอบว่า _newValue[index] ไม่เป็น undefined
         if (_newValue[index]) {
             _newValue[index][name] = e.target.value;
             setAddEmployeeForm(_newValue);
+        }
+        if (errors) {
+            if (e.target.value) {
+                console.log(name)
+                if (
+                    (name === "product" || name === "amount") &&
+                    e.target.value?.length > 0
+                ) {
+                    for (let product of e.target.value) {
+                        if (product?.code) {
+                            clearErrors(
+                                `${name}[${_newValue[index].index}].code[${product.index}]`
+                            );
+                        }
+                        if (product?.amount) {
+                            clearErrors(
+                                `${name}[${_newValue[index].index}].amount[${product.index}]`
+                            );
+                        }
+                    }
+                } else {
+                    clearErrors(`${name}[${_newValue[index].index}]`);
+                }
+            }
         }
     }
 
@@ -84,15 +173,15 @@ export default function EmployeeDetail() {
         }
         let lastElement = addEmployeeForm.length > 0 ? addEmployeeForm[addEmployeeForm.length - 1] : { index: 0 };
         let newService = {
-            // index: lastElement.index + 1,
-            // startDate: moment(new Date).format('YYYY-MM-DD'),
-            // employee: "",
-            // mainBranch: "",
-            // subBranch: "",
-            // task: "",
-            // inventory: "",
-            // wageType: "",
-            // operationStatus: ""
+            index: lastElement.index + 1,
+            startDate: moment(new Date).format('YYYY-MM-DD'),
+            title: {},
+            firstName: "",
+            gender: {},
+            nationality: {},
+            employeeType: {},
+            employeeRole: {},
+            endDate: null
         }
         setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)
@@ -112,7 +201,12 @@ export default function EmployeeDetail() {
                     <form className="space-y-4" id='inputForm'>
                         {addEmployeeForm && addEmployeeForm.map((employee, index) => {
                             return (
-                                <CardEmployee index={index} employee={employee} onChange={onChange} deleteAddOnService={deleteAddOnService} />
+                                <CardEmployee
+                                    index={index}
+                                    employee={employee}
+                                    onChange={onChange}
+                                    deleteAddOnService={deleteAddOnService}
+                                    onErrors={errors} />
                             )
                         })}
                     </form>
