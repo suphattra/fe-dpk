@@ -124,7 +124,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                 {/* items-stretch overflow-hidden */}
                 {/* {querySucess && */}
                 <div className="flex flex-1 items-stretch">
-                    <div className='relative w-0 flex-1 mr-6 border-r'>
+                    <div className='relative w-0 flex-1'>
                         <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-4 mr-6">
                             <InputSelectGroup type="text" label="คำนำหน้า"
                                 id={"title" + employee.index}
@@ -344,7 +344,8 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                                     </label>
                                     <textarea
                                         onChange={(e) => onChange(e, index, "remark")}
-                                        id="remark" name="หมายเหตุ"
+                                        id="remark" 
+                                        name="remark"
                                         value={employee.remark}
                                         rows={2}
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"

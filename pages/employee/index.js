@@ -80,7 +80,7 @@ export default function Driver() {
                 }}>
                 <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
                 <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
-                <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} onSort={onsort} paginate={paginate}/>
+                <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} onSort={onsort} paginate={paginate} />
             </LoadingOverlay>
         </Layout>
     )
