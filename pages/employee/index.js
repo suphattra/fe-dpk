@@ -49,7 +49,7 @@ export default function Driver() {
     const handleSearch = async () => {
         searchParam.employeeFullName = searchParam.employeeFullName.trim()
         getEmployeeList(searchParam);
-        setParamSearch(param)
+        // setParamSearch(param)
     }
 
     const getEmployeeList = async (searchParam) => {

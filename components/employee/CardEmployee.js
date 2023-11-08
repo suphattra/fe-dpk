@@ -2,31 +2,59 @@ import InputGroupDate from "../InputGroupDate";
 import InputSelectGroup from "../InputSelectGroup";
 import { _resObjConfig, renderOptions } from "../../helpers/utils";
 import { useEffect, useState } from "react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import InputGroupMask from "../InputGroupMask";
 import ListFile from "../ListFile";
 import { MasterService } from "../../pages/api/master.service";
 import InputGroup from "../InputGroup";
 import { isEmpty } from "lodash";
+import moment from "moment/moment";
+import { EmployeeService } from "../../pages/api/employee.service";
+import ImageUploading from 'react-images-uploading';
 
-export default function CardEmployee({ index, employee, onChange, deleteAddOnService, mode }) {
+
+export default function CardEmployee({ index, employee, timeSheet, onChange, dateSelect, deleteAddOnService, mode }) {
     const [listFile, setListFile] = useState([])
     const [titleOption, setTitleOption] = useState([])
     const [typeOption, setTypeOption] = useState([])
     const [genderOption, setGenderOption] = useState([])
     const [nationalityOption, setNationaliyOption] = useState([])
     const [roleOption, setRoleOption] = useState([])
+    const [employeesOption, setEmployeesOption] = useState([])
+    const [images, setImages] = useState([]);
+    const maxNumber = 69;
+    const [employeeDetail, setEmployeeDetail] = useState({});
 
     useEffect(() => {
         async function fetchData() {
+            let _date = dateSelect ? moment(new Date(dateSelect)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD')
+            await getEmployeeUnassignList(_date);
             await getConfigList('TITLE');
             await getConfigList('GENDER');
             await getConfigList('NATIONALITY');
             await getConfigList('TYPE');
             await getConfigList('ROLE');
+
         }
         fetchData()
     }, [])
+
+    const getEmployeeDetail = async (employeeCode) => {
+        await EmployeeService.getEmployeeDetail(employeeCode)
+          .then((res) => {
+            if (res.data.resultCode === 200) {
+              console.log(res.data.resultData);
+              setEmployeeDetail(res.data.resultData[0]);
+              setQuerySuccess(true);
+            } else {
+              setEmployeeDetail({});
+              setQuerySuccess(false);
+            }
+          })
+          .catch((err) => {
+            console.log("==> list job3");
+          });
+      };
 
     const handleChange = (e, index, name) => {
         let obj = {}
@@ -35,6 +63,17 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
             switch (name) {
                 case "title":
                     _option = titleOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'firstName') {
+            let _option = []
+            switch (name) {
+                case "firstName":
+                    _option = genderOption
                     break;
                 default:
             }
@@ -52,8 +91,87 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
             obj = _resObjConfig(e.target.value, _option)
             onChange({ target: { name: name, value: obj } }, index, name)
         }
+        if (name === 'nationality') {
+            let _option = []
+            switch (name) {
+                case "nationality":
+                    _option = nationalityOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'gender') {
+            let _option = []
+            switch (name) {
+                case "gender":
+                    _option = genderOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'nationality') {
+            let _option = []
+            switch (name) {
+                case "nationality":
+                    _option = genderOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'employeeType') {
+            let _option = []
+            switch (name) {
+                case "employeeType":
+                    _option = genderOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+        if (name === 'employeeRole') {
+            let _option = []
+            switch (name) {
+                case "employeeRole":
+                    _option = genderOption
+                    break;
+                default:
+            }
+            obj = _resObjConfig(e.target.value, _option)
+            onChange({ target: { name: name, value: obj } }, index, name)
+        }
+    }
+
+    const handleFileChange = async (e) => {
+        e.preventDefault();
+        const files = e.target.files
+        console.log(files)
+        if (files.length > 0) {
+            let param = {
+                index: listFile.length + 1,
+                file: files[0],
+                fileName: files[0].name,
+                fileSizeKb: files[0].size,
+                recordStatus: 'A',
+                filePath: files[0].name,
+                action: 'add'
+            };
+            setListFile([...listFile, param])
+        }
 
     }
+
+    const onChangeImg = (imageList, addUpdateIndex, index) => {
+        setImages(imageList);
+        handleChange(imageList, index, 'planPicture')
+    };
+
     const getConfigList = async (code) => {
         let param = {
             subType: code
@@ -129,44 +247,145 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
                                 isSearchable
                                 value={employee.gender?.code}
                                 required />
+                      
                             <InputGroupDate
-                                type="date" label="วันเกิด"
+                                type="date" id={"startDate"} name="startDate" label="วัน/เดือน/ปี"
                                 format="YYYY-MM-DD"
-                            />
-
-                            <InputSelectGroup type="text" label="สัญชาติ"
-                                onChange={(e) => handleChange(e, index, "GENDER")}
-                                isSearchable
-                                options={renderOptions(nationalityOption, "value1", "code")}
+                                onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
+                                value={moment().format('YYYY-MM-DD')}
+                                // invalid={errors?.startDate ? errors?.startDate[timeSheet.index] : false}
                                 required />
-                            <InputGroupMask type="text" label="เบอร์โทรติดต่อ 1"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => onChange(e, index, "GENDER")}
+                                 <InputSelectGroup type="text" label="สัญชาติ"
+                                id={"nationality" + employee.index}
+                                options={renderOptions(nationalityOption, "value1", "code")}
+                                onChange={(e) => handleChange(e, index, "nationality")}
+                                isSearchable
+                                value={employee.nationality?.code}
+                                required />
+                            <InputSelectGroup
+                                type="text"
+                                label="สัญชาติ"
+                                id={"nationality"}
+                                name="nationality"
+                                onChange={(e) => handleChange(e, index, "nationality")}
+                                options={renderOptions(
+                                    nationalityOption,
+                                    "value1",
+                                    "code"
+                                  )}                                isSearchable
+                                  value={employee?.nationality?.code}
+                                  required
                             />
-                            <InputGroupMask type="text" label="เบอร์โทรติดต่อ 2"
-                                mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                onChange={(e) => onChange(e, index, "taskAmount")}
+                           
+                            <InputGroup type="text" label="เบอร์โทรติดต่อ 1"
+                                id="phoneContact1"
+                                name="phoneContact1"
+                                onChange={(e) => onChange(e, "phoneContact1")}
+                                // value={employeeDetail.phoneContact1}
+                                required
+                            />
+                            <InputGroup type="text" label="เบอร์โทรติดต่อ 2"
+                                id="phoneContact2"
+                                name="phoneContact2"
+                                onChange={(e) => onChange(e, "phoneContact2")}
+                                // value={employeeDetail.phoneContact2}
+                                required
                             />
                         </div>
                         <hr className="mt-5 mb-2"></hr>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 mr-6">
+
                             <InputSelectGroup type="text" label="ประเภทพนักงาน"
                                 onChange={(e) => handleChange(e, index, "TYPE")}
                                 isSearchable
                                 options={renderOptions(typeOption, "value1", "code")}
                                 required />
-                            <div className="grid grid-cols-12 md:grid-cols-4 lg:grid-cols-4 gap-4 mb-4 mt-6">
+                            <div className="block w-full">
                                 <ListFile
                                     data={listFile}
                                 />
+                                <label htmlFor="" className="block text-sm font-medium text-gray-700">อัพโหลดไฟล์:</label>
+                                <ImageUploading
+                                    value={images}
+                                    onChange={(e, addUpdateIndex) => { onChangeImg(e, addUpdateIndex, index) }}
+                                    maxNumber={maxNumber}
+                                    dataURLKey="data_url"
+                                    acceptType={["jpg"]}
+                                >
+                                    {({
+                                        imageList,
+                                        onImageUpload,
+                                        onImageRemoveAll,
+                                        onImageUpdate,
+                                        onImageRemove,
+                                        isDragging,
+                                        dragProps
+                                    }) => (
+                                        <div className="upload__image-wrapper ">
+                                            <div className="flex items-center justify-center space-x-4">
+                                                {imageList.length <= 0 && <div className="w-100 border rounded-md" for="photo" style={{ textAlign: "center", width: "50%" }} {...dragProps}>
+                                                    <div onClick={onImageUpload} className="icon-add-photo" style={{
+                                                        backgroundColor: "white",
+                                                        width: "max-content",
+                                                        margin: "0 auto",
+                                                        padding: "0ยป",
+                                                        borderRadius: "50%"
+                                                    }}>
+
+                                                        <svg
+                                                            width="24"
+                                                            height="24"
+                                                            viewBox="0 0 42 43"
+                                                            fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                        >
+                                                            <path
+                                                                d="M33.25 12.5413V17.8984C33.25 17.8984 29.7675 17.9163 29.75 17.8984V12.5413H24.5C24.5 12.5413 24.5175 8.97592 24.5 8.95801H29.75V3.58301H33.25V8.95801H38.5V12.5413H33.25ZM28 19.708V14.333H22.75V8.95801H8.75C6.825 8.95801 5.25 10.5705 5.25 12.5413V34.0413C5.25 36.0122 6.825 37.6247 8.75 37.6247H29.75C31.675 37.6247 33.25 36.0122 33.25 34.0413V19.708H28ZM8.75 34.0413L14 26.8747L17.5 32.2497L22.75 25.083L29.75 34.0413H8.75Z"
+                                                                fill="#DF3062"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                    <div onClick={onImageUpload} style={{ color: "#344358", paddingTop: "5px", paddingBottom: "10px" }}>
+                                                        <h3 style={{ margin: "0" }}>อัพโหลดรูปภาพ</h3>
+                                                        <span>หรือลากไฟล์วางที่นี่</span>
+                                                    </div>
+                                                </div>
+                                                }
+                                            </div>
+
+                                            <div className="flex items-center justify-center space-x-4 mt-4">
+                                                {imageList.map((image, index) => (
+
+                                                    <div key={index} className="image-item" style={{ textAlign: "center", width: "50%" }}>
+                                                        <img src={image.data_url} alt="" width="50%" style={{ textAlign: "center" }} className="p-4 border rounded-md" />
+                                                        <hr />
+                                                        <div className="flex justify-between ">
+                                                            <button
+                                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-white-800 px-2 py-1.5 text-xs font-medium text-black shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-white-500 focus:ring-offset-0 disabled:opacity-80"
+                                                                type="button" onClick={() => onImageUpdate(index)}>
+                                                                <PencilIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+                                                                แก้ไข</button>
+                                                            <button
+                                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-white-800 px-2 py-1.5 text-xs font-medium text-black shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-0 focus:ring-white-500 focus:ring-offset-0 disabled:opacity-80"
+                                                                type="button" onClick={() => onImageRemove(index)}>
+                                                                <TrashIcon className="h-4 w-4 mr-2" aria-hidden="true" />
+                                                                ลบ</button>
+                                                        </div>
+                                                    </div>
+
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </ImageUploading>
                             </div>
                             <InputSelectGroup type="text" label="ตำแหน่งงาน"
                                 onChange={(e) => handleChange(e, index, "ROLE")}
                                 isSearchable
                                 options={renderOptions(roleOption, "value1", "code")}
                                 required />
-
                             <div className="block w-full">
+
                                 <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
                                     {"หมายเหตุ:"}
                                 </label>
@@ -181,17 +400,26 @@ export default function CardEmployee({ index, employee, onChange, deleteAddOnSer
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4  mr-6">
+
                             <InputGroupDate
-                                type="date" name="startDate" label="วันเริ่มงาน"
+                                type="date" id={"startDate"} name="startDate" label="วันเริ่มงาน"
                                 format="YYYY-MM-DD"
+                                onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
+                                value={moment().format('YYYY-MM-DD')}
+                                // invalid={errors?.startDate ? errors?.startDate[timeSheet.index] : false}
                                 required />
+
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4  mr-6 my-4">
-                            <InputGroupDate
-                                type="date" label="วันสิ้นสุด"
-                                format="YYYY-MM-DD"
 
+                            <InputGroupDate
+                                type="date" id={"startDate"} name="startDate" label="วันสิ้นสุด"
+                                format="YYYY-MM-DD"
+                                onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
+                                value={moment().format('YYYY-MM-DD')}
+                                // invalid={errors?.startDate ? errors?.startDate[timeSheet.index] : false}
                                 required />
+
                         </div>
                     </div>
                 </div>

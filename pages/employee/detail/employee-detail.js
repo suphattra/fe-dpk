@@ -6,6 +6,7 @@ import Layout from "../../../layouts";
 import { useRouter } from "next/router";
 import moment from "moment";
 import { PlusCircleIcon } from "@heroicons/react/20/solid";
+import { EmployeeService } from "../../api/employee.service";
 
 LoadingOverlay.propTypes = undefined
 export default function EmployeeDetail() {
@@ -30,15 +31,44 @@ export default function EmployeeDetail() {
     // const { register, handleSubmit, setValue, getValues, formState: { errors } } = useForm(formOptions);
     // function classNames(...classes) {
     //     return classes.filter(Boolean).join(' ')
-    // }
-    const handleSave = async () => {
 
+    
+    // }
+    // const handleSave = async () => {
+
+    // }
+
+    const handleSave = async () => {
+     
+            await EmployeeService.createEmployee(dataList).then(res => {
+                if (res.data.resultCode === 200) {
+                    NotifyService.success('บันทึกข้อมูลเรียบร้อยเเล้ว')
+                    // window.location.reload()
+                    setOpen(false)
+                    callbackLoad()
+                } else {
+                    NotifyService.error(res.data.message)
+                }
+            })
+        
     }
-    const onChange = (e, index, name,) => {
-        console.log('dddddddddddddd', e, index, name)
-        let _newValue = [...addEmployeeForm]
-        _newValue[index][name] = e.target.value
-        setAddEmployeeForm(_newValue)
+    // const onChange = (e, index, name,) => {
+    //     console.log('dddddddddddddd', e, index, name)
+    //     let _newValue = [...addEmployeeForm]
+    //     _newValue[index][name] = e.target.value
+    //     setAddEmployeeForm(_newValue)
+    // }
+
+    const onChange = (e, index, name) => {
+        console.log('dddddddddddddd', e, index, name);
+    
+        let _newValue = [...addEmployeeForm];
+        
+        // ตรวจสอบว่า _newValue[index] ไม่เป็น undefined
+        if (_newValue[index]) {
+            _newValue[index][name] = e.target.value;
+            setAddEmployeeForm(_newValue);
+        }
     }
 
     const deleteAddOnService = (rowIndex) => {
@@ -107,7 +137,7 @@ export default function EmployeeDetail() {
                                 <button
                                     type="button"
                                     className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                // onClick={handleSave}
+                                    onClick={handleSave}
                                 >
                                     บันทึก
                                 </button>
