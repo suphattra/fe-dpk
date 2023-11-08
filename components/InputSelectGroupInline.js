@@ -79,7 +79,8 @@ export default function InputSelectGroupInline({
               isSearchable={isSearchable}
               // className={classNames(invalid ? 'border-red-800 focus:border-red-300 focus:ring-red-300' : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500', classes, "block w-full rounded-md shadow-sm sm:text-sm disabled:text-gray-800 disabled:bg-gray-50")}
               onChange={handleChangeDate}
-              options={options}
+              // options={options}
+              options={isMulti ? options : [{ value: '', name: 'Please Select', isDisabled: required ? true : false }, ...options]}
               getOptionLabel={(option) => option.name}
               getOptionValue={(option) => option.value}
               value={getDefaultValue()}
