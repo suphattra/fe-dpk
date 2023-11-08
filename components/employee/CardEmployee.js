@@ -3,41 +3,31 @@ import InputSelectGroup from "../InputSelectGroup";
 import { _resObjConfig, renderOptions } from "../../helpers/utils";
 import { useEffect, useState } from "react";
 import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
-import InputGroupMask from "../InputGroupMask";
 import ListFile from "../ListFile";
 import { MasterService } from "../../pages/api/master.service";
 import InputGroup from "../InputGroup";
-import { isEmpty } from "lodash";
 import moment from "moment/moment";
-import { EmployeeService } from "../../pages/api/employee.service";
 import ImageUploading from 'react-images-uploading';
 
 
 export default function CardEmployee({ index, employee, timeSheet, onChange, dateSelect, deleteAddOnService, mode, onErrors }) {
     const [errors, setErrors] = useState({});
-
-
     const [listFile, setListFile] = useState([])
     const [titleOption, setTitleOption] = useState([])
     const [typeOption, setTypeOption] = useState([])
     const [genderOption, setGenderOption] = useState([])
     const [nationalityOption, setNationaliyOption] = useState([])
     const [roleOption, setRoleOption] = useState([])
-    const [employeesOption, setEmployeesOption] = useState([])
     const [images, setImages] = useState([]);
     const maxNumber = 69;
-    const [employeeDetail, setEmployeeDetail] = useState({});
 
     useEffect(() => {
         async function fetchData() {
-            let _date = dateSelect ? moment(new Date(dateSelect)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD')
-            // await getEmployeeUnassignList(_date);
             await getConfigList('TITLE');
             await getConfigList('GENDER');
             await getConfigList('NATIONALITY');
             await getConfigList('TYPE');
             await getConfigList('ROLE');
-
         }
         fetchData()
     }, [])
@@ -45,26 +35,10 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
         setErrors(onErrors);
     }, [onErrors]);
 
-    const getEmployeeDetail = async (employeeCode) => {
-        await EmployeeService.getEmployeeDetail(employeeCode)
-            .then((res) => {
-                if (res.data.resultCode === 200) {
-                    console.log(res.data.resultData);
-                    setEmployeeDetail(res.data.resultData[0]);
-                    setQuerySuccess(true);
-                } else {
-                    setEmployeeDetail({});
-                    setQuerySuccess(false);
-                }
-            })
-            .catch((err) => {
-                console.log("==> list job3");
-            });
-    };
-
     const handleChange = (e, index, name) => {
         let obj = {}
-        if (name === 'title') {
+        if (name === 'title' || name === 'gender'|| name === 'nationality'
+        || name === 'employeeType'|| name === 'employeeRole') {
             let _option = []
             switch (name) {
                 case "title":
@@ -72,6 +46,15 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                     break;
                 case "gender":
                     _option = genderOption;
+                    break;
+                case "nationality":
+                    _option = nationalityOption;
+                    break;
+                case "employeeType":
+                    _option = typeOption;
+                    break;
+                case "employeeRole":
+                    _option = roleOption;
                     break;
                 default:
             }
@@ -195,9 +178,11 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                                 required />
 
                             <InputGroupDate
-                                type="date" id={"startDate"} name="startDate" label="วันเกิด"
+                                type="date" 
+                                id={"birthDate" + employee.index}
+                                name="birthDate" label="วันเกิด"
                                 format="YYYY-MM-DD"
-                                onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, index, "startDate") }}
+                                onChange={(e) => {  onChange(e, index, "birthDate") }}
                                 value={moment().format('YYYY-MM-DD')}
                             />
                             <InputSelectGroup type="text" label="สัญชาติ"
@@ -214,13 +199,13 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                             <InputGroup type="text" label="เบอร์โทรติดต่อ 1"
                                 id="phoneContact1"
                                 name="phoneContact1"
-                                onChange={(e) => onChange(e, "phoneContact1")}
+                                onChange={(e) => onChange(e,index, "phoneContact1")}
                                 value={employee.phoneContact1}
                             />
                             <InputGroup type="text" label="เบอร์โทรติดต่อ 2"
                                 id="phoneContact2"
                                 name="phoneContact2"
-                                onChange={(e) => onChange(e, "phoneContact2")}
+                                onChange={(e) => onChange(e, index,"phoneContact2")}
                                 value={employee.phoneContact2}
                             />
                         </div>
@@ -360,6 +345,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                                     <textarea
                                         onChange={(e) => onChange(e, index, "remark")}
                                         id="remark" name="หมายเหตุ"
+                                        value={employee.remark}
                                         rows={2}
                                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
                                     />
