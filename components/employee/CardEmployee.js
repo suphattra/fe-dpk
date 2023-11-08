@@ -1,6 +1,6 @@
 import InputGroupDate from "../InputGroupDate";
 import InputSelectGroup from "../InputSelectGroup";
-import { _resObjConfig, renderOptions } from "../../helpers/utils";
+import { _resObjConfig, isEmpty, renderOptions } from "../../helpers/utils";
 import { useEffect, useState } from "react";
 import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import ListFile from "../ListFile";
@@ -32,6 +32,17 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
         fetchData()
     }, [])
     useEffect(() => {
+        if (!isEmpty(employee.profilePicture)) {
+          let a = []
+          a.push({
+            data_url: employee.profilePicture?.filePath,
+            file: employee.profilePicture?.filePath
+          })
+          setImages(a);
+        }
+    
+      }, [employee.profilePicture]);
+    useEffect(() => {
         setErrors(onErrors);
     }, [onErrors]);
 
@@ -61,6 +72,20 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
             obj = _resObjConfig(e.target.value, _option)
             onChange({ target: { name: name, value: obj } }, index, name)
         }
+        if (name === "profilePicture") {
+            console.log(e)
+            if (!isEmpty(e)) {
+              let obj = {
+                filePath: e[0].data_url
+              }
+              onChange({ target: { name: name, value: obj } }, index, name);
+            } else {
+              let obj = {
+                filePath: {}
+              }
+              onChange({ target: { name: name, value: obj } }, index, name);
+            }
+          }
     }
 
     const handleFileChange = async (e) => {
@@ -84,7 +109,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
 
     const onChangeImg = (imageList, addUpdateIndex, index) => {
         setImages(imageList);
-        handleChange(imageList, index, 'planPicture')
+        handleChange(imageList, index, 'profilePicture')
     };
 
     const getConfigList = async (code) => {
@@ -315,8 +340,8 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                                                 <div className="flex items-center justify-center space-x-4 mt-4">
                                                     {imageList.map((image, index) => (
 
-                                                        <div key={index} className="image-item" style={{ textAlign: "center", width: "50%" }}>
-                                                            <img src={image.data_url} alt="" width="50%" style={{ textAlign: "center" }} className="p-4 border rounded-md" />
+                                                        <div key={index} className="image-item" style={{ textAlign: "center", width: "40%" }}>
+                                                            <img src={image.data_url} alt="" width="100%" style={{ textAlign: "center" }} className="p-4 border rounded-md" />
                                                             <hr />
                                                             <div className="flex justify-between ">
                                                                 <button

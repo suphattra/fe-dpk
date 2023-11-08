@@ -33,6 +33,7 @@ export default function EmployeeDetail() {
       startDate: moment().format("YYYY-MM-DD"),
       endDate: null,
       remark: "",
+      profilePicture: "",
     },
   ]);
   const createValidationSchema = () => {};
@@ -197,6 +198,7 @@ export default function EmployeeDetail() {
       startDate: moment().format("YYYY-MM-DD"),
       endDate: null,
       remark: "",
+      profilePicture: "",
     };
     setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
   };
