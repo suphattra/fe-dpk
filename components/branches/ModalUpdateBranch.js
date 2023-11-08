@@ -43,13 +43,17 @@ export default function ModalUpdateBranch(props) {
             if (res.data.resultCode === 200) {
                 //default data
                 // console.log('gdueduie', res.data.resultData[0].mainBranch.branchCode)
-                // if (res.data.resultData[0].inventory.length > 0) {
-                //     res.data.resultData[0].inventory.forEach((inventory, index) => {
-                //         inventory.index = index + 1;
-                //     })
-
-                //     setAddInventory(true)
-                // }
+                if (res.data.resultData[0].product.length > 0) {
+                    res.data.resultData[0].product.forEach((product, index) => {
+                        product.index = index + 1;
+                    })
+                }
+                if (res.data.resultData[0].annualIncome.length > 0) {
+                    res.data.resultData[0].annualIncome.forEach((annualIncome, index) => {
+                        annualIncome.index = index + 1;
+                    })
+                }
+                console.log(res.data.resultData[0])
                 setBranchDetail(res.data.resultData[0])
                 setQuerySuccess(true)
             } else {

@@ -136,7 +136,6 @@ export default function CardBranch({
   };
 
   const callbackProduct = (e, index, name) => {
-    console.log(e, index, name)
     onChange({ target: { name: "product", value: e } }, index - 1, "product");
   };
 
