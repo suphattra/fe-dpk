@@ -111,7 +111,6 @@ export default function ItemProduct({
                     id="amount"
                     name="amount"
                     label="จำนวน"
-                    unit={"ต้น"}
                     required
                     classes=""
                     disabled={disabled}
