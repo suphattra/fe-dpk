@@ -12,6 +12,7 @@ import moment from "moment";
 import InputGroupMask from "../InputGroupMask";
 import ItemProduct from "./ItemProduct";
 import { BranchService } from "../../pages/api/branch.service";
+import LoadingTemplate from "../LoadingTemplate";
 export default function CardInventory({
   index,
   inventory,
@@ -34,7 +35,7 @@ export default function CardInventory({
     async function fetchData() {
       await getConfigList("PAYMENT_TYPE");
       await getConfigList("INVENTORY_TYPE");
-       getBranchList()
+      await getBranchList()
       setQuerySucess(true);
     }
     fetchData();
@@ -410,6 +411,7 @@ export default function CardInventory({
         </div>
         </div>
       )}
+      {!querySucess && <LoadingTemplate />}
     </div>
   );
 }

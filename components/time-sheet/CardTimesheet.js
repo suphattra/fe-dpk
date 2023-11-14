@@ -11,6 +11,8 @@ import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
 import { InventoryService } from "../../pages/api/inventory.service";
 import { BranchService } from "../../pages/api/branch.service";
+import Loading from "../loading";
+import LoadingTemplate from "../LoadingTemplate";
 
 export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnService, mode, dateSelect, onErrors }) {
     const [openAddInventory, setAddInventory] = useState(false)
@@ -263,6 +265,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                 </button>
 
             </div>}
+          
             <div className="rounded-md p-4 shadow-md">
                 {/* items-stretch overflow-hidden */}
                 {querySucess &&
@@ -418,6 +421,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                             </div>
                         </div>
                     </div>}
+                {!querySucess && <LoadingTemplate />}
             </div>
         </div >
 

@@ -15,6 +15,7 @@ import { InventoryService } from '../../pages/api/inventory.service';
 import { NotifyService } from '../../pages/api/notify.service';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import LoadingTemplate from "../LoadingTemplate";
 export default function ModalUpdateTimesheet(props) {
 
     const { open, setOpen, mode, operationCode, jobEntry, timesheet, callbackLoad } = props;
@@ -524,8 +525,11 @@ export default function ModalUpdateTimesheet(props) {
                                             </div>
                                         </div>
                                     }
+                                    {!querySuccess &&
+                                    <LoadingTemplate />
+                                    }
                                 </div>
-
+                            
                                 {/* <CardTimesheet index={0} timeSheet={timesheetDetail} onChange={onChange} deleteAddOnService={deleteAddOnService} mode={mode} /> */}
                                 < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
 

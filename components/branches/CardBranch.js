@@ -11,6 +11,7 @@ import { isEmpty } from "lodash";
 import ItemProduct from "./ItemProduct";
 import ItemIncome from "./ItemIncome";
 import ImageUploading from "react-images-uploading";
+import LoadingTemplate from "../LoadingTemplate";
 export default function CardBranch({
   index,
   branch,
@@ -426,6 +427,7 @@ export default function CardBranch({
           </ImageUploading>
         </div>
       )}
+       {!querySucess && <LoadingTemplate/>}
     </div>
   );
 }
