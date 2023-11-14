@@ -52,7 +52,7 @@ export default function DetailBranch() {
       address: initial.address,
       annualIncome: [],
       remark: "",
-      planPicture: "",
+      planPicture: {},
       status: "",
     },
   ]);
@@ -197,7 +197,7 @@ export default function DetailBranch() {
       address: initial.address,
       annualIncome: [],
       remark: "",
-      planPicture: "",
+      planPicture: {},
       status: "",
     };
     setBranchForm((branch) => [...branch, newService]);
