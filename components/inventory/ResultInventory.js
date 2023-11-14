@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useState } from 'react';
 import Pagination from "../Pagination";
-import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
 import ModalUpdateInventory from "./ModalUpdateInventory";
@@ -17,27 +16,6 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
-
-    const getOperationDetail = async (operationCode) => {
-        setLoading(true)
-        await OperationsService.getOperationsDetail(operationCode).then(res => {
-            if (res.data.resultCode === 200) {
-                console.log(res.data.resultData)
-                setTimesheetDetail(res.data.resultData[0])
-                onSetJobDetailModal(true)
-            } else {
-                setTimesheetDetail({})
-            }
-            setLoading(false)
-        }).catch(err => {
-            console.log("==> list job3")
-            setLoading(false)
-        })
-    }
-    const sortTable = async (name) => {
-        onSort(name, sort)
-    }
-
     return (
         <div className="md:container md:mx-auto">
             <LoadingOverlay active={loading}

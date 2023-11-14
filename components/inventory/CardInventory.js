@@ -9,6 +9,7 @@ import { isEmpty } from "lodash";
 import ImageUploading from "react-images-uploading";
 import InputGroupDate from "../InputGroupDate";
 import moment from "moment";
+import InputGroupMask from "../InputGroupMask";
 export default function CardInventory({
   index,
   inventory,
@@ -67,11 +68,14 @@ export default function CardInventory({
 
   const handleChange = (e, index, name) => {
     let obj = {};
-    if (name === "paymentType" || name === "supervisor") {
+    if (name === "paymentType" || name === "inventoryType") {
       let _option = [];
       switch (name) {
         case "paymentType":
           _option = paymentType;
+          break;
+        case "inventoryType":
+          _option = inventoryType;
           break;
         default:
       }
@@ -189,11 +193,23 @@ export default function CardInventory({
                 errors?.unit ? errors?.unit[inventory.index] : false
               }
             />
-            <InputGroup
+            <InputGroupMask
               type="text"
               label="ราคา/หน่วย"
               id={"pricePerUnit" + inventory.index}
               name="pricePerUnit"
+              mask={[
+                /[0-9]/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+              ]}
               onChange={(e) => onChange(e, index, "pricePerUnit")}
               value={inventory.pricePerUnit}
               required
@@ -201,11 +217,23 @@ export default function CardInventory({
                 errors?.pricePerUnit ? errors?.pricePerUnit[inventory.index] : false
               }
             />
-            <InputGroup
+            <InputGroupMask
               type="text"
               label="จำนวน"
               id={"amount" + inventory.index}
               name="amount"
+              mask={[
+                /[0-9]/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+                /\d/,
+              ]}
               onChange={(e) => onChange(e, index, "amount")}
               value={inventory.amount}
               required

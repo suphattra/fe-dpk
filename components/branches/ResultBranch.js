@@ -2,10 +2,8 @@ import { useRouter } from "next/router";
 import { useState } from 'react';
 import Pagination from "../Pagination";
 import moment from "moment";
-import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
-import { isEmpty } from "../../helpers/utils";
 import ModalUpdateBranch from "./ModalUpdateBranch";
 
 export default function ResultBranch({ branchList, total, paginate, currentPage, callBack, onSort }) {
@@ -19,45 +17,7 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
-    const renderbadgeStatus = (status, code) => {
-        let buttonColor;
-        let text_color;
-        switch (code) {
-            case "MD0029":
-                buttonColor = 'bg-red-100 border-red-300';
-                text_color = "text-red-800"
-                break;
-            case "MD0028":
-                buttonColor = "bg-green-100 border-green-300";
-                text_color = "text-green-800"
-                break;
-            case "MD0027":
-                buttonColor = "bg-yellow-100 border-yellow-300";
-                text_color = "text-yellow-800"
-                break;
-            default:
-                buttonColor = "bg-gray-100 border-gray-300";
-                text_color = "text-gray-800"
-        }
-        return <span className={classNames(buttonColor, text_color, "inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium ")}>{status}</span>
-    }
 
-    const getOperationDetail = async (operationCode) => {
-        setLoading(true)
-        await OperationsService.getOperationsDetail(operationCode).then(res => {
-            if (res.data.resultCode === 200) {
-                console.log(res.data.resultData)
-                setTimesheetDetail(res.data.resultData[0])
-                onSetJobDetailModal(true)
-            } else {
-                setTimesheetDetail({})
-            }
-            setLoading(false)
-        }).catch(err => {
-            console.log("==> list job3")
-            setLoading(false)
-        })
-    }
     const sortTable = async (name) => {
         onSort(name, sort)
     }
@@ -139,7 +99,6 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer"
                                                         onClick={() => {
                                                             onSetJobDetailModal(true)
-                                                            // getOperationDetail(item.operationCode)
                                                             setTimesheetDetail(item)
                                                         }}
                                                     >
