@@ -54,6 +54,7 @@ export default function DetailInventory() {
       pricePerUnit: "",
       amount: "",
       paymentType: initial.type,
+      distribution:[],
       bill: {},
       remark: "",
     },
@@ -74,6 +75,7 @@ export default function DetailInventory() {
     return classes.filter(Boolean).join(" ");
   }
   const handleSave = async () => {
+    setLoading(true);
     const errorList = [];
     console.log(inventoryForm);
 
@@ -141,11 +143,28 @@ export default function DetailInventory() {
           message: "custom message",
         });
       }
+      if (inventory.distribution.length > 0) {
+        for (let distribution of inventory.distribution) {
+          if (!distribution.branchCode) {
+            errorList.push({
+              field: `distribution[${inventory.index}].branchCode[${distribution.index}]`,
+              type: "custom",
+              message: "custom message",
+            });
+          }
+          if (!distribution.amount) {
+            errorList.push({
+              field: `distribution[${inventory.index}].amount[${distribution.index}]`,
+              type: "custom",
+              message: "custom message",
+            });
+          }
+        }
+      }
     }
     console.log(errorList);
 
     if (errorList.length === 0) {
-      setLoading(true);
       console.log(inventoryForm);
       let dataList = {
         dataList: inventoryForm,
@@ -161,6 +180,7 @@ export default function DetailInventory() {
       });
       setLoading(false);
     } else {
+      setLoading(false);
       errorList.forEach(({ field, type, message }) => {
         setError(field, { type, message });
       });
@@ -204,6 +224,7 @@ export default function DetailInventory() {
       pricePerUnit: "",
       amount: "",
       paymentType: initial.type,
+      distribution:[],
       bill: {},
       remark: "",
     };

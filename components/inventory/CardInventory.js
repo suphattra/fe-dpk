@@ -10,6 +10,8 @@ import ImageUploading from "react-images-uploading";
 import InputGroupDate from "../InputGroupDate";
 import moment from "moment";
 import InputGroupMask from "../InputGroupMask";
+import ItemProduct from "./ItemProduct";
+import { BranchService } from "../../pages/api/branch.service";
 export default function CardInventory({
   index,
   inventory,
@@ -24,12 +26,15 @@ export default function CardInventory({
   const [errors, setErrors] = useState({});
   const [paymentType, setPaymentType] = useState([]);
   const [inventoryType, setInventoryType] = useState([]);
+  const [branchList, setBranchList] = useState([]);
   const [images, setImages] = useState([]);
+  const [loadingItem, setLoadingItem] = useState(false);
   const maxNumber = 69;
   useEffect(() => {
     async function fetchData() {
       await getConfigList("PAYMENT_TYPE");
       await getConfigList("INVENTORY_TYPE");
+       getBranchList()
       setQuerySucess(true);
     }
     fetchData();
@@ -98,11 +103,33 @@ export default function CardInventory({
       }
     }
   };
-
+  const getBranchList = async () => {
+    let param = {
+      limit: 1000,
+      offset: 1
+    }
+    await BranchService.getBranchList(param).then(res => {
+        if (res.data.resultCode === 200) {
+          console.log(res.data.resultData)
+          setBranchList(res.data.resultData)
+          setLoadingItem(true)
+        } else {
+          setBranchList([])
+          setLoadingItem(true)
+        }
+    }).catch(err => {
+        console.log("==> list job3")
+    })
+}
 
   const onChangeImg = (imageList, addUpdateIndex, index) => {
     setImages(imageList);
     handleChange(imageList, index, 'bill')
+  };
+
+  const callbackProduct = (e, index, name) => {
+    console.log('dde',e)
+    onChange({ target: { name: "distribution", value: e } }, index - 1, "distribution");
   };
   return (
     <div className="mt-4 flex flex-col">
@@ -143,7 +170,7 @@ export default function CardInventory({
             />
             <InputGroup
               type="text"
-              label="ชื่อสาขา/แปลง"
+              label="ชื่อร้านค้า"
               id={"sellerName" + inventory.index}
               name="sellerName"
               onChange={(e) => onChange(e, index, "sellerName")}
@@ -332,7 +359,7 @@ export default function CardInventory({
             <div className="block w-full">
               <label
                 htmlFor={"remark"}
-                className="block text-sm font-medium text-gray-700"
+                className="block text-xs font-medium text-gray-700"
               >
                 {"หมายเหตุ"}
               </label>
@@ -350,6 +377,37 @@ export default function CardInventory({
               {"*สินค้าจะถูกเก็บเข้าคลังกลาง*"}
             </label>
           </div>
+          <hr/>
+          <div className="grid grid-cols-ๅ md:grid-cols-1 lg:grid-cols-ๅ gap-4 mr-6 mt-4 mb-4">
+            <label className="block text-sm font-bold text-gary-700">กระจายสินค้า</label>
+            {inventory.distribution && inventory.distribution.length <= 0 && (
+              <div
+                className="flex bg-blue-100 rounded-lg p-4 text-sm text-blue-700"
+                role="alert"
+              >
+                <svg
+                  className="w-5 h-5 inline mr-3"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                <div>กดปุ่มเพิ่มเมื่อต้องการเพิ่มรายการกระจายสินค้า</div>
+              </div>
+            )}
+            <ItemProduct 
+            loadingItem={loadingItem}
+            mode={mode}
+            extraProduct={inventory.distribution ? inventory.distribution:[]}
+            inventoryOption={branchList}
+            errors={errors?.distribution ? errors?.distribution[inventory.index] : false}
+            callbackProduct={(e) => callbackProduct(e, inventory.index)}/>
+        </div>
         </div>
       )}
     </div>

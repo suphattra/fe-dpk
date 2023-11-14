@@ -36,7 +36,12 @@ export default function ModalUpdateInventory(props) {
         await InventoryService.getInventoryDetail(inventoryCode).then(res => {
             if (res.data.resultCode === 200) {
                 console.log(res.data.resultData[0])
-                setInventoryDetail(res.data.resultData[0])
+                if (res.data.resultData[0].distribution.length > 0) {
+                    res.data.resultData[0].distribution.forEach((distribution, index) => {
+                        distribution.index = index + 1;
+                    })
+                }
+                setInventoryDetail({index:1 ,...res.data.resultData[0]})
                 setQuerySuccess(true)
             } else {
                 setInventoryDetail({})
@@ -51,79 +56,81 @@ export default function ModalUpdateInventory(props) {
         const { name, value, checked, type } = e.target;
         console.log(name, value, checked, type)
         setInventoryDetail((data) => ({ ...data, [name]: value }));
-        // if (errors) {
-        //     if (e.target.value) {
-        //         console.log(name)
-        //         if (
-        //             (name === "product" || name === "amount") &&
-        //             e.target.value?.length > 0
-        //         ) {
-        //             for (let product of e.target.value) {
-        //                 if (product?.code) {
-        //                     clearErrors(
-        //                         `${name}[${_newValue[index].index}].code[${product.index}]`
-        //                     );
-        //                 }
-        //                 if (product?.amount) {
-        //                     clearErrors(
-        //                         `${name}[${_newValue[index].index}].amount[${product.index}]`
-        //                     );
-        //                 }
-        //             }
-        //         } else {
-        //             clearErrors(`${name}[${_newValue[index].index}]`);
-        //         }
-        //     }
-        // }
-    };
-    const handleSave = async () => {
-        const errorList = [];
-        if (!inventoryDetail.branchName) {
-            errorList.push({
-                field: `branchName[1]`,
-                type: "custom",
-                message: "custom message",
-            });
-        }
-        if (!inventoryDetail.branchType.code) {
-            errorList.push({
-                field: `branchType[1]`,
-                type: "custom",
-                message: "custom message",
-            });
-        }
-        if (!inventoryDetail.supervisor.employeeCode) {
-            errorList.push({
-                field: `supervisor[1]`,
-                type: "custom",
-                message: "custom message",
-            });
-        }
-        if (inventoryDetail.product.length > 0) {
-            for (let product of inventoryDetail.product) {
-                // if (!product.code) {
-                //     errorList.push({
-                //         field: `product[${branch.index}].code[${product.index}]`,
-                //         type: "custom",
-                //         message: "custom message",
-                //     });
-                // }
-                // if (!product.amount) {
-                //     errorList.push({
-                //         field: `product[${branch.index}].amount[${product.index}]`,
-                //         type: "custom",
-                //         message: "custom message",
-                //     });
-                // }
+        if (errors) {
+            if (e.target.value) {
+                console.log(name)
+                if (
+                    (name === "distribution" || name === "amount") &&
+                    e.target.value?.length > 0
+                ) {
+                    for (let product of e.target.value) {
+                        if (product?.branchCode) {
+                            clearErrors(
+                                `distribution[1].branchCode[${product.index}]`
+                            );
+                        }
+                        if (product?.amount) {
+                            clearErrors(
+                                `distribution[1].amount[${product.index}]`
+                                );
+                        }
+                    }
+                } else {
+                    clearErrors(`${name}[1]`);
+                }
             }
         }
+    };
+    const handleSave = async () => {
+        setLoading(true)
+        const errorList = [];
+        console.log('inventoryDetail',inventoryDetail)
+        if (!inventoryDetail.importDate) {
+            errorList.push({
+                field: `importDate[1]`,
+                type: "custom",
+                message: "custom message",
+            });
+        }
+        if (!inventoryDetail.inventoryType.code) {
+            errorList.push({
+                field: `inventoryType[1]`,
+                type: "custom",
+                message: "custom message",
+            });
+        }
+        if (!inventoryDetail.sellerName) {
+            errorList.push({
+                field: `sellerName[1]`,
+                type: "custom",
+                message: "custom message",
+            });
+        }
+        if (inventoryDetail.distribution.length > 0) {
+            for (let distribution of inventoryDetail.distribution) {
+              if (isEmpty(distribution.branchCode)) {
+                errorList.push({
+                  field: `distribution[1].branchCode[${distribution.index}]`,
+                  type: "custom",
+                  message: "custom message",
+                });
+              }
+              if (!distribution.amount) {
+                errorList.push({
+                  field: `distribution[1].amount[${distribution.index}]`,
+                  type: "custom",
+                  message: "custom message",
+                });
+              }
+            }
+          }
         console.log(errorList)
         if (errorList.length === 0) {
-            setLoading(true)
+            
             let dataList = {
                 dataList: inventoryDetail
             }
-            await BranchService.updateBranch(inventoryCode, inventoryDetail).then(res => {
+            await InventoryService.updateInventory(inventoryCode, inventoryDetail).then(res => {
                 if (res.data.resultCode === 200) {
                     NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')
                     // window.location.reload()
@@ -135,9 +142,11 @@ export default function ModalUpdateInventory(props) {
             })
             setLoading(false)
         } else {
+            setLoading(false)
             errorList.forEach(({ field, type, message }) => {
                 setError(field, { type, message });
             });
+            console.log(errors)
         }
     }
     return (

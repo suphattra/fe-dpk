@@ -4,6 +4,7 @@ import Pagination from "../Pagination";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
 import ModalUpdateInventory from "./ModalUpdateInventory";
+import moment from "moment";
 
 export default function ResultInventory({ inventoryList, total, paginate, currentPage, callBack, onSort }) {
     const [showJobDetailForm, setShowJobDetailForm] = useState(false)
@@ -98,7 +99,8 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.unit}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.paymentType?.value1}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.amount}</td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.importDate}</td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.importDate ? moment(item.importDate).format('DD/MM/YYYY') : ""}</td>
+
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer"
                                                         onClick={() => {
