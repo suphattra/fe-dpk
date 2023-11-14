@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
 import { useState } from 'react';
 import Pagination from "../Pagination";
-import moment from "moment";
 import { OperationsService } from "../../pages/api/operations.service";
 import LoadingOverlay from "react-loading-overlay";
 import { BarsArrowDownIcon, BarsArrowUpIcon, ChevronDoubleDownIcon } from "@heroicons/react/20/solid";
-import { isEmpty } from "../../helpers/utils";
+import ModalUpdateInventory from "./ModalUpdateInventory";
 
 export default function ResultInventory({ inventoryList, total, paginate, currentPage, callBack, onSort }) {
     const [showJobDetailForm, setShowJobDetailForm] = useState(false)
@@ -17,28 +16,6 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
     }
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
-    }
-    const renderbadgeStatus = (status, code) => {
-        let buttonColor;
-        let text_color;
-        switch (code) {
-            case "MD0029":
-                buttonColor = 'bg-red-100 border-red-300';
-                text_color = "text-red-800"
-                break;
-            case "MD0028":
-                buttonColor = "bg-green-100 border-green-300";
-                text_color = "text-green-800"
-                break;
-            case "MD0027":
-                buttonColor = "bg-yellow-100 border-yellow-300";
-                text_color = "text-yellow-800"
-                break;
-            default:
-                buttonColor = "bg-gray-100 border-gray-300";
-                text_color = "text-gray-800"
-        }
-        return <span className={classNames(buttonColor, text_color, "inline-flex items-center rounded-md px-2.5 py-0.5 text-sm font-medium ")}>{status}</span>
     }
 
     const getOperationDetail = async (operationCode) => {
@@ -60,12 +37,7 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
     const sortTable = async (name) => {
         onSort(name, sort)
     }
-    const arrayToCommaDelimeter = (data, key) => {
-        let result = data.map(function (val) {
-            return `${val[key] ? val[key] : ''}`;
-        }).join(', ');
-        return result;
-    }
+
     return (
         <div className="md:container md:mx-auto">
             <LoadingOverlay active={loading}
@@ -148,12 +120,11 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.unit}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.paymentType?.value1}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.amount}</td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.importDate}</td> 
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.importDate}</td>
                                                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6 cursor-pointer"
                                                         onClick={() => {
                                                             onSetJobDetailModal(true)
-                                                            // getOperationDetail(item.operationCode)
                                                             setTimesheetDetail(item)
                                                         }}
                                                     >
@@ -166,14 +137,13 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
                                     ))}
                                 </tbody>
                             </table>
-                            {/* {showJobDetailForm && <ModalUpdateBranch
+                            {showJobDetailForm && <ModalUpdateInventory
                                 open={showJobDetailForm}
                                 setOpen={onSetJobDetailModal}
                                 mode={"edit"}
                                 callbackLoad={callBack}
-                                // // timesheet={timesheetDetail}
-                                branchCode={timesheetDetail.branchCode}
-                            />} */}
+                                inventoryCode={timesheetDetail.inventoryCode}
+                            />}
                             <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={inventoryList} />
                         </div>
                     </div>
