@@ -81,17 +81,14 @@ export default function SearchInventory({
       alignment: { horizontal: "center" },
     };
     const column = [
-      { title: "ลำดับ", style: styleHeader },
-      { title: "วัน/เดือน/ปี", style: styleHeader },
-      { title: "พนักงาน", style: styleHeader },
-      { title: "แปลงใหญ่", style: styleHeader },
-      { title: "แปลงย่อย", style: styleHeader },
-      { title: "งาน", style: styleHeader },
-      { title: "จำนวนงาน", style: styleHeader },
-      { title: "ค่าแรง", style: styleHeader },
-      { title: "OT", style: styleHeader },
-      { title: "รวมเงิน OT", style: styleHeader },
-      { title: "ประเภทค่าแรง", style: styleHeader },
+      { title: 'ลำดับ', style: styleHeader },
+      { title: "รหัส", style: styleHeader },
+      { title: "ชื่อ", style: styleHeader },
+      { title: "ประเภท", style: styleHeader },
+      { title: "หน่วย", style: styleHeader },
+      { title: "รูปแบบการจ่ายเงิน", style: styleHeader },
+      { title: "จำนวนคงเหลือ", style: styleHeader },
+      { title: "นำเข้าล่าสุด", style: styleHeader },
       { title: "หมายเหตุ", style: styleHeader },
     ];
     let dataRecord = [];
@@ -99,32 +96,22 @@ export default function SearchInventory({
       dataRecord = inventoryList.map((item, index) => {
         return [
           { value: index + 1, style: styleData },
-          //   {
-          //     value: item.startDate
-          //       ? moment(item.startDate).format("DD/MM/YYYY")
-          //       : "",
-          //   },
-          //   { value: item.employee.firstName + " " + item.employee.lastName },
-          //   {
-          //     value: item.mainBranch.branchName ? item.mainBranch.branchName : "",
-          //   },
-          //   { value: item.subBranch.branchName ? item.subBranch.branchName : "" },
-          //   { value: item.task.value1 ? item.task.value1 : "" },
-          //   { value: item.taskAmount ? item.taskAmount : "", style: styleData },
-          //   {
-          //     value: item.taskPaymentRate ? item.taskPaymentRate : "",
-          //     style: styleData,
-          //   },
-          //   {
-          //     value:
-          //       item.otAmount && item.otRate
-          //         ? `${item.otAmount} * ${item.otRate}`
-          //         : `${item.otAmount || ""} ${item.otRate || ""}`,
-          //     style: styleData,
-          //   },
-          //   { value: item.otTotal ? item.otTotal : "", style: styleData },
-          //   { value: item.wageType.value1 ? item.wageType.value1 : "" },
-          //   { value: item.remark ? item.remark : "" },
+          { value: item.inventoryCodee ? item.inventoryCode : "" },
+          {
+            value: item.inventoryName ? item.inventoryName : "",
+          },
+          { value: item.inventoryType.value1 ? item.inventoryType.value1 : "" },
+          { value: item.unit ? item.unit : "" },
+          {
+            value: item.paymentType.value1 ? item.paymentType.value1 : "",
+            style: styleData,
+          },
+          { value: item.amount ? item.amount : "" },
+          {
+            value: item.importDate
+              ? moment(item.importDate).format("DD/MM/YYYY")
+              : "",
+          }, { value: item.remark ? item.remark : "" },
         ];
       });
     }
