@@ -8,6 +8,7 @@ import { MasterService } from "../../pages/api/master.service";
 import InputGroup from "../InputGroup";
 import moment from "moment/moment";
 import ImageUploading from 'react-images-uploading';
+import LoadingTemplate from "../LoadingTemplate";
 
 
 export default function CardEmployee({ index, employee, timeSheet, onChange, dateSelect, deleteAddOnService, mode, onErrors }) {
@@ -19,6 +20,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
     const [nationalityOption, setNationaliyOption] = useState([])
     const [roleOption, setRoleOption] = useState([])
     const [images, setImages] = useState([]);
+    const [querySucess, setQuerySucess] = useState(false);
     const maxNumber = 69;
 
     useEffect(() => {
@@ -28,6 +30,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
             await getConfigList('NATIONALITY');
             await getConfigList('TYPE');
             await getConfigList('ROLE');
+            setQuerySucess(true);
         }
         fetchData()
     }, [])
@@ -145,6 +148,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                 </button>
 
             </div>}
+            {querySucess && 
             <div className="rounded-md p-4 shadow-md">
                 {/* items-stretch overflow-hidden */}
                 {/* {querySucess && */}
@@ -382,6 +386,8 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                 </div>
                 {/* } */}
             </div>
+            }
+             {!querySucess && <LoadingTemplate />}
         </div >
 
     )

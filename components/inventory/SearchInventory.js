@@ -96,7 +96,7 @@ export default function SearchInventory({
       dataRecord = inventoryList.map((item, index) => {
         return [
           { value: index + 1, style: styleData },
-          { value: item.inventoryCodee ? item.inventoryCode : "" },
+          { value: item.inventoryCode ? item.inventoryCode : "" },
           {
             value: item.inventoryName ? item.inventoryName : "",
           },
@@ -139,7 +139,7 @@ export default function SearchInventory({
             <DownloadExcel
               reportData={reportData}
               name="สร้างรายงาน"
-              filename="รายงานสินค้า & ทรัพย์สิน"
+              filename="รายงานสินค้าและทรัพย์สิน"
             />
           )}
           <button

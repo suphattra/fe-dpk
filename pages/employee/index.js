@@ -22,11 +22,13 @@ export default function Driver() {
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const [paramSearch, setParamSearch] = useState({})
+    const [employeesListExcel, setEmployeesListExcel] = useState(initial.employeesList)
 
 
     useEffect(() => {
         async function fetchData() {
-            getEmployeeList()
+            await getEmployeeList(initial.search)
+            await getEmployeeListReport(initial.search)
         }
         fetchData();
     }, []);
@@ -57,8 +59,21 @@ export default function Driver() {
         await EmployeeService.getEmployeeList(searchParam).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesList(res.data.resultData)
+                setTotal(res.data.total)
             } else {
                 setEmployeesList([])
+            }
+        }).catch(err => {
+        })
+    }
+
+    const getEmployeeListReport = async (searchParam) => {
+
+        await EmployeeService.getEmployeeList(searchParam).then(res => {
+            if (res.data.resultCode === 200) {
+                setEmployeesListExcel(res.data.resultData)
+            } else {
+                setEmployeesListExcel([])
             }
         }).catch(err => {
         })
@@ -79,7 +94,7 @@ export default function Driver() {
                     }
                 }}>
                 <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
-                <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} />
+                <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} employeesListExcel={employeesListExcel}/>
                 <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} onSort={onsort} paginate={paginate} />
             </LoadingOverlay>
         </Layout>
