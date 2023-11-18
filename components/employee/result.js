@@ -53,7 +53,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.firstName");
+                          sortTable("firstName");
                           setSort(!sort);
                         }}
                       >
@@ -73,7 +73,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.nickName");
+                          sortTable("nickName");
                           setSort(!sort);
                         }}
                       >
@@ -93,7 +93,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.gender.value1");
+                          sortTable("gender.value1");
                           setSort(!sort);
                         }}
                       >
@@ -113,7 +113,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.nationality.value1");
+                          sortTable("nationality.value1");
                           setSort(!sort);
                         }}
                       >
@@ -133,7 +133,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.employeeType.value1");
+                          sortTable("employeeType.value1");
                           setSort(!sort);
                         }}
                       >
@@ -153,7 +153,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.employeeRole.value1");
+                          sortTable("employeeRole.value1");
                           setSort(!sort);
                         }}
                       >
@@ -173,7 +173,7 @@ export default function Result({
                       <div
                         class="flex items-center "
                         onClick={() => {
-                          sortTable("employee.phoneContact1");
+                          sortTable("phoneContact1");
                           setSort(!sort);
                         }}
                       >
