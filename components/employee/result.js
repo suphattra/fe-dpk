@@ -51,7 +51,7 @@ export default function Result({
                       className="text-center py-3.5 pl-4 pr-3 text-sm font-semibold text-gray-900 sm:pl-6"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("firstName");
                           setSort(!sort);
@@ -71,7 +71,7 @@ export default function Result({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("nickName");
                           setSort(!sort);
@@ -91,7 +91,7 @@ export default function Result({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("gender.value1");
                           setSort(!sort);
@@ -111,7 +111,7 @@ export default function Result({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("nationality.value1");
                           setSort(!sort);
@@ -131,7 +131,7 @@ export default function Result({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("employeeType.value1");
                           setSort(!sort);
@@ -151,7 +151,7 @@ export default function Result({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("employeeRole.value1");
                           setSort(!sort);
@@ -171,7 +171,7 @@ export default function Result({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       <div
-                        class="flex items-center "
+                        class="flex items-center cursor-pointer"
                         onClick={() => {
                           sortTable("phoneContact1");
                           setSort(!sort);
