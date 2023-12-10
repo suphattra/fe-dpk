@@ -28,7 +28,8 @@ export default function ItemIncome({ extraProduct, deleteAddOnService, callbackI
       index: lastElement.index + 1,
       year: "",
       income: "",
-      productAmount:""
+      productAmount: "",
+      remark: ""
     };
     const _newValue = [...inventoryList, newService]
     setInventoryList((item) => [...item, newService]);
@@ -76,15 +77,15 @@ export default function ItemIncome({ extraProduct, deleteAddOnService, callbackI
             <>
 
               <div className=" " key={index}>
-                < div className="grid grid-cols-10 md:grid-cols-2 lg:grid-cols-10 gap-4 md:py-2 lg:py-0">
-                  <div className="col-span-3">
+                < div className="grid grid-cols-10 md:grid-cols-2 lg:grid-cols-9 gap-4 md:py-2 lg:py-0">
+                  <div className="col-span-2">
                     <InputGroupMaskInline
                       type="text"
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                       id={"year" + index + 1}
                       name="year"
                       label="ปี (พ.ศ.)"
-                      invalid={errorsList?.inventoryCode?errorsList?.inventoryCode[extra.index]:false}
+                      invalid={errorsList?.inventoryCode ? errorsList?.inventoryCode[extra.index] : false}
                       disabled={disabled}
                       value={extra.year}
                       onChange={(e) => {
@@ -92,13 +93,13 @@ export default function ItemIncome({ extraProduct, deleteAddOnService, callbackI
                       }}
                     />
                   </div>
-                  <div className="col-span-3">
-                  <InputGroupMaskInline
+                  <div className="col-span-2">
+                    <InputGroupMaskInline
                       type="text"
                       id="productAmount"
                       name="productAmount"
                       label="จำนวน"
-                      // unit={"ต้น"}
+                      unit={"กิโลกรัม"}
                       classes=""
                       disabled={disabled}
                       value={extra.productAmount}
@@ -107,8 +108,8 @@ export default function ItemIncome({ extraProduct, deleteAddOnService, callbackI
                         handleOnChange(e, index, "productAmount");
                       }}
                     />
-                    </div>
-                  <div className="col-span-3">
+                  </div>
+                  <div className="col-span-2">
                     <InputGroupMaskInline
                       type="text"
                       id="income"
@@ -121,6 +122,20 @@ export default function ItemIncome({ extraProduct, deleteAddOnService, callbackI
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                       onChange={(e) => {
                         handleOnChange(e, index, "income");
+                      }}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <InputGroupInline
+                      type="text"
+                      id={"remark" + index + 1}
+                      name="remark"
+                      label="หมายเหตุ"
+                      invalid={errorsList?.inventoryCode ? errorsList?.inventoryCode[extra.index] : false}
+                      disabled={disabled}
+                      value={extra.remark}
+                      onChange={(e) => {
+                        handleOnChange(e, index, "remark");
                       }}
                     />
                   </div>
