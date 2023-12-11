@@ -33,7 +33,10 @@ export default function EmployeeDetail() {
       startDate: moment().format("YYYY-MM-DD"),
       endDate: null,
       remark: "",
-      profilePicture: "",
+      profilePicture: null,
+      status: 'Active',
+      createdBy: 'initail_by_admin',
+      updatedBy: 'initail_by_admin',
     },
   ]);
   const createValidationSchema = () => {};
@@ -198,7 +201,10 @@ export default function EmployeeDetail() {
       startDate: moment().format("YYYY-MM-DD"),
       endDate: null,
       remark: "",
-      profilePicture: "",
+      profilePicture: null,
+      status: 'Active',
+      createdBy: 'initail_by_admin',
+      updatedBy: 'initail_by_admin',
     };
     setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
   };
