@@ -41,7 +41,7 @@ export default function ModalUpdateInventory(props) {
                         distribution.index = index + 1;
                     })
                 }
-                setInventoryDetail({index:1 ,...res.data.resultData[0]})
+                setInventoryDetail({ index: 1, ...res.data.resultData[0] })
                 setQuerySuccess(true)
             } else {
                 setInventoryDetail({})
@@ -72,7 +72,7 @@ export default function ModalUpdateInventory(props) {
                         if (product?.amount) {
                             clearErrors(
                                 `distribution[1].amount[${product.index}]`
-                                );
+                            );
                         }
                     }
                 } else {
@@ -84,7 +84,7 @@ export default function ModalUpdateInventory(props) {
     const handleSave = async () => {
         setLoading(true)
         const errorList = [];
-        console.log('inventoryDetail',inventoryDetail)
+        console.log('inventoryDetail', inventoryDetail)
         if (!inventoryDetail.importDate) {
             errorList.push({
                 field: `importDate[1]`,
@@ -108,25 +108,25 @@ export default function ModalUpdateInventory(props) {
         }
         if (inventoryDetail.distribution.length > 0) {
             for (let distribution of inventoryDetail.distribution) {
-              if (isEmpty(distribution.branchCode)) {
-                errorList.push({
-                  field: `distribution[1].branchCode[${distribution.index}]`,
-                  type: "custom",
-                  message: "custom message",
-                });
-              }
-              if (!distribution.amount) {
-                errorList.push({
-                  field: `distribution[1].amount[${distribution.index}]`,
-                  type: "custom",
-                  message: "custom message",
-                });
-              }
+                if (isEmpty(distribution.branchCode)) {
+                    errorList.push({
+                        field: `distribution[1].branchCode[${distribution.index}]`,
+                        type: "custom",
+                        message: "custom message",
+                    });
+                }
+                if (!distribution.amount) {
+                    errorList.push({
+                        field: `distribution[1].amount[${distribution.index}]`,
+                        type: "custom",
+                        message: "custom message",
+                    });
+                }
             }
-          }
+        }
         console.log(errorList)
         if (errorList.length === 0) {
-            
+
             let dataList = {
                 dataList: inventoryDetail
             }
@@ -186,7 +186,7 @@ export default function ModalUpdateInventory(props) {
                                         onErrors={errors}
                                     />
                                 }
-                               < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
+                                < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
 
                                     <div className="flex justify-center items-center overflow-y-auto p-4" >
                                         <div className="flex justify-center items-center">

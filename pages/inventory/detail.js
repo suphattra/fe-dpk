@@ -54,7 +54,7 @@ export default function DetailInventory() {
       pricePerUnit: "",
       amount: "",
       paymentType: initial.type,
-      distribution:[],
+      distribution: [],
       bill: {},
       remark: "",
     },
@@ -224,7 +224,7 @@ export default function DetailInventory() {
       pricePerUnit: "",
       amount: "",
       paymentType: initial.type,
-      distribution:[],
+      distribution: [],
       bill: {},
       remark: "",
     };
@@ -276,6 +276,7 @@ export default function DetailInventory() {
               inventoryForm.map((inventory, index) => {
                 return (
                   <CardInventory
+                    mode={mode}
                     index={index}
                     inventory={inventory}
                     onChange={onChange}

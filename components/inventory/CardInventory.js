@@ -110,18 +110,18 @@ export default function CardInventory({
       offset: 1
     }
     await BranchService.getBranchList(param).then(res => {
-        if (res.data.resultCode === 200) {
-          console.log(res.data.resultData)
-          setBranchList(res.data.resultData)
-          setLoadingItem(true)
-        } else {
-          setBranchList([])
-          setLoadingItem(true)
-        }
+      if (res.data.resultCode === 200) {
+        console.log(res.data.resultData)
+        setBranchList(res.data.resultData)
+        setLoadingItem(true)
+      } else {
+        setBranchList([])
+        setLoadingItem(true)
+      }
     }).catch(err => {
-        console.log("==> list job3")
+      console.log("==> list job3")
     })
-}
+  }
 
   const onChangeImg = (imageList, addUpdateIndex, index) => {
     setImages(imageList);
@@ -129,7 +129,7 @@ export default function CardInventory({
   };
 
   const callbackProduct = (e, index, name) => {
-    console.log('dde',e)
+    console.log('dde', e)
     onChange({ target: { name: "distribution", value: e } }, index - 1, "distribution");
   };
   return (
@@ -373,13 +373,14 @@ export default function CardInventory({
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
               />
             </div>
-            <label className="block text-sm font-medium text-red-700 text-center"
+            {/* <label className="block text-sm font-medium text-red-700 text-center"
             >
               {"*สินค้าจะถูกเก็บเข้าคลังกลาง*"}
-            </label>
+            </label> */}
           </div>
-          <hr/>
-          <div className="grid grid-cols-ๅ md:grid-cols-1 lg:grid-cols-ๅ gap-4 mr-6 mt-4 mb-4">
+
+          {mode !== 'create' && <div className="grid grid-cols-ๅ md:grid-cols-1 lg:grid-cols-ๅ gap-4 mr-6 mt-4 mb-4">
+            <hr />
             <label className="block text-sm font-bold text-gary-700">กระจายสินค้า</label>
             {inventory.distribution && inventory.distribution.length <= 0 && (
               <div
@@ -401,14 +402,14 @@ export default function CardInventory({
                 <div>กดปุ่มเพิ่มเมื่อต้องการเพิ่มรายการกระจายสินค้า</div>
               </div>
             )}
-            <ItemProduct 
-            loadingItem={loadingItem}
-            mode={mode}
-            extraProduct={inventory.distribution ? inventory.distribution:[]}
-            inventoryOption={branchList}
-            errors={errors?.distribution ? errors?.distribution[inventory.index] : false}
-            callbackProduct={(e) => callbackProduct(e, inventory.index)}/>
-        </div>
+            <ItemProduct
+              loadingItem={loadingItem}
+              mode={mode}
+              extraProduct={inventory.distribution ? inventory.distribution : []}
+              inventoryOption={branchList}
+              errors={errors?.distribution ? errors?.distribution[inventory.index] : false}
+              callbackProduct={(e) => callbackProduct(e, inventory.index)} />
+          </div>}
         </div>
       )}
       {!querySucess && <LoadingTemplate />}
