@@ -13,7 +13,8 @@ const initial = {
     search: {
         name: '',
         limit: 10,
-        offset: 1
+        offset: 1,
+        status: 'Active',
     },
     branchList: []
 }

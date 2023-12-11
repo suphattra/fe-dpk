@@ -53,7 +53,9 @@ export default function DetailBranch() {
       annualIncome: [],
       remark: "",
       planPicture: {},
-      status: "",
+      status: 'Active',
+      createdBy: 'initail_by_admin',
+      updatedBy: 'initail_by_admin',
     },
   ]);
   const createValidationSchema = () => {};
@@ -198,7 +200,9 @@ export default function DetailBranch() {
       annualIncome: [],
       remark: "",
       planPicture: {},
-      status: "",
+      status: 'Active',
+      createdBy: 'initail_by_admin',
+      updatedBy: 'initail_by_admin',
     };
     setBranchForm((branch) => [...branch, newService]);
     console.log(newService);

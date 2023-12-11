@@ -57,6 +57,7 @@ export default function CardBranch({
     let param = {
       type: "BRANCH",
       subType: code,
+      status: 'Active',
     };
     await MasterService.getConfig(param)
       .then((res) => {
