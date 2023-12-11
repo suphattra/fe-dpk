@@ -38,6 +38,7 @@ export default function Search({
   const getConfigList = async (code) => {
     let param = {
       subType: code,
+      status: 'Active'
     };
     await MasterService.getConfig(param)
       .then((res) => {

@@ -9,7 +9,8 @@ const initial = {
     search: {
         employeeFullName: '',
         limit: 10,
-        offset: 0
+        offset: 0,
+        status: 'Active'
     },
     employeesList: []
 }
