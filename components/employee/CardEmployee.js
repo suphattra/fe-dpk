@@ -118,7 +118,8 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
     const getConfigList = async (code) => {
         let param = {
             subType: code,
-            status: 'Active'
+            status: 'Active',
+            type:'EMPLOYEE'
         }
         await MasterService.getConfig(param).then(res => {
             if (res.data.resultCode === 200) {

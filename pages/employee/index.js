@@ -22,7 +22,7 @@ export default function Driver() {
     const [employeesList, setEmployeesList] = useState(initial.employeesList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
-    const [paramSearch, setParamSearch] = useState({})
+    const [paramSearch, setParamSearch] = useState(initial.search)
     const [employeesListExcel, setEmployeesListExcel] = useState(initial.employeesList)
 
 
@@ -47,7 +47,7 @@ export default function Driver() {
     const paginate = async (pageNumber) => {
         setCurrentPage(pageNumber);
         setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
-        getEmployeeList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
+        getEmployeeList({ ...searchParam, offset: 10 * (pageNumber - 1) })
     }
     const handleSearch = async () => {
         searchParam.employeeFullName = searchParam.employeeFullName.trim()
@@ -82,7 +82,7 @@ export default function Driver() {
 
     const onsort = async (sort, desc) => {
         setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
-        getEmployeeList({ ...paramSearch, sort: sort, desc: desc ? 'DESC' : 'ASC' })
+        getEmployeeList({ ...searchParam, sort: sort, desc: desc ? 'DESC' : 'ASC' })
     }
 
     return (
