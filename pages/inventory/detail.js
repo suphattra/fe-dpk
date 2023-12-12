@@ -57,6 +57,9 @@ export default function DetailInventory() {
       distribution: [],
       bill: {},
       remark: "",
+      status: 'Active',
+      createdBy: 'initail_by_admin',
+      updatedBy: 'initail_by_admin',
     },
   ]);
   const createValidationSchema = () => { };
@@ -227,6 +230,9 @@ export default function DetailInventory() {
       distribution: [],
       bill: {},
       remark: "",
+      status: 'Active',
+      createdBy: 'initail_by_admin',
+      updatedBy: 'initail_by_admin',
     };
     setInventoryForm((inventory) => [...inventory, newService]);
     console.log(newService);

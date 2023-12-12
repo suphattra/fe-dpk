@@ -20,6 +20,7 @@ const initial = {
     sort: "updatedDate",
     limit: 10,
     offset: 0,
+    status: 'Active',
   },
   jobList: [],
 };
@@ -88,6 +89,9 @@ export default function Inventory() {
     }
     if (searchParam.importDateTo) {
       param.importDateTo = searchParam.importDateTo;
+    }
+    if (searchParam.status) {
+      param.status = searchParam.status;
     }
     if (searchParam.inventoryType) {
       let split = "";

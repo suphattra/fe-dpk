@@ -58,6 +58,7 @@ export default function CardInventory({
     let param = {
       type: "INVENTORY",
       subType: code,
+      status: 'Active'
     };
     await MasterService.getConfig(param)
       .then((res) => {
@@ -107,7 +108,10 @@ export default function CardInventory({
   const getBranchList = async () => {
     let param = {
       limit: 1000,
-      offset: 1
+      offset: 1,
+      branchType: 'MD0014',
+      status: 'Active'
+
     }
     await BranchService.getBranchList(param).then(res => {
       if (res.data.resultCode === 200) {
