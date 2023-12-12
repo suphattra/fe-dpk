@@ -40,7 +40,7 @@ export default function Driver() {
     }
     const handleReset = async () => {
         setSearchParam(initial.search)
-        getEmployeeList()
+        getEmployeeList(initial.search)
         setCurrentPage(1);
     }
 
