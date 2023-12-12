@@ -29,7 +29,7 @@ export default function Driver() {
     useEffect(() => {
         async function fetchData() {
             await getEmployeeList(initial.search)
-            await getEmployeeListReport(initial.search)
+            await getEmployeeListReport({ ...initial.search, limit: 1000 })
         }
         fetchData();
     }, []);
@@ -51,7 +51,8 @@ export default function Driver() {
     }
     const handleSearch = async () => {
         searchParam.employeeFullName = searchParam.employeeFullName.trim()
-        getEmployeeList(searchParam);
+        await getEmployeeList(searchParam);
+        await getEmployeeListReport({ ...searchParam, limit: 1000 })
         // setParamSearch(param)
     }
 
@@ -95,7 +96,7 @@ export default function Driver() {
                     }
                 }}>
                 <Breadcrumbs title="ข้อมูลพนักงาน" breadcrumbs={breadcrumbs} />
-                <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} employeesListExcel={employeesListExcel}/>
+                <Search searchParam={searchParam} handleChange={handleChange} handleSearch={handleSearch} handleReset={handleReset} employeesListExcel={employeesListExcel} />
                 <Result employeesList={employeesList} total={total} currentPage={currentPage} callBack={handleSearch} onSort={onsort} paginate={paginate} />
             </LoadingOverlay>
         </Layout>
