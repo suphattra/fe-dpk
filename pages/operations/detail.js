@@ -70,7 +70,9 @@ export default function DetailOperation() {
         inventory: initial.inventory,
         wageType: initial.wageType,
         operationStatus: initial.operationStatus,
-        inventory: []
+        inventory: [],
+        createdBy: 'initail_by_admin',
+        updatedBy: 'initail_by_admin',
     }])
     const createValidationSchema = () => {
     }
@@ -157,18 +159,18 @@ export default function DetailOperation() {
         _newValue[index][name] = e.target.value
         setTimeSheetForm(_newValue)
 
-        if(errors){
-            if(e.target.value){
-                if((name === "inventory" || name === "pickupAmount") && e.target.value?.length > 0){
-                    for(let inventory of e.target.value){
-                        if(inventory?.inventoryCode){
+        if (errors) {
+            if (e.target.value) {
+                if ((name === "inventory" || name === "pickupAmount") && e.target.value?.length > 0) {
+                    for (let inventory of e.target.value) {
+                        if (inventory?.inventoryCode) {
                             clearErrors(`${name}[${_newValue[index].index}].inventoryCode[${inventory.index}]`)
                         }
-                        if(inventory?.pickupAmount){
+                        if (inventory?.pickupAmount) {
                             clearErrors(`${name}[${_newValue[index].index}].pickupAmount[${inventory.index}]`)
                         }
                     }
-                }else{
+                } else {
                     clearErrors(`${name}[${_newValue[index].index}]`);
                 }
             }
@@ -198,17 +200,19 @@ export default function DetailOperation() {
             task: {},//initial.task,
             inventory: initial.inventory,
             wageType: initial.wageType,
-            operationStatus: initial.operationStatus
+            operationStatus: initial.operationStatus,
+            createdBy: 'initail_by_admin',
+            updatedBy: 'initail_by_admin',
         }
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)
     }
 
-    useEffect(()=>{
-        if(timeSheetForm?.length == 0){
+    useEffect(() => {
+        if (timeSheetForm?.length == 0) {
             clearErrors()
         }
-    },[timeSheetForm])
+    }, [timeSheetForm])
 
     return (
         <Layout>

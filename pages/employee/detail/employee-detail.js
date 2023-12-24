@@ -14,7 +14,7 @@ LoadingOverlay.propTypes = undefined;
 export default function EmployeeDetail() {
   const breadcrumbs = [
     { index: 1, href: "/employee", name: "ข้อมูลพนักงาน" },
-    { index: 2, href: "/employee", name: "เพิ่มหนักงาน" },
+    { index: 2, href: "/employee", name: "เพิ่มพนักงาน" },
   ];
   const [loading, setLoading] = useState(false);
   const router = useRouter();
