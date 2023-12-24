@@ -153,7 +153,7 @@ export default function Inventory() {
   const paginate = async (pageNumber) => {
     setCurrentPage(pageNumber);
     setSearchParam((data) => ({ ...data, offset: 10 * (pageNumber - 1) }));
-    getInvenrotyList({ ...paramSearch, offset: 10 * (pageNumber - 1) });
+    getInvenrotyList({ ...searchParam, offset: 10 * (pageNumber - 1) });
   };
   const onsort = async (sort, desc) => {
     setSearchParam((data) => ({
@@ -162,7 +162,7 @@ export default function Inventory() {
       desc: desc ? "DESC" : "ASC",
     }));
     getInvenrotyList({
-      ...paramSearch,
+      ...searchParam,
       sort: sort,
       desc: desc ? "DESC" : "ASC",
     });
