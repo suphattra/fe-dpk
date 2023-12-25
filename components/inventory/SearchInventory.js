@@ -86,9 +86,10 @@ export default function SearchInventory({
       { title: "ชื่อ", style: styleHeader },
       { title: "ประเภท", style: styleHeader },
       { title: "หน่วย", style: styleHeader },
-      { title: "รูปแบบการจ่ายเงิน", style: styleHeader },
+      { title: "ราคา/หน่วย", style: styleHeader },
       { title: "จำนวนคงเหลือ", style: styleHeader },
       { title: "นำเข้าล่าสุด", style: styleHeader },
+      { title: "รูปแบบการจ่ายเงิน", style: styleHeader },
       { title: "หมายเหตุ", style: styleHeader },
     ];
     let dataRecord = [];
@@ -102,16 +103,18 @@ export default function SearchInventory({
           },
           { value: item.inventoryType.value1 ? item.inventoryType.value1 : "" },
           { value: item.unit ? item.unit : "" },
-          {
-            value: item.paymentType.value1 ? item.paymentType.value1 : "",
-            style: styleData,
-          },
+          { value: item.pricePerUnit ? item.pricePerUnit : "" },
           { value: item.amount ? item.amount : "" },
           {
             value: item.importDate
               ? moment(item.importDate).format("DD/MM/YYYY")
               : "",
-          }, { value: item.remark ? item.remark : "" },
+          },
+          {
+            value: item.paymentType.value1 ? item.paymentType.value1 : "",
+            style: styleData,
+          },
+          { value: item.remark ? item.remark : "" },
         ];
       });
     }
@@ -139,7 +142,7 @@ export default function SearchInventory({
             <DownloadExcel
               reportData={reportData}
               name="สร้างรายงาน"
-              filename="รายงานสินค้าและทรัพย์สิน"
+              filename="รายงานสินค้าคงคลัง"
             />
           )}
           <button
