@@ -4,6 +4,9 @@ import InputSelectGroupInline from "../InputSelectGroupInline";
 import { useEffect, useState } from "react";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 import Loading from "../loading";
+import InputGroupDate from "../InputGroupDate";
+import moment from "moment";
+import InputGroup from "../InputGroup";
 
 export default function ItemProduct({
   extraProduct,
@@ -37,6 +40,7 @@ export default function ItemProduct({
       branchCode: "",
       branchName: "",
       amount: "",
+      updatedDate: moment(new Date()).format('YYYY-MM-DD hh:mm:ss')
     };
     const _newValue = [...inventoryList, newService];
     setInventoryList((item) => [...item, newService]);
@@ -73,20 +77,20 @@ export default function ItemProduct({
   };
   return (
     <div className="flow-root">
-      {!loadingItem && mode == 'edit' ? 
-       <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-2 mt-2">
-       
-       <Loading/><Loading/> </div>
-      :
-      inventoryList.length > 0 &&
+      {!loadingItem && mode == 'edit' ?
+        <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-4 mb-2 mt-2">
+
+          <Loading /><Loading /> </div>
+        :
+        inventoryList.length > 0 &&
         inventoryList.map((extra, index) => {
           return (
             <>
               <div
-                className="grid grid-cols-8 md:grid-cols-2 lg:grid-cols-8 gap-4 md:py-2 lg:py-0"
+                className="grid grid-cols-12 md:grid-cols-2 lg:grid-cols-12 gap-4 md:py-2 lg:py-0"
                 key={index}
               >
-                <div className="col-span-4">
+                <div className="col-span-5">
                   <InputSelectGroupInline
                     type="text"
                     id={"distribution" + index + 1}
@@ -137,6 +141,7 @@ export default function ItemProduct({
                     }}
                   />
                 </div>
+
                 <div className="col-span-1 m-0 pt-2">
                   <button
                     type="button"
@@ -159,6 +164,13 @@ export default function ItemProduct({
                       />
                     </svg>
                   </button>
+                </div>
+                <div className="col-span-2 text-left">
+                  <InputGroup
+                    type="text" label=""
+                    disabled
+                    value={"( " + (extra.updatedDate ? moment(new Date(extra.updatedDate)).format('DD-MM-YYYY hh:mm:ss') : "") + " )"}
+                  />
                 </div>
               </div>
             </>
