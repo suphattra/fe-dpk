@@ -6,12 +6,13 @@ import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
 
-export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled, errors }) {
+export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled, errors, mode, statusOperation }) {
   const [inventoryList, setInventoryList] = useState([]);
   const [errorsList, setErrorsList] = useState({});
 
   useEffect(() => {
-    setInventoryList(extraInventory);
+    const _newValue = extraInventory.filter((item) => (item.action !== 'DELETE'));
+    setInventoryList(_newValue);
   }, [extraInventory]);
 
   useEffect(() => {
@@ -29,16 +30,25 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
       inventoryCode: "",
       inventoryName: "",
       unit: "",
-      pickupAmount: ""
+      pickupAmount: "",
+      action: 'NEW'
     };
     const _newValue = [...inventoryList, newService]
     setInventoryList((item) => [...item, newService]);
     callbackInventory(_newValue)
   };
   const deleteInventory = async (rowIndex) => {
-    const _newValue = inventoryList.filter((item) => item.index !== rowIndex);
+    console.log("extraInventory", extraInventory)
+    const _newValue = extraInventory.filter((item) => (item.index !== rowIndex && item.action !== 'DELETE'));
     setInventoryList(_newValue);
-    callbackInventory(_newValue)
+
+    const inventory = _newValue
+    const _oldValue = extraInventory.find((item) => item.index === rowIndex);
+    _oldValue.action = 'DELETE'
+    inventory.push(_oldValue)
+    console.log("inventory", inventory)
+    // setInventoryList(inventory);
+    callbackInventory(inventory)
   };
   const handleOnChange = (e, index, name) => {
     if (name === 'inventory') {
@@ -72,6 +82,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
   return (
     <div className="flow-root">
       {inventoryList.length > 0 &&
+        // .filter((item) => (item.action !== 'DELETE'))
         inventoryList.map((extra, index) => {
           return (
             <>
@@ -87,7 +98,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       label="สินค้าคงคลัง"
                       required
                       invalid={errorsList?.inventoryCode ? errorsList?.inventoryCode[extra.index] : false}
-                      disabled={disabled}
+                      disabled={extra.action === 'NEW' ? false : statusOperation === 'MD0028' ? true : (mode === 'view') ? true : false}
                       options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
                       value={extra.inventoryCode}
                       onChange={(e) => {
@@ -104,7 +115,8 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                       unit={extra.unit ? extra.unit : "หน่วย"}
                       required
                       classes=""
-                      disabled={disabled}
+                      // disabled={disabled}
+                      disabled={extra.action === 'NEW' ? false : statusOperation === 'MD0028' ? true : (mode === 'view') ? true : false}
                       invalid={errorsList?.pickupAmount ? errorsList?.pickupAmount[extra.index] : false}
                       value={extra.pickupAmount}
                       mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}

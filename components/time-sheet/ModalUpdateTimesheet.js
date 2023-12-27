@@ -33,6 +33,7 @@ export default function ModalUpdateTimesheet(props) {
     const [otAmount, setOtAmount] = useState(null)
     const [otRate, setOtRate] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [operationStatusCode, setOperationStatusCode] = useState("")
     const createValidationSchema = () => {
     }
     const validationSchema = createValidationSchema();
@@ -54,6 +55,7 @@ export default function ModalUpdateTimesheet(props) {
 
     }, []);
     useEffect(() => {
+        setOperationStatusCode(timesheetDetail.operationStatus?.code)
         onChangeMainBranch({ target: { name: 'mainBranch', value: timesheetDetail.mainBranch?.branchCode } });
     }, [timesheetDetail.mainBranch])
 
@@ -245,6 +247,7 @@ export default function ModalUpdateTimesheet(props) {
         }
     }
     const callbackInventory = (e, name) => {
+        console.log(e)
         setTimesheetDetail(data => ({ ...data, ['inventory']: e }));
         // onChange({ target: { name: 'inventory', value: e } }, index, 'inventory')
         if (errors) {
@@ -439,9 +442,11 @@ export default function ModalUpdateTimesheet(props) {
                                                         <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
                                                             <ItemInventory extraInventory={timesheetDetail.inventory}
                                                                 inventoryOption={inventoryOption}
+                                                                statusOperation={operationStatusCode}
                                                                 callbackInventory={(e, name) => callbackInventory(e, name)}
                                                                 errors={errors?.inventory ? errors?.inventory[1] : false}
-                                                                disabled={mode == 'view' ? true : false} />
+                                                                disabled={mode == 'view' ? true : false}
+                                                                mode={mode} />
 
                                                         </div>
                                                     </>}
@@ -512,7 +517,7 @@ export default function ModalUpdateTimesheet(props) {
                                                             {operationStatus.map(function (item, inx) {
                                                                 return (
                                                                     <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                                        disabled={mode == 'view' ? true : false}
+                                                                        disabled={operationStatusCode === 'MD0028' ? true : mode == 'view' ? true : false}
                                                                         id={"operationStatus_" + inx} name={"operationStatus"} label={item.value1}
                                                                         onChange={(e) => onChange(e, "operationStatus")}
                                                                         value={item.code}
@@ -526,10 +531,9 @@ export default function ModalUpdateTimesheet(props) {
                                         </div>
                                     }
                                     {!querySuccess &&
-                                    <LoadingTemplate />
+                                        <LoadingTemplate />
                                     }
                                 </div>
-                            
                                 {/* <CardTimesheet index={0} timeSheet={timesheetDetail} onChange={onChange} deleteAddOnService={deleteAddOnService} mode={mode} /> */}
                                 < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
 
