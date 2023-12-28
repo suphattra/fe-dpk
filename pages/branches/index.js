@@ -67,7 +67,7 @@ export default function Branches() {
     }
     const onsort = async (sort, desc) => {
         setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
-        getBranchList({ status: 'Active', sort: sort, desc: desc ? 'DESC' : 'ASC' })
+        getBranchList({ ...searchParam ,status: 'Active', sort: sort, desc: desc ? 'DESC' : 'ASC' })
     }
     return (
         <Layout>
