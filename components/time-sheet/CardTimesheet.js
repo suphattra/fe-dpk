@@ -80,7 +80,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const getInventoryList = async () => {
         setInventoryOption([])
-        await InventoryService.getInventoryList().then(res => {
+        await InventoryService.getInventoryList({  status: 'Active'}).then(res => {
             if (res.data.resultCode === 200) {
                 setInventoryOption(res.data.resultData)
             } else {
@@ -91,7 +91,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const getMainBranchList = async () => {
         let param = {
-            branchType: 'MD0014'
+            branchType: 'MD0014',
+            status: 'Active',
         }
         await BranchService.getBranchList(param).then(res => {
             if (res.data.resultCode === 200) {
@@ -104,7 +105,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const getSubBranchList = async () => {
         let param = {
-            branchType: 'MD0015'
+            branchType: 'MD0015',
+            status: 'Active',
         }
         await BranchService.getBranchList(param).then(res => {
             if (res.data.resultCode === 200) {

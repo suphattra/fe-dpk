@@ -33,6 +33,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
     }, [operationsList]);
     const getConfig = async (configCategory) => {
         let paramquery = {
+            status: 'Active',
             subType: configCategory,
         }
         await MasterService.getConfig(paramquery).then(res => {
@@ -47,7 +48,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         })
     }
     const getEmployeeList = async () => {
-        await EmployeeService.getEmployeeList().then(res => {
+        await EmployeeService.getEmployeeList({status: 'Active'}).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesOption(res.data.resultData)
             } else {
@@ -59,6 +60,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
 
     const getMainBranchList = async () => {
         let param = {
+            status: 'Active',
             branchType: 'MD0014'
         }
         await BranchService.getBranchList(param).then(res => {
@@ -72,6 +74,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
     }
     const getSubBranchList = async () => {
         let param = {
+            status: 'Active',
             branchType: 'MD0015'
         }
         await BranchService.getBranchList(param).then(res => {
