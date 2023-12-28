@@ -78,9 +78,9 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
         }).catch(err => {
         })
     }
-    const getInventoryList = async () => {
+    const getInventoryList = async (branchCode) => {
         setInventoryOption([])
-        await InventoryService.getInventoryList({  status: 'Active'}).then(res => {
+        await InventoryService.getInventoryList({  branchCode: branchCode, status: 'Active'}).then(res => {
             if (res.data.resultCode === 200) {
                 setInventoryOption(res.data.resultData)
             } else {
@@ -236,13 +236,14 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
 
         }
     }
-    const onChangeMainBranch = (e) => {
+    const onChangeMainBranch = async (e) => {
         let obj = []
         obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
         console.log(obj)
         if (!isEmpty(obj)) {
             setProductOption(obj.product)
         }
+        await getInventoryList(e.target.value)
     }
 
     const _convertValue = (value) => {

@@ -45,7 +45,7 @@ export default function ModalUpdateTimesheet(props) {
             await getConfigList('WAGE_TYPE');
             await getConfigList('OPERATION_STATUS');
             await getConfigList('TASK');
-            await getInventoryList();
+            await getInventoryList(timesheetDetail.mainBranch?.branchCode);
             await getMainBranchList();
             await getSubBranchList();
             await getOperationDetail(operationCode)
@@ -99,9 +99,9 @@ export default function ModalUpdateTimesheet(props) {
         }).catch(err => {
         })
     }
-    const getInventoryList = async () => {
+    const getInventoryList = async (branchCode) => {
         setInventoryOption([])
-        await InventoryService.getInventoryList().then(res => {
+        await InventoryService.getInventoryList({branchCode:branchCode}).then(res => {
             if (res.data.resultCode === 200) {
                 setInventoryOption(res.data.resultData)
             } else {
@@ -112,7 +112,8 @@ export default function ModalUpdateTimesheet(props) {
     }
     const getMainBranchList = async () => {
         let param = {
-            branchType: 'MD0014'
+            branchType: 'MD0014',
+            status: 'Active',
         }
         await BranchService.getBranchList(param).then(res => {
             if (res.data.resultCode === 200) {
@@ -125,7 +126,8 @@ export default function ModalUpdateTimesheet(props) {
     }
     const getSubBranchList = async () => {
         let param = {
-            branchType: 'MD0015'
+            branchType: 'MD0015',
+            status: 'Active',
         }
         await BranchService.getBranchList(param).then(res => {
             if (res.data.resultCode === 200) {
@@ -138,7 +140,8 @@ export default function ModalUpdateTimesheet(props) {
     }
     const getConfigList = async (code) => {
         let param = {
-            subType: code
+            subType: code,
+            status: 'Active',
         }
         await MasterService.getConfig(param).then(res => {
             if (res.data.resultCode === 200) {
@@ -221,7 +224,7 @@ export default function ModalUpdateTimesheet(props) {
                     }
 
     }
-    const onChangeMainBranch = (e) => {
+    const onChangeMainBranch = async (e) => {
         let obj = []
         console.log(e)
         obj = mainBranchOption.find((ele => { return ele.branchCode === e.target.value }))
@@ -229,6 +232,8 @@ export default function ModalUpdateTimesheet(props) {
         if (!isEmpty(obj)) {
             setProductOption(obj.product)
         }
+        await getInventoryList(e.target.value)
+
     }
     const _convertValue = (value) => {
         if (!isEmpty(value)) {
