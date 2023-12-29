@@ -97,8 +97,10 @@ export default function ModalUpdateEmployee(props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-2 pb-2 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-white px-2 pb-2 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6">
+              <div className=" md:h-auto max-h-screen overflow-y-auto">
                 {querySuccess && (
+                    
                   <CardEmployee
                     index={1}
                     employee={employeeDetail}
@@ -129,6 +131,7 @@ export default function ModalUpdateEmployee(props) {
                     </div>
                   </div>
                 </footer>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>

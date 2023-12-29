@@ -359,8 +359,10 @@ export default function ModalUpdateTimesheet(props) {
                             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
-                            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6">
-                                <div className="rounded-md p-4 shadow-md">
+                             <Dialog.Panel className="relative transform  rounded-lg bg-white  text-left shadow-xl transition-all w-5/6 ">
+                            {/* <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6"> */}
+                            <div className='md:h-auto max-h-screen overflow-y-auto'>
+                                <div className="rounded-md p-4 shadow-md m-4">
                                     {querySuccess &&
                                         <div className="flex flex-1 items-stretch">
                                             <div className='relative w-0 flex-1 mr-6 border-r'>
@@ -561,7 +563,7 @@ export default function ModalUpdateTimesheet(props) {
                                     </div>
 
                                 </footer>
-
+</div>
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>
