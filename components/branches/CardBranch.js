@@ -42,10 +42,12 @@ export default function CardBranch({
   useEffect(() => {
     if (!isEmpty(branch.planPicture)) {
       let a = []
-      a.push({
-        data_url: branch.planPicture?.filePath,
-        file: branch.planPicture?.filePath
-      })
+      if(!isEmpty(branch.planPicture.filePath)){
+        a.push({
+          data_url: branch.planPicture?.filePath,
+          file: branch.planPicture?.filePath
+        })
+      }
       setImages(a);
     }
 
@@ -130,7 +132,7 @@ export default function CardBranch({
         onChange({ target: { name: name, value: obj } }, index, name);
       } else {
         let obj = {
-          filePath: {}
+          filePath: ""
         }
         onChange({ target: { name: name, value: obj } }, index, name);
       }
