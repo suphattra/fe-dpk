@@ -29,6 +29,8 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const [querySucess, setQuerySucess] = useState(false)
     const [errors, setErrors] = useState({})
 
+    const [inventoryBackUp, setInventoryBackUp] = useState(timeSheet.inventory)
+
     useEffect(() => {
         async function fetchData() {
             let _date = dateSelect ? moment(new Date(dateSelect)).format('YYYY-MM-DD') : moment(new Date()).format('YYYY-MM-DD')
@@ -137,8 +139,15 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
         if (!e.target.checked) {
-            onChange({ target: { name: 'inventory', value: [] } }, index, 'inventory')
-        } else {
+            if(inventoryBackUp){
+                for (let inventory of inventoryBackUp) {
+                    if(!inventory.action){
+                      extra.action = "DELETE"
+                    }
+                  }
+            }
+            onChange({ target: { name: 'inventory', value: inventoryBackUp } }, index, 'inventory')
+        }else {
             onChange({
                 target: {
                     name: 'inventory', value: [{

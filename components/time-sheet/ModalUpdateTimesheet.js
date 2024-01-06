@@ -34,6 +34,7 @@ export default function ModalUpdateTimesheet(props) {
     const [otRate, setOtRate] = useState(null)
     const [loading, setLoading] = useState(false)
     const [operationStatusCode, setOperationStatusCode] = useState("")
+        const [inventoryBackUp, setInventoryBackUp] = useState([])
     const createValidationSchema = () => {
     }
     const validationSchema = createValidationSchema();
@@ -58,6 +59,10 @@ export default function ModalUpdateTimesheet(props) {
         setOperationStatusCode(timesheetDetail.operationStatus?.code)
         onChangeMainBranch({ target: { name: 'mainBranch', value: timesheetDetail.mainBranch?.branchCode } });
     }, [timesheetDetail.mainBranch])
+
+    useEffect(() => {
+        setInventoryBackUp(timesheetDetail.inventory)
+    }, [timesheetDetail.inventory])
 
     const getOperationDetail = async (operationCode) => {
         await OperationsService.getOperationsDetail(operationCode).then(res => {
@@ -248,7 +253,14 @@ export default function ModalUpdateTimesheet(props) {
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
         if (!e.target.checked) {
-            setTimesheetDetail(data => ({ ...data, ['inventory']: [] }));
+            if(inventoryBackUp){
+                for (let inventory of inventoryBackUp) {
+                    if(!inventory.action){
+                        inventory.action = "DELETE"
+                    }
+                  }
+            }
+            setTimesheetDetail(data => ({ ...data, ['inventory']: inventoryBackUp }));
         }
     }
     const callbackInventory = (e, name) => {
