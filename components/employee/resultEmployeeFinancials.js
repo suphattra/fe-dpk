@@ -2,13 +2,14 @@ import { CheckIcon, EyeIcon } from "@heroicons/react/24/outline";
 import Router, { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
-import Pagination from "../../components/Pagination";
+import Pagination from "../Pagination";
 import ModalUpdateEmployee from "./ModalUpdateEmployee";
 import moment from "moment";
 import { BarsArrowDownIcon, BarsArrowUpIcon } from "@heroicons/react/20/solid";
+import ModalUpdateFinancialsEmployee from "./ModalUpdateFinancialsEmployee";
 
-export default function Result({
-  employeesList,
+export default function ResultEmployeeFinancials({
+  employeesFinancialsList,
   total,
   currentPage,
   paginate,
@@ -53,12 +54,12 @@ export default function Result({
                       <div
                         class="flex items-center cursor-pointer"
                         onClick={() => {
-                          sortTable("firstName");
+                          sortTable("financialType.code");
                           setSort(!sort);
                         }}
                       >
                         {" "}
-                        ชื่อ-นามสกุล
+                        ประเภท
                         {sort ? (
                           <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
                         ) : (
@@ -73,12 +74,12 @@ export default function Result({
                       <div
                         class="flex items-center cursor-pointer"
                         onClick={() => {
-                          sortTable("nickName");
+                          sortTable("financialTopic.code");
                           setSort(!sort);
                         }}
                       >
                         {" "}
-                        ชื่อเล่น
+                        รายการ
                         {sort ? (
                           <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
                         ) : (
@@ -93,12 +94,12 @@ export default function Result({
                       <div
                         class="flex items-center cursor-pointer"
                         onClick={() => {
-                          sortTable("gender.value1");
+                          sortTable("amount");
                           setSort(!sort);
                         }}
                       >
                         {" "}
-                        เพศ
+                        จำนวน
                         {sort ? (
                           <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
                         ) : (
@@ -113,12 +114,12 @@ export default function Result({
                       <div
                         class="flex items-center cursor-pointer"
                         onClick={() => {
-                          sortTable("nationality.value1");
+                          sortTable("remark");
                           setSort(!sort);
                         }}
                       >
                         {" "}
-                        สัญชาติ
+                        หมายเหตุ
                         {sort ? (
                           <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
                         ) : (
@@ -133,52 +134,12 @@ export default function Result({
                       <div
                         class="flex items-center cursor-pointer"
                         onClick={() => {
-                          sortTable("employeeType.value1");
+                          sortTable("updatedDate");
                           setSort(!sort);
                         }}
                       >
                         {" "}
-                        ประเภทพนักงาน
-                        {sort ? (
-                          <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
-                        ) : (
-                          <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />
-                        )}
-                      </div>
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
-                    >
-                      <div
-                        class="flex items-center cursor-pointer"
-                        onClick={() => {
-                          sortTable("employeeRole.value1");
-                          setSort(!sort);
-                        }}
-                      >
-                        {" "}
-                        ตำแหน่ง
-                        {sort ? (
-                          <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
-                        ) : (
-                          <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />
-                        )}
-                      </div>
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
-                    >
-                      <div
-                        class="flex items-center cursor-pointer"
-                        onClick={() => {
-                          sortTable("phoneContact1");
-                          setSort(!sort);
-                        }}
-                      >
-                        {" "}
-                        เบอร์โทรติดต่อ
+                        วันเดือนปี
                         {sort ? (
                           <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" />
                         ) : (
@@ -194,37 +155,25 @@ export default function Result({
                       scope="col"
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     ></th>
-                    <th
-                      scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-6"
-                    >
-                      <span className="sr-only">Edit</span>
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {employeesList?.map((employees) => (
+                  {employeesFinancialsList?.map((employees) => (
                     <tr>
                       <td className="whitespace-nowrap  py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {employees.firstName} {employees.lastName}
+                        {employees.financialType?.value1}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {employees.nickName}
+                        {employees.financialTopic?.value1}
                       </td>
                       <td className="whitespace-nowrap  px-3 py-4 text-sm text-gray-500">
-                        {employees.gender.value1}
+                        {employees?.amount}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {employees.nationality.value1}
+                        {employees?.remark}
                       </td>
                       <td className="whitespace-nowrap  px-3 py-4 text-sm text-gray-500">
-                        {employees.employeeType.value1}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {employees.employeeRole.value1}
-                      </td>
-                      <td className="whitespace-nowrap  px-3 py-4 text-sm text-gray-500">
-                        {employees.phoneContact1}
+                        {employees.transactionDate ? moment(employees.transactionDate).format('DD/MM/YYYY') : ""}
                       </td>
 
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
@@ -248,18 +197,6 @@ export default function Result({
                         </svg>
                         <span className="sr-only">, </span>
                       </td>
-
-                      <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            Router.push("employee/disbursement?employeeCode=" + employees.employeeCode);
-                          }}
-                          className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
-                        >
-                          บันทึกเบิก - จ่าย
-                        </button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -270,17 +207,17 @@ export default function Result({
               currentPage={currentPage}
               postsPerPage={10}
               paginate={paginate}
-              lengthList={employeesList}
+              lengthList={employeesFinancialsList}
             />
           </div>
         </div>
         {showModalDetialEmp && (
-          <ModalUpdateEmployee
+          <ModalUpdateFinancialsEmployee
             open={showModalDetialEmp}
             setOpen={onSetOpenModalEdit}
             mode={"edit"}
             callbackLoad={callBack}
-            employeeCode={employeeDetail.employeeCode}
+            _id={employeeDetail._id}
           />
         )}
         <Transition.Root show={open}>

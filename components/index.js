@@ -7,3 +7,4 @@ export { default as InputGroupMask } from "./InputGroupMask";
 export { default as InputGroupDate } from "./InputGroupDate";
 export { default as InputGroupCurrency } from "./InputGroupCurrency";
 export { default as InputGroupMultipleDate } from "./InputGroupMultipleDate";
+export { default as LableGroup } from "./LableGroup";
