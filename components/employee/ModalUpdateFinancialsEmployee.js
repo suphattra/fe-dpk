@@ -56,7 +56,7 @@ export default function ModalUpdateFinancialsEmployee(props) {
   };
   const handleSave = async () => {
     console.log(employeeDetail);
-    await EmployeeService.updateEmployee(employeeCode, employeeDetail).then(
+    await EmployeeService.updateEmployeeFinancials(_id, employeeDetail).then(
       (res) => {
         if (res.data.resultCode === 200) {
           NotifyService.success("แก้ไขข้อมูลเรียบร้อยเเล้ว");

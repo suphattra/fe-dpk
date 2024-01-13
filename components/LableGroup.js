@@ -9,7 +9,7 @@ export default function LableGroup({ label, type, classes, id, name, onChange, v
     return (
         <div className="block w-full">
             <label htmlFor={id} className="block text-sm text-gray-700">
-                <b className="font-bold ">{label}</b> : {value}
+                <b className="font-bold">{label}</b> : {value}
             </label>
         </div>
     )

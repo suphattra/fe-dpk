@@ -7,7 +7,9 @@ export const EmployeeService = {
     createEmployee,
     getEmployeeUnassignList,
     getEmployeeFinancialsList,
-    getEmployeeFinancialsDetail
+    getEmployeeFinancialsDetail,
+    updateEmployeeFinancials,
+    createEmployeeFinancials
 };
 
 async function getEmployeeList(param) {
@@ -58,6 +60,20 @@ async function getEmployeeFinancialsList(param) {
 async function getEmployeeFinancialsDetail(param) {
     try {
         return http.get(`/v1/employees-financials/${param}`);
+    } catch (err) {
+        console.log(err)
+    }
+}
+async function updateEmployeeFinancials(param, data) {
+    try {
+        return http.put(`/v1/employees-financials/${param}`, data);
+    } catch (err) {
+        console.log(err)
+    }
+}
+async function createEmployeeFinancials(data) {
+    try {
+        return http.post(`/v1/employees-financials`, data);
     } catch (err) {
         console.log(err)
     }

@@ -29,14 +29,14 @@ export default function Disbursement(props) {
     const [employeesFinancialsList, setEmployeesFinancialsList] = useState(initial.employeesFinancialsList)
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
-    const [paramSearch, setParamSearch] = useState({})
     const [employeesFinancialsListExcel, setEmployeesFinancialsListExcel] = useState(initial.employeesList)
 
 
     useEffect(() => {
         async function fetchData() {
-            await getEmployeeFinancialsList(initial.search)
-            await getEmployeeFinancialsListReport(initial.search)
+            setSearchParam(data => ({ ...data, employeeCode: employeeCode }));
+            await getEmployeeFinancialsList({...initial.search,employeeCode :employeeCode})
+            await getEmployeeFinancialsListReport({...initial.search,employeeCode :employeeCode})
         }
         fetchData();
     }, []);
@@ -51,17 +51,17 @@ export default function Disbursement(props) {
     }
     const handleReset = async () => {
         setSearchParam(initial.search)
-        getEmployeeFinancialsList()
+        getEmployeeFinancialsList({...initial.search,employeeCode :employeeCode})
         setCurrentPage(1);
     }
 
     const paginate = async (pageNumber) => {
         setCurrentPage(pageNumber);
         setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
-        getEmployeeFinancialsList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
+        getEmployeeFinancialsList({ ...searchParam, offset: 10 * (pageNumber - 1) })
     }
     const handleSearch = async () => {
-        getEmployeeFinancialsList(searchParam);
+        getEmployeeFinancialsList({...searchParam,employeeCode :employeeCode});
     }
 
     const getEmployeeFinancialsList = async (searchParam) => {
@@ -91,7 +91,7 @@ export default function Disbursement(props) {
 
     const onsort = async (sort, desc) => {
         setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
-        getEmployeeFinancialsList({ ...paramSearch, sort: sort, desc: desc ? 'DESC' : 'ASC' })
+        getEmployeeFinancialsList({ ...searchParam, sort: sort, desc: desc ? 'DESC' : 'ASC' })
     }
 
     return (

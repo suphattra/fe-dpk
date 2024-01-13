@@ -1,4 +1,4 @@
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { renderOptions } from "../../helpers/utils";
 import {
   CardBasic,
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
 import DownloadExcel from "../DownloadExcel";
+import moment from "moment";
 
 export default function SearchDisbursement({
   handleSearch,
@@ -30,6 +31,7 @@ export default function SearchDisbursement({
   useEffect(() => {
     initExport();
   }, [employeesFinancialsListExcel]);
+  const router = useRouter();
   const [nationalityOption, setNationaliyOption] = useState([]);
   const [roleOption, setRoleOption] = useState([]);
   const [typeOption, setTypeOption] = useState([]);
@@ -79,14 +81,11 @@ export default function SearchDisbursement({
     };
     const column = [
       { title: "ลำดับ", style: styleHeader },
-      { title: "ชื่อ-นามสกุล", style: styleHeader },
-      { title: "ชื่อเล่น", style: styleHeader },
-      { title: "เพศ", style: styleHeader },
-      { title: "สัญชาติ", style: styleHeader },
-      { title: "ประเภทพนักงาน", style: styleHeader },
-      { title: "ตำแหน่ง", style: styleHeader },
-      { title: "เบอร์โทรติดต่อ1", style: styleHeader },
-      { title: "เบอร์โทรติดต่อ2", style: styleHeader },
+      { title: "วัน/เดือน/ปี", style: styleHeader },
+      { title: "ประเภท", style: styleHeader },
+      { title: "รายการ", style: styleHeader },
+      { title: "จำนวนเงิน", style: styleHeader },
+      { title: "ช่องทางการจ่ายเงิน", style: styleHeader },
       { title: "หมายเหตุ", style: styleHeader },
     ];
     let dataRecord = [];
@@ -94,25 +93,12 @@ export default function SearchDisbursement({
       dataRecord = employeesFinancialsListExcel.map((item, index) => {
         return [
           { value: index + 1, style: styleData },
-          // { value: item.firstName + ' ' + item.lastName, },
-          // {
-          //   value: item.nickName ? item.nickName : "",
-          // },
-          // { value: item.gender.value1 ? item.gender.value1 : "" },
-          // { value: item.nationality.value1 ? item.nationality.value1 : "" },
-          // {
-          //   value: item.employeeType.value1 ? item.employeeType.value1 : "",
-          //   style: styleData,
-          // },
-          // {
-          //   value: item.employeeRole.value1 ? item.employeeRole.value1 : "",
-          //   style: styleData,
-          // },
-          // { value: item.phoneContact1 ? item.phoneContact1 : "" },
-
-          // { value: item.phoneContact2 ? item.phoneContact2 : "" },
-
-          // { value: item.remark ? item.remark : "" },
+          { value: item.transactionDate ? moment(item.transactionDate).format('DD/MM/YYYY') : ""},
+          { value: item.financialType?.value1, },
+          { value: item.financialTopic?.value1 },
+          { value: item.amount ? item.amount : "" },
+          { value: item.financialType?.code === 'MD0089' ? item.paymentType?.value1 : "-" },
+          { value: item.remark ? item.remark : "" },
         ];
       });
     }
@@ -140,13 +126,13 @@ export default function SearchDisbursement({
             <DownloadExcel
               reportData={reportData}
               name="สร้างรายงาน"
-              filename="รายงานพนักงาน"
+              filename={"รายงานการเบิกจ่ายเงิน_" + employeeDetail.firstName + ' ' + employeeDetail.lastName}
             />
           )}
           <button
             type="button"
             onClick={() => {
-              Router.push("employee/detail/employee-detail");
+              Router.push("detail/employee-disbursement?employeeCode="+employeeDetail.employeeCode);
             }}
             className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
           >

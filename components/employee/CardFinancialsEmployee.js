@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { PencilIcon, TrashIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import ListFile from "../ListFile";
 import { MasterService } from "../../pages/api/master.service";
-import InputGroup from "../InputGroup";
 import moment from "moment/moment";
 import ImageUploading from 'react-images-uploading';
 import LoadingTemplate from "../LoadingTemplate";
@@ -61,21 +60,17 @@ export default function CardFinancialsEmployee({ index, employee, timeSheet, onC
 
     const handleChange = (e, index, name) => {
         let obj = {}
-        if (name === 'financialTopic' || name === 'gender' || name === 'nationality'
-            || name === 'employeeType' || name === 'employeeRole') {
+        if (name === 'financialTopic' || name === 'paymentType' || name === 'financialType') {
             let _option = []
             switch (name) {
                 case "financialTopic":
                     _option = typeOption
                     break;
-                case "gender":
-                    _option = genderOption;
+                case "paymentType":
+                    _option = paymentOption;
                     break;
-                case "nationality":
-                    _option = nationalityOption;
-                    break;
-                case "employeeRole":
-                    _option = roleOption;
+                case "financialType":
+                    _option = financialTypeOption;
                     break;
                 default:
             }
@@ -119,7 +114,7 @@ export default function CardFinancialsEmployee({ index, employee, timeSheet, onC
 
     const onChangeImg = (imageList, addUpdateIndex, index) => {
         setImages(imageList);
-        handleChange(imageList, index, 'profilePicture')
+        handleChange(imageList, index, 'receipt')
     };
 
     const getConfigList = async (code) => {
@@ -169,6 +164,10 @@ export default function CardFinancialsEmployee({ index, employee, timeSheet, onC
                                     format="YYYY-MM-DD"
                                     onChange={(e) => { onChange(e, index, "transactionDate") }}
                                     value={moment().format('YYYY-MM-DD')}
+                                    invalid={
+                                        errors?.transactionDate ? errors?.transactionDate[employee.index] : false
+                                    }
+                                    required
                                 />
                                 <div class="col-span-2">
                                     <label className="block text-sm font-medium text-gray-700">
@@ -179,10 +178,11 @@ export default function CardFinancialsEmployee({ index, employee, timeSheet, onC
                                         {financialTypeOption && financialTypeOption.map(function (item, inx) {
                                             return (
                                                 <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                    id={"wageType_" + inx + employee.index} name={"financialType" + employee.index} label={item.value1}
+                                                    id={"financialType_" + inx + employee.index} name={"financialType" + employee.index} label={item.value1}
                                                     onChange={(e) => handleChange(e, index, "financialType")}
                                                     value={item.code}
                                                     required
+                                                    disabled={mode == 'edit' ? true : false}
                                                     checked={item.code === employee.financialType?.code ? true : false} />
                                             )
                                         })}
@@ -214,25 +214,27 @@ export default function CardFinancialsEmployee({ index, employee, timeSheet, onC
                                             unit="บาท"
                                             invalid={errors?.amount ? errors?.amount[employee.index] : false}
                                         />
-                                        <div class="col-span-1">
-                                            <label className="block text-sm font-medium text-gray-700">
-                                                ช่องทางการจ่าย
-                                                <span style={{ color: "#991B1E" }}> *</span>
-                                            </label>
-                                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
-                                                {paymentOption && paymentOption.map(function (item, inx) {
-                                                    return (
-                                                        <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                            id={"paymentType_" + inx + employee.index} name={"paymentType" + employee.index} label={item.value1}
-                                                            onChange={(e) => handleChange(e, index, "paymentType")}
-                                                            value={item.code}
-                                                            required
-                                                            checked={item.code === employee.paymentType?.code ? true : false} />
-                                                    )
-                                                })}
+                                        {employee.financialType?.code === 'MD0089' && 
+                                            <div class="col-span-1">
+                                                <label className="block text-sm font-medium text-gray-700">
+                                                    ช่องทางการจ่าย
+                                                    <span style={{ color: "#991B1E" }}> *</span>
+                                                </label>
+                                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
+                                                    {paymentOption && paymentOption.map(function (item, inx) {
+                                                        return (
+                                                            <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                                id={"paymentType_" + inx + employee.index} name={"paymentType" + employee.index} label={item.value1}
+                                                                onChange={(e) => handleChange(e, index, "paymentType")}
+                                                                value={item.code}
+                                                                required
+                                                                checked={item.code === employee.paymentType?.code ? true : false} />
+                                                        )
+                                                    })}
 
+                                                </div>
                                             </div>
-                                        </div>
+                                        }
                                     </div>
                                 </div>
                                 <div className="relative w-0 flex-1">
