@@ -52,6 +52,12 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
                                             </div>
                                         </th>
                                         <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
+                                            <div class="flex items-center cursor-pointer" onClick={() => { sortTable('inventoryTradeName'); setSort(!sort) }}>ชื่อการค้า
+                                                {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
+
+                                            </div>
+                                        </th>
+                                        <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
                                             <div class="flex items-center cursor-pointer" onClick={() => { sortTable('inventoryType.value1'); setSort(!sort) }}>ประเภท
                                                 {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
 
@@ -98,6 +104,7 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
                                                     {item.inventoryCode}
                                                 </td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.inventoryName}</td>
+                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.inventoryTradeName}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.inventoryType?.value1}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.unit}</td>
                                                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{item.paymentType?.value1}</td>
