@@ -201,13 +201,15 @@ export default function EmployeeDisbursement() {
             {addEmployeeForm &&
               addEmployeeForm.map((employee, index) => {
                 return (
-                  <CardFinancialsEmployee
-                    index={index}
-                    employee={employee}
-                    onChange={onChange}
-                    deleteAddOnService={deleteAddOnService}
-                    onErrors={errors}
-                  />
+                  <div className="shadow-md">
+                    <CardFinancialsEmployee
+                      index={index}
+                      employee={employee}
+                      onChange={onChange}
+                      deleteAddOnService={deleteAddOnService}
+                      onErrors={errors}
+                    />
+                  </div>
                 );
               })}
           </form>

@@ -151,7 +151,7 @@ export default function CardFinancialsEmployee({ index, employee, timeSheet, onC
 
             </div>}
             {querySucess &&
-                <div className="rounded-md p-4 shadow-md">
+                <div className="rounded-md p-4">
                     {/* items-stretch overflow-hidden */}
                     {/* {querySucess && */}
                     <div className="flex flex-1 items-stretch">
