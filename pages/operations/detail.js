@@ -228,7 +228,9 @@ export default function DetailOperation() {
                     <form className="space-y-4" id='inputForm'>
                         {timeSheetForm && timeSheetForm.map((timeSheet, index) => {
                             return (
-                                <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} onErrors={errors} />
+                                <div className=" shadow-md">
+                                    <CardTimesheet index={index} timeSheet={timeSheet} onChange={onChange} deleteAddOnService={deleteAddOnService} onErrors={errors} />
+                                </div>
                             )
                         })}
                     </form>

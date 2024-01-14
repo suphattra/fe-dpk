@@ -142,7 +142,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
             if(inventoryBackUp){
                 for (let inventory of inventoryBackUp) {
                     if(!inventory.action){
-                      extra.action = "DELETE"
+                        inventory.action = "DELETE"
                     }
                   }
             }
@@ -278,7 +278,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
 
             </div>}
           
-            <div className="rounded-md p-4 shadow-md">
+            <div className="rounded-md p-4">
                 {/* items-stretch overflow-hidden */}
                 {querySucess &&
                     <div className="flex flex-1 items-stretch">
