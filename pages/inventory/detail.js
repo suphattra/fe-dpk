@@ -281,14 +281,16 @@ export default function DetailInventory() {
             {inventoryForm &&
               inventoryForm.map((inventory, index) => {
                 return (
-                  <CardInventory
-                    mode={mode}
-                    index={index}
-                    inventory={inventory}
-                    onChange={onChange}
-                    deleteAddOnService={deleteAddOnService}
-                    onErrors={errors}
-                  />
+                  <div className=" shadow-md">
+                    <CardInventory
+                      mode={mode}
+                      index={index}
+                      inventory={inventory}
+                      onChange={onChange}
+                      deleteAddOnService={deleteAddOnService}
+                      onErrors={errors}
+                    />
+                  </div>
                 );
               })}
           </form>

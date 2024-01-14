@@ -150,7 +150,7 @@ export default function CardInventory({
         </div>
       )}
       {querySucess && (
-        <div className="rounded-md p-4 shadow-md">
+        <div className="rounded-md p-4 ">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mr-6">
             <InputGroupDate
               type="date" id={"importDate" + inventory.index} name="importDate" label="วันที่นำเข้า"
