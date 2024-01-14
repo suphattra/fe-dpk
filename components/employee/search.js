@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
 import DownloadExcel from "../DownloadExcel";
+import moment from "moment";
 
 export default function Search({
   handleSearch,
@@ -75,11 +76,13 @@ export default function Search({
       { title: "ชื่อ-นามสกุล", style: styleHeader },
       { title: "ชื่อเล่น", style: styleHeader },
       { title: "เพศ", style: styleHeader },
+      { title: "วันเกิด", style: styleHeader },
       { title: "สัญชาติ", style: styleHeader },
+      { title: "เบอร์โทรติดต่อ", style: styleHeader },
       { title: "ประเภทพนักงาน", style: styleHeader },
-      { title: "ตำแหน่ง", style: styleHeader },
-      { title: "เบอร์โทรติดต่อ1", style: styleHeader },
-      { title: "เบอร์โทรติดต่อ2", style: styleHeader },
+      { title: "ตำแหน่งงาน", style: styleHeader },
+      { title: "วันเริ่มงาน", style: styleHeader },
+      { title: "วันสิ้นสุดงาน", style: styleHeader },
       { title: "หมายเหตุ", style: styleHeader },
     ];
     let dataRecord = [];
@@ -88,11 +91,11 @@ export default function Search({
         return [
           { value: index + 1, style: styleData },
           { value: item.firstName + ' ' + item.lastName, },
-          {
-            value: item.nickName ? item.nickName : "",
-          },
+          { value: item.nickName ? item.nickName : "",},
           { value: item.gender.value1 ? item.gender.value1 : "" },
+          { value: item.birthDate ? moment(item.birthDate).format('DD/MM/YYYY') : ""},
           { value: item.nationality.value1 ? item.nationality.value1 : "" },
+          { value: item.phoneContact1 ? item.phoneContact1 : "" },
           {
             value: item.employeeType.value1 ? item.employeeType.value1 : "",
             style: styleData,
@@ -101,10 +104,8 @@ export default function Search({
             value: item.employeeRole.value1 ? item.employeeRole.value1 : "",
             style: styleData,
           },
-          { value: item.phoneContact1 ? item.phoneContact1 : "" },
-         
-          { value: item.phoneContact2 ? item.phoneContact2 : "" },
-
+          { value: item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : ""},
+          { value: item.endDate ? moment(item.endDate).format('DD/MM/YYYY') : ""},
           { value: item.remark ? item.remark : "" },
         ];
       });
@@ -133,7 +134,7 @@ export default function Search({
             <DownloadExcel
               reportData={reportData}
               name="สร้างรายงาน"
-              filename="รายงานพนักงาน"
+              filename="รายงานข้อมูลพนักงาน"
             />
           )}
           <button
