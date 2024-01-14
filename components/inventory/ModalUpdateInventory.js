@@ -187,7 +187,7 @@ export default function ModalUpdateInventory(props) {
             >
               
               <Dialog.Panel className="h-full relative transform  rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full">
-              <div className="h-5/6 overflow-y-auto shadow-inner">
+              <div className="h-5/6 overflow-y-auto shadow-inner border rounded-md">
              {querySuccess && (
                     <CardInventory
                       index={1}
@@ -199,8 +199,8 @@ export default function ModalUpdateInventory(props) {
                     />
                   )}
                    </div>
-                  <footer className="flex  h-1/6 items-center justify-center ">
-                    <div className="flex justify-center items-center overflow-y-auto ">
+                  <footer className="flex  h-1/6 items-center justify-center">
+                    <div className="flex justify-center items-center overflow-y-auto my-10">
                       <div className="flex justify-center items-center">
                         <button
                           type="button"

@@ -151,7 +151,7 @@ export default function CardInventory({
       )}
       {querySucess && (
         <div className="rounded-md p-4 shadow-md">
-          <div className="grid grid-cols-3 md:grid-cols-1 lg:grid-cols-3 gap-4 mr-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mr-6">
             <InputGroupDate
               type="date" id={"importDate" + inventory.index} name="importDate" label="วันที่นำเข้า"
               format="YYYY-MM-DD"
@@ -186,7 +186,7 @@ export default function CardInventory({
               }
             />
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-1 lg:grid-cols-3 gap-4 mr-6 mt-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mr-6 mt-4 mb-4">
             <InputGroup
               type="text"
               label="ชื่อสามัญ"
@@ -212,7 +212,7 @@ export default function CardInventory({
               }
             />
           </div>
-          <div className="grid grid-cols-4 md:grid-cols-1 lg:grid-cols-4 gap-4 mr-6 mt-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mr-6 mt-4 mb-4">
             <InputGroup
               type="text"
               label="หน่วยนับ"
@@ -360,7 +360,7 @@ export default function CardInventory({
               </div>
             )}
           </ImageUploading>
-          <div className="grid grid-cols-ๅ md:grid-cols-1 lg:grid-cols-ๅ gap-4 mr-6 mt-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6 mt-4 mb-4">
             <div className="block w-full">
               <label
                 htmlFor={"remark"}
@@ -383,7 +383,7 @@ export default function CardInventory({
             </label>}
           </div>
 
-          {mode !== 'create' && <div className="grid grid-cols-ๅ md:grid-cols-1 lg:grid-cols-ๅ gap-4 mr-6 mt-4 mb-4">
+          {mode !== 'create' && <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-ๅ gap-4 mr-6 mt-4 mb-4">
             <hr />
             <label className="block text-sm font-bold text-gary-700">กระจายสินค้า</label>
             {inventory.distribution && inventory.distribution.length <= 0 && (
