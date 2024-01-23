@@ -9,13 +9,13 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => {
-    // const islogin = authService.getToken();
-    // if (!islogin) {
-    //   router.push('/login');
-    //   setIsAuthenticated(false);
-    // } else {
-    //   setIsAuthenticated(true)
-    // }
+    const islogin = authService.getToken();
+    if (!islogin) {
+      router.push('/login');
+      setIsAuthenticated(false);
+    } else {
+      setIsAuthenticated(true)
+    }
     setIsAuthenticated(true)
   }, [isAuthenticated]);
 

@@ -1,5 +1,6 @@
 import jwt from 'jwt-decode'
 import { http } from '../dpk/http.endpoint.dpk';
+import {sha256} from 'crypto-hash';
 export const authService = {
     getToken,
     authentication,
@@ -51,16 +52,21 @@ export function authHeaderFile() {
         return {};
     }
 }
-function authentication(param) {
-    try {
-        return http.post(`/nx/v1/auth/login/admin`, {
-            userName: param.username,
-            password: param.password
+async function authentication(param) {
+    try { 
+        // /auth/sign-in /auth/login
+        let shaPassword = await sha256(param.password)
+        console.log(console.log(shaPassword))
+        return http.post(`/v1/auth/sign-in`, {
+            username: param.username,
+            password: shaPassword
         }).then(function (response) {
             if (response.status === 200) {
-                if (response.data.resultCode === '20000') {
-                    localStorage.setItem('username', response.data.resultData.email);
-                    localStorage.setItem('userId', response.data.resultData.userId);
+                if (response.data.resultCode === '200') {
+                    const user = jwt(response.data.resultData.accessToken);
+                    localStorage.setItem('username', user.email);
+                    localStorage.setItem('role', user.role);
+                    localStorage.setItem('userId', user.email);
                     localStorage.setItem('accessToken', response.data.resultData.accessToken);
                 }
                 return response;
@@ -91,6 +97,7 @@ function authentication(param) {
 async function logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('username');
+    localStorage.removeItem('role');
     localStorage.removeItem('userId');
     return true
 }
