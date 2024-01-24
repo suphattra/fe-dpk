@@ -8,11 +8,13 @@ RUN mkdir /dpk_frondend
 WORKDIR /dpk_frondend
 
 # Add the source code to app
-COPY ./ /dpk_frondend
+COPY ./package.json /dpk_frondend
+# COPY ./ /dpk_frondend
 
 # Install all the dependencies
 RUN npm install
 
+COPY . /dpk_frondend
 # Generate the build of the application
 RUN npm run build
 
