@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------------
 # Install dependencies stage
-FROM node:20.11.0 as dependencies
+FROM node:20.11.0 as build
 
 RUN mkdir /dpk_frondend
 WORKDIR /dpk_frondend
