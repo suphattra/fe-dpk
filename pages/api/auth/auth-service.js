@@ -1,6 +1,5 @@
 import jwt from 'jwt-decode'
 import { http } from '../dpk/http.endpoint.dpk';
-import {sha256} from 'crypto-hash';
 export const authService = {
     getToken,
     authentication,
@@ -54,12 +53,9 @@ export function authHeaderFile() {
 }
 async function authentication(param) {
     try { 
-        // /auth/sign-in /auth/login
-        let shaPassword = await sha256(param.password)
-        console.log(console.log(shaPassword))
         return http.post(`/v1/auth/sign-in`, {
             username: param.username,
-            password: shaPassword
+            password: param.password
         }).then(function (response) {
             if (response.status === 200) {
                 if (response.data.resultCode === '200') {
