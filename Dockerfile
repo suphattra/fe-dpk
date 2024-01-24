@@ -1,17 +1,13 @@
 # ----------------------------------------------------------------------------------
 # Install dependencies stage
 FROM node:20.11.0 as dependencies
-WORKDIR /app
-COPY package.json package-lock.json ./
-##RUN npm i -S react-loading-overlay --force
-RUN npm install --frozen-lockfile
 
-# ----------------------------------------------------------------------------------
-# Build stage
-FROM node:20.11.0 as builder
-WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
+RUN mkdir /dpk_frondend
+WORKDIR /dpk_frondend
+
+COPY ./ /dpk_frondend
+
+RUN npm install
 
 RUN npm run build
 
