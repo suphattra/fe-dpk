@@ -4,17 +4,17 @@
 FROM node:20.11.0
 
 # Set the working directory
-RUN mkdir /dpk_frondend
-WORKDIR /dpk_frondend
+RUN mkdir /dpk_frontend
+WORKDIR /dpk_frontend
 
 # Add the source code to app
-COPY ./package.json /dpk_frondend
-# COPY ./ /dpk_frondend
+COPY ./package.json /dpk_frontend
+# COPY ./ /dpk_frontend
 
 # Install all the dependencies
 RUN npm install
 
-COPY . /dpk_frondend
+COPY . /dpk_frontend
 # Generate the build of the application
 RUN npm run build
 
