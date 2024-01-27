@@ -108,7 +108,7 @@ export default function CardInventory({
   const getBranchList = async () => {
     let param = {
       limit: 1000,
-      offset: 1,
+      offset: 0,
       branchType: 'MD0014',
       status: 'Active'
 
