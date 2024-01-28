@@ -51,8 +51,9 @@ export default function Driver() {
     }
     const handleSearch = async () => {
         searchParam.employeeFullName = searchParam.employeeFullName.trim()
-        await getEmployeeList(searchParam);
+        await getEmployeeList({ ...searchParam, limit: 10, offset: 0 });
         await getEmployeeListReport({ ...searchParam, limit: 1000 })
+        setCurrentPage(1);
         // setParamSearch(param)
     }
 

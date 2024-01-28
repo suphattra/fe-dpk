@@ -14,7 +14,7 @@ LoadingOverlay.propTypes = undefined;
 const initial = {
   search: {
     inventoryCode: "",
-    importDateFrom: "", 
+    importDateFrom: "",
     importDateTo: "",
     desc: "DESC",
     sort: "updatedDate",
@@ -75,7 +75,7 @@ export default function Inventory() {
       setSearchParam((data) => ({ ...data, [name]: value }));
     }
   };
-  const handleSearch = async () => {
+  const parstFilter = async () => {
     let param = {};
     console.log("searchParam", searchParam);
     if (searchParam.inventoryCode) {
@@ -107,8 +107,14 @@ export default function Inventory() {
       });
       param.paymentType = split;
     }
-
-    setParamSearch(param);
+    param.limit = 10
+    param.offset = 0
+    return param
+  }
+  const handleSearch = async () => {
+    let param = await parstFilter(searchParam)
+    setCurrentPage(1);
+    // setParamSearch(param);
     console.log(param);
     getInvenrotyList(param);
     getInvenrotyListReport(param);
@@ -153,7 +159,8 @@ export default function Inventory() {
   const paginate = async (pageNumber) => {
     setCurrentPage(pageNumber);
     setSearchParam((data) => ({ ...data, offset: 10 * (pageNumber - 1) }));
-    getInvenrotyList({ ...searchParam, offset: 10 * (pageNumber - 1) });
+    let param = await parstFilter(searchParam)
+    getInvenrotyList({ ...param, offset: 10 * (pageNumber - 1) });
   };
   const onsort = async (sort, desc) => {
     setSearchParam((data) => ({
@@ -161,8 +168,9 @@ export default function Inventory() {
       sort: sort,
       desc: desc ? "DESC" : "ASC",
     }));
+    let param = await parstFilter(searchParam)
     getInvenrotyList({
-      ...searchParam,
+      ...param,
       sort: sort,
       desc: desc ? "DESC" : "ASC",
     });

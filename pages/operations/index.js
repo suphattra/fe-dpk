@@ -33,7 +33,6 @@ export default function Job() {
     const [total, setTotal] = useState(0)
     const [currentPage, setCurrentPage] = useState(1)
     const breadcrumbs = [{ index: 1, href: '/job', name: 'บันทึกการทำงาน' }]
-    const [paramSearch, setParamSearch] = useState({})
     useEffect(() => {
         async function fetchData() {
             await getOperationsList(searchParam);
@@ -57,8 +56,8 @@ export default function Job() {
             setSearchParam(data => ({ ...data, [name]: value }));
         }
     }
-    const handleSearch = async () => {
-        let param = {}
+    const parstFilter = async () => {
+        let param = {};
         console.log("searchParam", searchParam)
         if (searchParam.task) {
             let split = ""
@@ -102,7 +101,14 @@ export default function Job() {
         if (searchParam.endDate) {
             param.endDate = searchParam.endDate
         }
-        setParamSearch(param)
+        param.limit = 10
+        param.offset = 0
+        return param
+    }
+    const handleSearch = async () => {
+        let param = await parstFilter(searchParam)
+        setCurrentPage(1);
+        // setParamSearch(param)
         console.log(param)
         getOperationsList(param);
         getOperationsListReport(param)
@@ -126,7 +132,7 @@ export default function Job() {
     const getOperationsListReport = async (searchParam) => {
         setLoading(true)
         let param = convertFilter(searchParam)
-        param.limit = 100000
+        param.limit = 100000000
         await OperationsService.getOperationsList(param).then(res => {
             if (res.data.resultCode === 200) {
                 setOperationsListExcel(res.data.resultData)
@@ -143,11 +149,13 @@ export default function Job() {
     const paginate = async (pageNumber) => {
         setCurrentPage(pageNumber);
         setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
-        getOperationsList({ ...paramSearch, offset: 10 * (pageNumber - 1) })
+        let param = await parstFilter(searchParam)
+        getOperationsList({ ...param, offset: 10 * (pageNumber - 1) })
     }
     const onsort = async (sort, desc) => {
         setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
-        getOperationsList({ ...paramSearch, sort: sort, desc: desc ? 'DESC' : 'ASC' })
+        let param = await parstFilter(searchParam)
+        getOperationsList({ ...param, sort: sort, desc: desc ? 'DESC' : 'ASC' })
     }
     return (
         <>
