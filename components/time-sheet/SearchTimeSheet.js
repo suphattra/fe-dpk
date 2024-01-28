@@ -29,7 +29,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         fetchData();
     }, []);
     useEffect(() => {
-         initExport()
+        initExport()
     }, [operationsList]);
     const getConfig = async (configCategory) => {
         let paramquery = {
@@ -48,7 +48,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         })
     }
     const getEmployeeList = async () => {
-        await EmployeeService.getEmployeeList({status: 'Active'}).then(res => {
+        await EmployeeService.getEmployeeList({ status: 'Active', limit: 10000 }).then(res => {
             if (res.data.resultCode === 200) {
                 setEmployeesOption(res.data.resultData)
             } else {
