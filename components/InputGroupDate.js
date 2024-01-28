@@ -13,9 +13,13 @@ export default function InputGroupDate({ label, type, classes, id, name, onChang
         return classes.filter(Boolean).join(' ')
     }
     const handleChangeDate = (date) => {
-        const dateCurrent = new Date(date);
-        setSelect(date)
-        onChange({ target: { name: name, value: moment(dateCurrent).format(format) } })
+        if (date) {
+            const dateCurrent = new Date(date);
+            setSelect(date)
+            onChange({ target: { name: name, value: moment(dateCurrent).format(format) } })
+        } else {
+            onChange({ target: { name: name, value: '' } })
+        }
 
     };
     useEffect(() => {
