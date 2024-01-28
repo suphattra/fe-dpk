@@ -63,11 +63,11 @@ export default function Branches() {
     const paginate = async (pageNumber) => {
         setCurrentPage(pageNumber);
         setSearchParam(data => ({ ...data, offset: 10 * (pageNumber - 1) }));
-        getBranchList({ status: 'Active', offset: 10 * (pageNumber - 1) })
+        getBranchList({ ...searchParam, status: 'Active', offset: 10 * (pageNumber - 1) })
     }
     const onsort = async (sort, desc) => {
         setSearchParam(data => ({ ...data, sort: sort, desc: desc ? 'DESC' : 'ASC' }));
-        getBranchList({ ...searchParam ,status: 'Active', sort: sort, desc: desc ? 'DESC' : 'ASC' })
+        getBranchList({ ...searchParam, status: 'Active', sort: sort, desc: desc ? 'DESC' : 'ASC' })
     }
     return (
         <Layout>
