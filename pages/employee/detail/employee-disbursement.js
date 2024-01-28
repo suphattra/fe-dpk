@@ -10,6 +10,7 @@ import { NotifyService } from "../../api/notify.service";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import CardFinancialsEmployee from "../../../components/employee/CardFinancialsEmployee";
+import { authService } from "../../api/auth/auth-service";
 LoadingOverlay.propTypes = undefined;
 export default function EmployeeDisbursement() {
   const router = useRouter();
@@ -20,31 +21,8 @@ export default function EmployeeDisbursement() {
   const employeeCode = router.query["employeeCode"];
   const [loading, setLoading] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState(breadcrumbsData);
-  const [addEmployeeForm, setAddEmployeeForm] = useState([
-    {
-      index: 1,
-      transactionDate: moment(new Date()).format("YYYY-MM-DD"),
-      employeeCode: employeeCode,
-      financialType: {
-        code: 'MD0088',
-        value1: "รายการเบิก"
-      },
-      financialTopic: {
-        code: '',
-        value1: ""
-      },
-      amount: "",
-      paymentType: {
-        code: 'MD0090',
-        value1: "เงินสด"
-      },
-      remark: "",
-      receipt: null,
-      status: 'Active',
-      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
-    },
-  ]);
+  const [addEmployeeForm, setAddEmployeeForm] = useState([]);
+  const [userLogin, setUserLogin] = useState("")
   const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -61,7 +39,35 @@ export default function EmployeeDisbursement() {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
+  useEffect(() => {
+    setUserLogin(authService.getUserId())
+    setAddEmployeeForm([
+      {
+        index: 1,
+        transactionDate: moment(new Date()).format("YYYY-MM-DD"),
+        employeeCode: employeeCode,
+        financialType: {
+          code: 'MD0088',
+          value1: "รายการเบิก"
+        },
+        financialTopic: {
+          code: '',
+          value1: ""
+        },
+        amount: "",
+        paymentType: {
+          code: 'MD0090',
+          value1: "เงินสด"
+        },
+        remark: "",
+        receipt: null,
+        status: 'Active',
+        createdBy: authService.getUserId(),//'initail_by_admin',
+        updatedBy: authService.getUserId()//'initail_by_admin',
+      },
+    ])
 
+  }, [])
   useEffect(() => {
     async function fetchData() {
       await getEmployeeDetail(employeeCode);
@@ -172,8 +178,8 @@ export default function EmployeeDisbursement() {
       remark: "",
       receipt: null,
       status: 'Active',
-      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
+      createdBy: userLogin,//'initail_by_admin',
+      updatedBy: userLogin//'initail_by_admin',
     };
     setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
   };

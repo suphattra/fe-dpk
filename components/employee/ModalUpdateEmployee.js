@@ -6,6 +6,7 @@ import { NotifyService } from "../../pages/api/notify.service";
 import CardEmployee from "./CardEmployee";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { authService } from "../../pages/api/auth/auth-service";
 
 export default function ModalUpdateEmployee(props) {
   const {
@@ -17,7 +18,7 @@ export default function ModalUpdateEmployee(props) {
   } = props;
   const [employeeDetail, setEmployeeDetail] = useState({});
   const [querySuccess, setQuerySuccess] = useState(false);
-
+  const [userLogin, setUserLogin] = useState("")
   const createValidationSchema = () => {};
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -32,6 +33,7 @@ export default function ModalUpdateEmployee(props) {
   } = useForm(formOptions);
 
   useEffect(() => {
+    setUserLogin(authService.getUserId())
     async function fetchData() {
       await getEmployeeDetail(employeeCode);
     }
@@ -55,7 +57,7 @@ export default function ModalUpdateEmployee(props) {
   };
   const handleSave = async () => {
     console.log(employeeDetail);
-    employeeDetail.updatedBy = localStorage.getItem('userId')
+    employeeDetail.updatedBy = userLogin
     await EmployeeService.updateEmployee(employeeCode, employeeDetail).then(
       (res) => {
         if (res.data.resultCode === 200) {

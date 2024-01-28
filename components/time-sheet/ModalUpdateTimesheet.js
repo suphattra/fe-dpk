@@ -16,6 +16,7 @@ import { NotifyService } from '../../pages/api/notify.service';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import LoadingTemplate from "../LoadingTemplate";
+import { authService } from '../../pages/api/auth/auth-service';
 export default function ModalUpdateTimesheet(props) {
 
     const { open, setOpen, mode, operationCode, jobEntry, timesheet, callbackLoad } = props;
@@ -33,6 +34,7 @@ export default function ModalUpdateTimesheet(props) {
     const [otAmount, setOtAmount] = useState(null)
     const [otRate, setOtRate] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [userLogin, setUserLogin] = useState("")
     const [operationStatusCode, setOperationStatusCode] = useState("")
         const [inventoryBackUp, setInventoryBackUp] = useState([])
     const createValidationSchema = () => {
@@ -41,6 +43,7 @@ export default function ModalUpdateTimesheet(props) {
     const formOptions = { resolver: yupResolver(validationSchema) };
     const { register, handleSubmit, setValue, getValues, setError, clearErrors, formState: { errors } } = useForm(formOptions);
     useEffect(() => {
+        setUserLogin(authService.getUserId())
         async function fetchData() {
             await getEmployeeUnassignList();
             await getConfigList('WAGE_TYPE');
@@ -327,7 +330,7 @@ export default function ModalUpdateTimesheet(props) {
             let dataList = {
                 dataList: timesheetDetail
             }
-            timesheetDetail.updatedBy = localStorage.getItem('userId')
+            timesheetDetail.updatedBy = userLogin
             await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
                 if (res.data.resultCode === 200) {
                     NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')

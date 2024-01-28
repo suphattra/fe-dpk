@@ -14,14 +14,18 @@ export default function Pagination({
     const [totalPage, setTotalPage] = useState(0);
     const [pages, setPages] = useState([])
     const [currentPage, setCurrentPage] = useState(currentPages);
+    const [listData, setListData] = useState(lengthList);
+    const [listDataShow, setListDataShow] = useState(0);
     useEffect(() => {
         const pageNumbers = [];
-        if (lengthList.length > 0) {
+        if (lengthList && lengthList.length > 0) {
             for (let i = 1; i <= totalPosts; i++) {
                 pageNumbers.push(i);
             }
         }
         setPages(pageNumbers)
+        setListData(lengthList)
+        setListDataShow(lengthList.length)
     }, [totalPosts, lengthList])
 
     useEffect(() => {
@@ -56,13 +60,13 @@ export default function Pagination({
         return classes.filter(Boolean).join(' ')
     }
     return (
-        lengthList.length > 0 ?
+        // lengthList.length > 0 ?
 
             <div className="flex items-between justify-between lg:pt-4">
                 <div>
                     <p className='text-sm text-gray-700'>
                         Showing
-                        <span className='font-medium'> {lengthList.length + (currentPage - 1) * postsPerPage} </span>
+                        <span className='font-medium'> {listDataShow + (currentPage - 1) * postsPerPage} </span>
                         of
                         <span className='font-medium'> {totalPosts} </span>
                         results
@@ -123,7 +127,7 @@ export default function Pagination({
                     </nav>
                 </div>
             </div>
-            :
-            <div></div>
+            // :
+            // <div></div>
     );
 }

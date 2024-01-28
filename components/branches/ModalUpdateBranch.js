@@ -13,10 +13,12 @@ import { NotifyService } from '../../pages/api/notify.service';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import CardBranch from './CardBranch';
+import { authService } from '../../pages/api/auth/auth-service';
 export default function ModalUpdateBranch(props) {
     const [querySuccess, setQuerySuccess] = useState(false)
     const { open, setOpen, mode, branchCode, jobEntry, timesheet, callbackLoad } = props;
     const [branchDetail, setBranchDetail] = useState({})
+    const [userLogin, setUserLogin] = useState("")
     const [loading, setLoading] = useState(false)
     const createValidationSchema = () => { };
     const validationSchema = createValidationSchema();
@@ -31,6 +33,7 @@ export default function ModalUpdateBranch(props) {
         formState: { errors },
     } = useForm(formOptions);
     useEffect(() => {
+        setUserLogin(authService.getUserId())
         async function fetchData() {
             await getBranchDetail(branchCode);
             setQuerySuccess(true)
@@ -135,7 +138,7 @@ export default function ModalUpdateBranch(props) {
                 // }
             }
         }
-        branchDetail.updatedBy = localStorage.getItem('userId')
+        branchDetail.updatedBy = userLogin
         console.log(errorList)
         if (errorList.length === 0) {
             setLoading(true)

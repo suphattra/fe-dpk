@@ -10,6 +10,7 @@ import { EmployeeService } from "../../api/employee.service";
 import { NotifyService } from "../../api/notify.service";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { authService } from "../../api/auth/auth-service";
 LoadingOverlay.propTypes = undefined;
 export default function EmployeeDetail() {
   const breadcrumbs = [
@@ -18,27 +19,8 @@ export default function EmployeeDetail() {
   ];
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const [addEmployeeForm, setAddEmployeeForm] = useState([
-    {
-      index: 1,
-      startDate: moment(new Date()).format("YYYY-MM-DD"),
-      title: {},
-      firstName: "",
-      gender: {},
-      nationality: {},
-      employeeType: {},
-      employeeRole: {},
-      phoneContact1: "",
-      phoneContact2: "",
-      startDate: moment().format("YYYY-MM-DD"),
-      endDate: null,
-      remark: "",
-      profilePicture: null,
-      status: 'Active',
-      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
-    },
-  ]);
+  const [addEmployeeForm, setAddEmployeeForm] = useState([]);
+  const [userLogin, setUserLogin] = useState("")
   const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -55,7 +37,31 @@ export default function EmployeeDetail() {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
+  useEffect(() => {
+    setUserLogin(authService.getUserId())
+    setAddEmployeeForm([
+      {
+        index: 1,
+        startDate: moment(new Date()).format("YYYY-MM-DD"),
+        title: {},
+        firstName: "",
+        gender: {},
+        nationality: {},
+        employeeType: {},
+        employeeRole: {},
+        phoneContact1: "",
+        phoneContact2: "",
+        startDate: moment().format("YYYY-MM-DD"),
+        endDate: null,
+        remark: "",
+        profilePicture: null,
+        status: 'Active',
+        createdBy: authService.getUserId(),//'initail_by_admin',
+        updatedBy: authService.getUserId()//'initail_by_admin',
+      },
+    ])
 
+  }, [])
   const handleSave = async () => {
     const errorList = [];
     console.log(addEmployeeForm);
@@ -203,8 +209,8 @@ export default function EmployeeDetail() {
       remark: "",
       profilePicture: null,
       status: 'Active',
-      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
+      createdBy: userLogin,//'initail_by_admin',
+      updatedBy: userLogin//'initail_by_admin',
     };
     setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
   };

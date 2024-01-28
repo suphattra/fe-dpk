@@ -9,7 +9,7 @@ import {
   InputSelectGroup,
 } from "../../components";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { renderOptions } from "../../helpers/utils";
 import CardTimesheet from "../../components/time-sheet/CardTimesheet";
@@ -20,6 +20,7 @@ import { OperationsService } from "../api/operations.service";
 import { NotifyService } from "../api/notify.service";
 import CardBranch from "../../components/branches/CardBranch";
 import { BranchService } from "../api/branch.service";
+import { authService } from "../api/auth/auth-service";
 const initial = {
   areaSize: "",
   address: "",
@@ -41,24 +42,9 @@ export default function DetailBranch() {
   const router = useRouter();
   const [mode, setMode] = useState(router.query["mode"]);
   const [jobDetail, setJobDetail] = useState(initial.jobDetail);
-  const [branchForm, setBranchForm] = useState([
-    {
-      index: 1,
-      branchName: "",
-      branchType: initial.branchType,
-      product: [], //initial.task,
-      supervisor: {},
-      areaSize: initial.areaSize,
-      address: initial.address,
-      annualIncome: [],
-      remark: "",
-      planPicture: {},
-      status: 'Active',
-      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
-    },
-  ]);
-  const createValidationSchema = () => {};
+  const [branchForm, setBranchForm] = useState([]);
+  const [userLogin, setUserLogin] = useState("")
+  const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
   const {
@@ -73,6 +59,27 @@ export default function DetailBranch() {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
+  useEffect(() => {
+    setUserLogin(authService.getUserId())
+    setBranchForm([
+      {
+        index: 1,
+        branchName: "",
+        branchType: initial.branchType,
+        product: [], //initial.task,
+        supervisor: {},
+        areaSize: initial.areaSize,
+        address: initial.address,
+        annualIncome: [],
+        remark: "",
+        planPicture: {},
+        status: 'Active',
+        createdBy: authService.getUserId(),//'initail_by_admin',
+        updatedBy: authService.getUserId()//'initail_by_admin',
+      },
+    ])
+
+  }, [])
   const handleSave = async () => {
     const errorList = [];
     console.log(branchForm);
@@ -201,8 +208,8 @@ export default function DetailBranch() {
       remark: "",
       planPicture: {},
       status: 'Active',
-      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
+      createdBy: userLogin,//'initail_by_admin',
+      updatedBy: userLogin//'initail_by_admin',
     };
     setBranchForm((branch) => [...branch, newService]);
     console.log(newService);

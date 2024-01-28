@@ -7,6 +7,7 @@ import CardEmployee from "./CardEmployee";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CardFinancialsEmployee from "./CardFinancialsEmployee";
+import { authService } from "../../pages/api/auth/auth-service";
 
 export default function ModalUpdateFinancialsEmployee(props) {
   const {
@@ -18,7 +19,7 @@ export default function ModalUpdateFinancialsEmployee(props) {
   } = props;
   const [employeeDetail, setEmployeeDetail] = useState({});
   const [querySuccess, setQuerySuccess] = useState(false);
-
+  const [userLogin, setUserLogin] = useState("")
   const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -33,6 +34,7 @@ export default function ModalUpdateFinancialsEmployee(props) {
   } = useForm(formOptions);
 
   useEffect(() => {
+    setUserLogin(authService.getUserId())
     async function fetchData() {
       await getEmployeeFinancialsDetail(_id);
     }
@@ -56,7 +58,7 @@ export default function ModalUpdateFinancialsEmployee(props) {
   };
   const handleSave = async () => {
     console.log(employeeDetail);
-    employeeDetail.updatedBy = localStorage.getItem('userId')
+    employeeDetail.updatedBy = userLogin
     await EmployeeService.updateEmployeeFinancials(_id, employeeDetail).then(
       (res) => {
         if (res.data.resultCode === 200) {

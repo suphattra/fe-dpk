@@ -12,6 +12,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import moment from 'moment'
 import { OperationsService } from "../api/operations.service";
 import { NotifyService } from "../api/notify.service";
+import { authService } from "../api/auth/auth-service";
 const initial = {
     jobDetail: {},
     wageType: {
@@ -44,20 +45,9 @@ export default function DetailOperation() {
     const router = useRouter();
     const [mode, setMode] = useState(router.query["mode"])
     const [jobDetail, setJobDetail] = useState(initial.jobDetail)
-    const [timeSheetForm, setTimeSheetForm] = useState([{
-        index: 1,
-        startDate: moment(new Date).format('YYYY-MM-DD'),
-        employee: {},
-        mainBranch: {},//initial.mainBranch,
-        subBranch: initial.subBranch,
-        task: {},//initial.task,
-        inventory: initial.inventory,
-        wageType: initial.wageType,
-        operationStatus: initial.operationStatus,
-        inventory: [],
-        createdBy: localStorage.getItem('userId'),//'initail_by_admin',
-        updatedBy: localStorage.getItem('userId')//'initail_by_admin',
-    }])
+    const [timeSheetForm, setTimeSheetForm] = useState([])
+    const [userLogin, setUserLogin] = useState("")
+
     const createValidationSchema = () => {
     }
     const validationSchema = createValidationSchema();
@@ -66,6 +56,23 @@ export default function DetailOperation() {
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
+    useEffect(() => {
+        setUserLogin(authService.getUserId())
+        setTimeSheetForm([{
+            index: 1,
+            startDate: moment(new Date).format('YYYY-MM-DD'),
+            employee: {},
+            mainBranch: {},//initial.mainBranch,
+            subBranch: initial.subBranch,
+            task: {},//initial.task,
+            inventory: initial.inventory,
+            wageType: initial.wageType,
+            operationStatus: initial.operationStatus,
+            inventory: [],
+            createdBy: authService.getUserId(),//'initail_by_admin',
+            updatedBy: authService.getUserId()//'initail_by_admin',
+        }])
+    }, [])
     const handleSave = async () => {
 
         const errorList = [];
@@ -185,8 +192,8 @@ export default function DetailOperation() {
             inventory: initial.inventory,
             wageType: initial.wageType,
             operationStatus: initial.operationStatus,
-            createdBy: localStorage.getItem('userId'),//'initail_by_admin',
-            updatedBy: localStorage.getItem('userId')//'initail_by_admin',
+            createdBy: userLogin,//'initail_by_admin',
+            updatedBy: userLogin//'initail_by_admin',
         }
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)

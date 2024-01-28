@@ -9,7 +9,7 @@ import {
   InputSelectGroup,
 } from "../../components";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { isEmpty, renderOptions } from "../../helpers/utils";
 import CardTimesheet from "../../components/time-sheet/CardTimesheet";
@@ -21,6 +21,7 @@ import { NotifyService } from "../api/notify.service";
 import CardBranch from "../../components/branches/CardBranch";
 import { BranchService, InventoryService } from "../api/inventory.service";
 import CardInventory from "../../components/inventory/CardInventory";
+import { authService } from "../api/auth/auth-service";
 const initial = {
   areaSize: "",
   address: "",
@@ -42,26 +43,8 @@ export default function DetailInventory() {
   const router = useRouter();
   const [mode, setMode] = useState(router.query["mode"]);
   const [jobDetail, setJobDetail] = useState(initial.jobDetail);
-  const [inventoryForm, setInventoryForm] = useState([
-    {
-      index: 1,
-      importDate: "",
-      inventoryType: initial.type,
-      sellerName: "",
-      inventoryName: "",
-      inventoryTradeName: "",
-      unit: "",
-      pricePerUnit: "",
-      amount: "",
-      paymentType: initial.type,
-      distribution: [],
-      bill: {},
-      remark: "",
-      status: 'Active',
-      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
-    },
-  ]);
+  const [inventoryForm, setInventoryForm] = useState([]);
+  const [userLogin, setUserLogin] = useState("")
   const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -77,6 +60,30 @@ export default function DetailInventory() {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
+  useEffect(() => {
+    setUserLogin(authService.getUserId())
+    setInventoryForm([
+      {
+        index: 1,
+        importDate: "",
+        inventoryType: initial.type,
+        sellerName: "",
+        inventoryName: "",
+        inventoryTradeName: "",
+        unit: "",
+        pricePerUnit: "",
+        amount: "",
+        paymentType: initial.type,
+        distribution: [],
+        bill: {},
+        remark: "",
+        status: 'Active',
+        createdBy: authService.getUserId(),//'initail_by_admin',
+        updatedBy: authService.getUserId()//'initail_by_admin',
+      },
+    ])
+
+  }, [])
   const handleSave = async () => {
     setLoading(true);
     const errorList = [];
@@ -231,8 +238,8 @@ export default function DetailInventory() {
       bill: {},
       remark: "",
       status: 'Active',
-      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
-      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
+      createdBy: userLogin,//'initail_by_admin',
+      updatedBy: userLogin//'initail_by_admin',
     };
     setInventoryForm((inventory) => [...inventory, newService]);
     console.log(newService);

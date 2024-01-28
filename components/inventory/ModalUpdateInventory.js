@@ -7,6 +7,7 @@ import { NotifyService } from "../../pages/api/notify.service";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import CardInventory from "./CardInventory";
+import { authService } from "../../pages/api/auth/auth-service";
 export default function ModalUpdateInventory(props) {
   const [querySuccess, setQuerySuccess] = useState(false);
   const {
@@ -21,6 +22,7 @@ export default function ModalUpdateInventory(props) {
   const [inventoryDetail, setInventoryDetail] = useState({});
   const [loading, setLoading] = useState(false);
   const createValidationSchema = () => {};
+  const [userLogin, setUserLogin] = useState("")
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
   const {
@@ -33,6 +35,7 @@ export default function ModalUpdateInventory(props) {
     formState: { errors },
   } = useForm(formOptions);
   useEffect(() => {
+    setUserLogin(authService.getUserId())
     async function fetchData() {
       await getInventoryDetail(inventoryCode);
       setQuerySuccess(true);
@@ -135,7 +138,7 @@ export default function ModalUpdateInventory(props) {
       let dataList = {
         dataList: inventoryDetail,
       };
-      inventoryDetail.updatedBy = localStorage.getItem('userId')
+      inventoryDetail.updatedBy = userLogin
       await InventoryService.updateInventory(
         inventoryCode,
         inventoryDetail
