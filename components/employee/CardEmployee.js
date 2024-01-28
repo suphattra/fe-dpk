@@ -214,7 +214,7 @@ export default function CardEmployee({ index, employee, timeSheet, onChange, dat
                                 name="birthDate" label="วันเกิด"
                                 format="YYYY-MM-DD"
                                 onChange={(e) => {  onChange(e, index, "birthDate") }}
-                                value={moment().format('YYYY-MM-DD')}
+                                value={employee.birthDate ? moment().format('YYYY-MM-DD') : ""}
                             />
                             <InputSelectGroup type="text" label="สัญชาติ"
                                 id={"nationality" + employee.index}
