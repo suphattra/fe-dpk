@@ -71,8 +71,8 @@ export default function DetailOperation() {
         wageType: initial.wageType,
         operationStatus: initial.operationStatus,
         inventory: [],
-        createdBy: 'initail_by_admin',
-        updatedBy: 'initail_by_admin',
+        createdBy: localStorage.getItem('userId'),//'initail_by_admin',
+        updatedBy: localStorage.getItem('userId')//'initail_by_admin',
     }])
     const createValidationSchema = () => {
     }
@@ -201,8 +201,8 @@ export default function DetailOperation() {
             inventory: initial.inventory,
             wageType: initial.wageType,
             operationStatus: initial.operationStatus,
-            createdBy: 'initail_by_admin',
-            updatedBy: 'initail_by_admin',
+            createdBy: localStorage.getItem('userId'),//'initail_by_admin',
+            updatedBy: localStorage.getItem('userId')//'initail_by_admin',
         }
         setTimeSheetForm((timeSheet) => [...timeSheet, newService]);
         console.log(newService)

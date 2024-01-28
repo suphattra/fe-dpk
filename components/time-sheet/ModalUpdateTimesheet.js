@@ -327,6 +327,7 @@ export default function ModalUpdateTimesheet(props) {
             let dataList = {
                 dataList: timesheetDetail
             }
+            timesheetDetail.updatedBy = localStorage.getItem('userId')
             await OperationsService.updateOperations(operationCode, timesheetDetail).then(res => {
                 if (res.data.resultCode === 200) {
                     NotifyService.success('แก้ไขข้อมูลเรียบร้อยเเล้ว')

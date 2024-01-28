@@ -35,11 +35,11 @@ export default function EmployeeDetail() {
       remark: "",
       profilePicture: null,
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
     },
   ]);
-  const createValidationSchema = () => {};
+  const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
   const {
@@ -203,8 +203,8 @@ export default function EmployeeDetail() {
       remark: "",
       profilePicture: null,
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
     };
     setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
   };

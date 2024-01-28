@@ -55,6 +55,7 @@ export default function ModalUpdateEmployee(props) {
   };
   const handleSave = async () => {
     console.log(employeeDetail);
+    employeeDetail.updatedBy = localStorage.getItem('userId')
     await EmployeeService.updateEmployee(employeeCode, employeeDetail).then(
       (res) => {
         if (res.data.resultCode === 200) {

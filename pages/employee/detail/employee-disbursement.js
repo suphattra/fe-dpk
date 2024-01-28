@@ -41,11 +41,11 @@ export default function EmployeeDisbursement() {
       remark: "",
       receipt: null,
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
     },
   ]);
-  const createValidationSchema = () => {};
+  const createValidationSchema = () => { };
   const validationSchema = createValidationSchema();
   const formOptions = { resolver: yupResolver(validationSchema) };
   const {
@@ -72,8 +72,8 @@ export default function EmployeeDisbursement() {
     await EmployeeService.getEmployeeDetail(employeeCode)
       .then((res) => {
         if (res.data.resultCode === 200) {
-          setBreadcrumbs([...breadcrumbsData,{ index: 3, href: '/employee', name: 'สร้างบันทึก (' + res.data.resultData[0]?.firstName + ' '  + res.data.resultData[0]?.lastName + ')'}])
-       } 
+          setBreadcrumbs([...breadcrumbsData, { index: 3, href: '/employee', name: 'สร้างบันทึก (' + res.data.resultData[0]?.firstName + ' ' + res.data.resultData[0]?.lastName + ')' }])
+        }
       })
       .catch((err) => {
         console.log("==> list job3");
@@ -129,9 +129,9 @@ export default function EmployeeDisbursement() {
     if (errors) {
       if (e.target.value) {
         console.log(name);
-      
-          clearErrors(`${name}[${_newValue[index].index}]`);
-        
+
+        clearErrors(`${name}[${_newValue[index].index}]`);
+
       }
     }
   };
@@ -172,8 +172,8 @@ export default function EmployeeDisbursement() {
       remark: "",
       receipt: null,
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy: localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy: localStorage.getItem('userId')//'initail_by_admin',
     };
     setAddEmployeeForm((timeSheet) => [...timeSheet, newService]);
   };

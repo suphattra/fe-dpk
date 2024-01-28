@@ -58,8 +58,8 @@ export default function DetailInventory() {
       bill: {},
       remark: "",
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
     },
   ]);
   const createValidationSchema = () => { };
@@ -231,8 +231,8 @@ export default function DetailInventory() {
       bill: {},
       remark: "",
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
     };
     setInventoryForm((inventory) => [...inventory, newService]);
     console.log(newService);

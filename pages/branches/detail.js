@@ -54,8 +54,8 @@ export default function DetailBranch() {
       remark: "",
       planPicture: {},
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
     },
   ]);
   const createValidationSchema = () => {};
@@ -201,8 +201,8 @@ export default function DetailBranch() {
       remark: "",
       planPicture: {},
       status: 'Active',
-      createdBy: 'initail_by_admin',
-      updatedBy: 'initail_by_admin',
+      createdBy:  localStorage.getItem('userId'),//'initail_by_admin',
+      updatedBy:  localStorage.getItem('userId')//'initail_by_admin',
     };
     setBranchForm((branch) => [...branch, newService]);
     console.log(newService);

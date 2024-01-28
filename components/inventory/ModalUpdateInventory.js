@@ -135,6 +135,7 @@ export default function ModalUpdateInventory(props) {
       let dataList = {
         dataList: inventoryDetail,
       };
+      inventoryDetail.updatedBy = localStorage.getItem('userId')
       await InventoryService.updateInventory(
         inventoryCode,
         inventoryDetail
