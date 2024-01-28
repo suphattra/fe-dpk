@@ -26,24 +26,8 @@ const initial = {
     },
     task: {},
     employee: {},
-    subBranch: {
-        "_id": "64c1557f95d25869bb895389",
-        "branchCode": "BC10001",
-        "branchName": "ทรัพย์ประเมิน",
-        "branchType": {
-            "code": "MD0023",
-            "value1": "แปลงย่อย"
-        }
-    },
-    mainBranch: {
-        "_id": "64c1557f95d25869bb89538a",
-        "branchCode": "BC10002",
-        "branchName": "บ้านแหลม",
-        "branchType": {
-            "code": "MD0022",
-            "value1": "แปลงใหญ่"
-        }
-    },
+    subBranch: {},
+    mainBranch: {},
     inventory: [
         //     {
         //     index: 1,
