@@ -119,7 +119,7 @@ export default function ResultBranch({ branchList, total, paginate, currentPage,
                                 // // timesheet={timesheetDetail}
                                 branchCode={timesheetDetail.branchCode}
                             />}
-                            <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={branchList} />
+                            <Pagination totalPosts={total} currentPages={currentPage} postsPerPage={10} paginate={paginate} lengthList={branchList} maxPage={Math.ceil(total / 10)}/>
                         </div>
                     </div>
                 </div>

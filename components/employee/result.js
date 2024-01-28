@@ -267,10 +267,11 @@ export default function Result({
             </div>
             <Pagination
               totalPosts={total}
-              currentPage={currentPage}
+              currentPages={currentPage}
               postsPerPage={10}
               paginate={paginate}
               lengthList={employeesList}
+              maxPage={Math.ceil(total / 10)}
             />
           </div>
         </div>

@@ -3,91 +3,127 @@ import React, { useEffect, useState } from "react";
 export default function Pagination({
     postsPerPage,
     totalPosts,
-    currentPage,
+    currentPages,
     paginate,
-    lengthList
+    lengthList,
+    maxPage
 }) {
-    const [pageNumbers, setPageNumbers] = useState([])
+    const pageNumberLimit = 10;
+    const [maxPageLimit, setMaxPageLimit] = useState(maxPage);
+    const [minPageLimit, setMinPageLimit] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+    const [pages, setPages] = useState([])
+    const [currentPage, setCurrentPage] = useState(currentPages);
     useEffect(() => {
-        const _pageNumber = [];
-        console.log('dddd', Math.ceil(totalPosts / postsPerPage))
-        for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
-            _pageNumber.push(i);
+        const pageNumbers = [];
+        if (lengthList.length > 0) {
+            for (let i = 1; i <= totalPosts; i++) {
+                pageNumbers.push(i);
+            }
         }
-        setPageNumbers(_pageNumber)
-    }, [totalPosts])
+        setPages(pageNumbers)
+    }, [totalPosts, lengthList])
 
+    useEffect(() => {
+        setCurrentPage(currentPages)
+        if (currentPages === 1) {
+            setMinPageLimit(0)
+            setMaxPageLimit(pageNumberLimit)
+        }
+    }, [currentPages])
+
+    useEffect(() => {
+        setTotalPage(maxPage)
+    }, [maxPage])
 
     const paginateBack = (number) => {
         paginate(number - 1);
+        if ((currentPage - 1) % pageNumberLimit === 0) {
+            setMaxPageLimit(maxPageLimit - pageNumberLimit);
+            setMinPageLimit(minPageLimit - pageNumberLimit);
+        }
+        setCurrentPage(prev => prev - 1);
     }
     const paginateFront = (number) => {
         paginate(number + 1);
+        if (currentPage + 1 > maxPageLimit) {
+            setMaxPageLimit(maxPageLimit + pageNumberLimit);
+            setMinPageLimit(minPageLimit + pageNumberLimit);
+        }
+        setCurrentPage(prev => prev + 1);
     }
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
     return (
-        <div className="flex items-between justify-between lg:pt-4">
-            <div>
-                <p className='text-sm text-gray-700'>
-                    Showing
-                    {/* + lengthList.length */}
-                    {/* <span className='font-medium'> {currentPage * postsPerPage} </span> */}
-                    <span className='font-medium'>  {currentPage === pageNumbers.length ? totalPosts : lengthList?.length * currentPage} </span>
-                    of
-                    <span className='font-medium'> {totalPosts} </span>
-                    results
-                </p>
-            </div>
-            <nav className='block'></nav>
-            <div>
-                <nav className='relative z-0 inline-flex rounded-md shadow-sm -space-x-px' >
-                    <a onClick={() => { if (currentPage !== 1) paginateBack(currentPage); }}
-                        href='#'
-                        className={classNames(currentPage === 1 ? 'cursor-not-allowed' : '', 'relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')}
-                    >
-                        <span>Previous</span>
-                    </a>
-                    <a href='#' className={classNames('cursor-not-allowed relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')} >
-                        <span>...</span>
-                    </a>
-                    <nav className='block'>
-                        <ul className='flex pl-0 rounded list-none flex-wrap'>
-                            <li>
-                                {pageNumbers.map((number, index) => {
-                                    //  && (pageNumbers.length - index) < pageNumbers.length  && pageNumbers.length - index
-                                    if ((number >= currentPage) && (number < (currentPage + 10))) {
-                                        return <a
-                                            onClick={() => {
-                                                paginate(number);
-                                            }}
-                                            href='#'
-                                            key={number}
-                                            className={
-                                                currentPage === number
-                                                    ? "bg-blue-100 border-indigo-300 text-indigo-500 hover:bg-blue-200 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                                                    : "bg-white text-gray-500 hover:bg-blue-200 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                                            }
-                                        >
-                                            {number}
-                                        </a>
-                                    }
-                                })}
-                            </li>
-                        </ul>
+        lengthList.length > 0 ?
+
+            <div className="flex items-between justify-between lg:pt-4">
+                <div>
+                    <p className='text-sm text-gray-700'>
+                        Showing
+                        <span className='font-medium'> {lengthList.length + (currentPage - 1) * postsPerPage} </span>
+                        of
+                        <span className='font-medium'> {totalPosts} </span>
+                        results
+                    </p>
+                </div>
+                <nav className='block'></nav>
+                <div>
+                    <nav className='relative z-0 inline-flex rounded-md shadow-sm -space-x-px' >
+                        <a onClick={() => { if (currentPage !== 1) paginateBack(currentPage); }}
+                            href='#'
+                            className={classNames(currentPage === 1 ? 'cursor-not-allowed' : '', 'relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')}
+                        >
+                            <span>Previous</span>
+                        </a>
+                        {currentPage <= maxPageLimit && minPageLimit > 0 &&
+                            <a href='#' className={classNames('cursor-not-allowed relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')} >
+                                <span>...</span>
+                            </a>
+                        }
+                        <nav className='block'>
+                            <ul className='flex pl-0 rounded list-none flex-wrap'>
+                                <li>
+                                    {pages.map((number, index) => {
+                                        if (number <= maxPageLimit && number > minPageLimit && number <= totalPage) {
+                                            return <a
+                                                onClick={() => {
+                                                    paginate(number);
+                                                    setCurrentPage(number);
+                                                }}
+                                                href='#'
+                                                key={number}
+                                                className={
+                                                    currentPage === number
+                                                        ? "bg-blue-100 border-indigo-300 text-indigo-500 hover:bg-blue-200 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+                                                        : "bg-white text-gray-500 hover:bg-blue-200 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+                                                }
+                                            >
+                                                {number}
+                                            </a>
+                                        } else {
+                                            return null;
+                                        }
+                                    })}
+                                </li>
+                            </ul>
+                        </nav>
+                        {totalPage > maxPageLimit &&
+                            <a href='#' className={classNames('cursor-not-allowed relative inline-flex items-center px-2 py-2  border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')}>
+                                <span>...</span>
+                            </a>
+                        }
+                        <a onClick={() => { if (currentPage !== totalPage) paginateFront(currentPage) }}
+                            href='#'
+                            className={classNames(currentPage === totalPage ? 'cursor-not-allowed' : '', 'relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')}
+                        >
+                            <span>Next</span>
+                        </a>
                     </nav>
-                    <a href='#' className={classNames('cursor-not-allowed relative inline-flex items-center px-2 py-2  border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')}>
-                        <span>...</span>
-                    </a>
-                    <a onClick={() => { if (currentPage !== pageNumbers.length) paginateFront(currentPage) }}
-                        href='#'
-                        className={classNames(currentPage === pageNumbers.length ? 'cursor-not-allowed' : '', 'relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50')}
-                    >
-                        <span>Next</span>
-                    </a>
-                </nav>
+                </div>
             </div>
-        </div>
+            :
+            <div></div>
     );
 }

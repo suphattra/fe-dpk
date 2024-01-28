@@ -195,7 +195,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                     // timesheet={timesheetDetail}
                                     operationCode={timesheetDetail.operationCode}
                                 />}
-                                <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList} />
+                                <Pagination totalPosts={total} currentPages={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList}  maxPage={Math.ceil(total / 10)}/>
                             </div>
                         </div>
                     </div>

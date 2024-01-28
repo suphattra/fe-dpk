@@ -134,7 +134,7 @@ export default function ResultInventory({ inventoryList, total, paginate, curren
                                 callbackLoad={callBack}
                                 inventoryCode={timesheetDetail.inventoryCode}
                             />}
-                            <Pagination totalPosts={total} currentPage={currentPage} postsPerPage={10} paginate={paginate} lengthList={inventoryList} />
+                            <Pagination totalPosts={total} currentPages={currentPage} postsPerPage={10} paginate={paginate} lengthList={inventoryList} maxPage={Math.ceil(total / 10)}/>
                         </div>
                     </div>
                 </div>
