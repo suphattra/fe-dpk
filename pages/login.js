@@ -19,7 +19,7 @@ export default function Login() {
             await authService.authentication(e).then(res => {
                 console.log(res)
                 if (res.data.resultCode === '200') {
-                    router.push('operations');
+                    router.push('dashboard');
                     setLoading(false)
                 } else if (res.resultCode === '40100') {
                     setMsgError("Invalid username or password.")
