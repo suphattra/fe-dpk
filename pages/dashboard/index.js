@@ -406,7 +406,7 @@ export default function MyCalendar(props) {
                                             </div>
                                         </div>
                                         <div className="p-4 flex-auto">
-                                            <div className="relative h-56 min-w-full overflow-x-auto">
+                                            <div className="relative h-96 min-w-full overflow-x-auto">
                                                 {successCost && <Bar data={costOfWorkPerTask} options={options} />}
                                             </div>
                                         </div>
