@@ -167,6 +167,23 @@ export default function MyCalendar(props) {
         interaction: {
             intersect: false,
         },
+        scales: {
+            y: {
+                grid: {
+                    drawBorder: false, // <-- this removes y-axis line
+                    lineWidth: 1
+                    // lineWidth: function (context) {
+                    //   return context?.index === 0 ? 0 : 1; // <-- this removes the base line
+                    // }
+                }
+            },
+            x: {
+                grid: {
+                    drawBorder: false,
+                    lineWidth: 1 // <-- this removes vertical lines between bars
+                }
+            }
+        }
         // scales: {
         //     x: {
         //         stacked: false
