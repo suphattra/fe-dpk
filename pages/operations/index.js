@@ -36,7 +36,7 @@ export default function Job() {
     useEffect(() => {
         async function fetchData() {
             await getOperationsList(searchParam);
-            await getOperationsListReport(searchParam);
+            // await getOperationsListReport(searchParam);
         }
         fetchData();
     }, []);
@@ -46,7 +46,7 @@ export default function Job() {
         setOperationsListExcel([])
         setCurrentPage(1);
         getOperationsList(initial.search);
-        getOperationsListReport(initial.search)
+        // getOperationsListReport(initial.search)
     }
     const handleChange = (evt) => {
         const { name, value, checked, type } = evt.target;
@@ -111,7 +111,10 @@ export default function Job() {
         // setParamSearch(param)
         console.log(param)
         getOperationsList(param);
-        getOperationsListReport(param)
+        if (param.startDate) {
+            await getOperationsListReport(param)
+        }
+
     }
     const getOperationsList = async (searchParam) => {
         setLoading(true)
