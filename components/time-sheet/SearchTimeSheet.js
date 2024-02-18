@@ -118,8 +118,8 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                     { value: item.mainBranch.branchName ? item.mainBranch.branchName : '' },//แปลงใหญ่
                     { value: item.subBranch.branchName ? item.subBranch.branchName : '' },//แปลงย่อย
                     { value: item.task.value1 ? item.task.value1 : '' },//งาน
-                    { value: item.wageType.code == 'MD0024' ? item.taskAmount ? item.taskAmount : '' : '' },//รายวัน
-                    { value: item.wageType.code == 'MD0025' ? item.taskAmount ? item.taskAmount : '' : '' },//เหมาจ่าย
+                    { value: item.wageType.code == 'MD0024' ? item.taskAmount ? item.taskAmount : '0.0' : '0.0', style: styleData },//รายวัน
+                    { value: item.wageType.code == 'MD0025' ? item.taskAmount ? item.taskAmount : '0.0' : '0.0', style: styleData },//เหมาจ่าย
                     // { value: item.taskAmount ? item.taskAmount : '', style: styleData },
                     { value: item.taskPaymentRate ? item.taskPaymentRate : '', style: styleData },//OT
                     { value: item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}`, style: styleData },
