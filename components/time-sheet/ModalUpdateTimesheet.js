@@ -36,7 +36,7 @@ export default function ModalUpdateTimesheet(props) {
     const [loading, setLoading] = useState(false)
     const [userLogin, setUserLogin] = useState("")
     const [operationStatusCode, setOperationStatusCode] = useState("")
-        const [inventoryBackUp, setInventoryBackUp] = useState([])
+    const [inventoryBackUp, setInventoryBackUp] = useState([])
     const createValidationSchema = () => {
     }
     const validationSchema = createValidationSchema();
@@ -61,12 +61,26 @@ export default function ModalUpdateTimesheet(props) {
     useEffect(() => {
         setOperationStatusCode(timesheetDetail.operationStatus?.code)
         onChangeMainBranch({ target: { name: 'mainBranch', value: timesheetDetail.mainBranch?.branchCode } });
+        setOtAmount(timesheetDetail.otAmount)
+        setOtRate(timesheetDetail.otRate)
     }, [timesheetDetail.mainBranch])
 
     useEffect(() => {
         setInventoryBackUp(timesheetDetail.inventory)
     }, [timesheetDetail.inventory])
+    useEffect(() => {
+        calculatorOT()
+    }, [otAmount, otRate])
 
+    const calculatorOT = () => {
+        if (!isEmpty(otAmount) && !isEmpty(otRate)) {
+            const otTotal = parseFloat(otAmount) * parseFloat(otRate)
+            onChange({ target: { name: 'otTotal', value: otTotal.toFixed(2) } }, 'otTotal')
+        } else {
+            onChange({ target: { name: 'otTotal', value: 0 } }, 'otTotal')
+
+        }
+    }
     const getOperationDetail = async (operationCode) => {
         await OperationsService.getOperationsDetail(operationCode).then(res => {
             if (res.data.resultCode === 200) {
@@ -109,7 +123,7 @@ export default function ModalUpdateTimesheet(props) {
     }
     const getInventoryList = async (branchCode) => {
         setInventoryOption([])
-        await InventoryService.getInventoryList({branchCode:branchCode}).then(res => {
+        await InventoryService.getInventoryList({ branchCode: branchCode }).then(res => {
             if (res.data.resultCode === 200) {
                 setInventoryOption(res.data.resultData)
             } else {
@@ -256,12 +270,12 @@ export default function ModalUpdateTimesheet(props) {
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
         if (!e.target.checked) {
-            if(inventoryBackUp){
+            if (inventoryBackUp) {
                 for (let inventory of inventoryBackUp) {
-                    if(!inventory.action){
+                    if (!inventory.action) {
                         inventory.action = "DELETE"
                     }
-                  }
+                }
             }
             setTimesheetDetail(data => ({ ...data, ['inventory']: inventoryBackUp }));
         }
@@ -351,233 +365,233 @@ export default function ModalUpdateTimesheet(props) {
     }
     return (
         <Transition.Root show={open} as={Fragment}>
-             <Dialog as="div" className="relative z-10" onClose={setOpen}>
+            <Dialog as="div" className="relative z-10" onClose={setOpen}>
                 <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-                >
-                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                </Transition.Child>
-                <div className="fixed inset-0 z-10 overflow-y-auto p-14">
-                <div className="flex max-h-fit min-h-max h-full items-endjustify-center p-4 text-center sm:items-center sm:p-0 ">
-                    <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
-                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
                     leave="ease-in duration-200"
-                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                </Transition.Child>
+                <div className="fixed inset-0 z-10 overflow-y-auto p-14">
+                    <div className="flex max-h-fit min-h-max h-full items-endjustify-center p-4 text-center sm:items-center sm:p-0 ">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            enterTo="opacity-100 translate-y-0 sm:scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        >
                             <Dialog.Panel className="h-full relative transform  rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full">
                                 {/* <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 text-left shadow-xl transition-all w-5/6 h-3/6 md:h-auto p-6"> */}
                                 <div className="h-5/6 overflow-y-auto shadow-inner border rounded-md p-4">
                                     {/* <div className="rounded-md p-4 shadow-md m-4"> */}
-                                        {querySuccess &&
-                                            <div className="flex flex-1 items-stretch">
-                                                <div className='relative w-0 flex-1 mr-6 border-r'>
-                                                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mr-6">
-                                                        <InputGroupDate
-                                                            type="date" id={"startDate"} name="startDate" label="วัน/เดือน/ปี"
-                                                            format="YYYY-MM-DD"
+                                    {querySuccess &&
+                                        <div className="flex flex-1 items-stretch">
+                                            <div className='relative w-0 flex-1 mr-6 border-r'>
+                                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 mr-6">
+                                                    <InputGroupDate
+                                                        type="date" id={"startDate"} name="startDate" label="วัน/เดือน/ปี"
+                                                        format="YYYY-MM-DD"
+                                                        disabled={mode == 'view' ? true : false}
+                                                        onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, 1, "startDate") }}
+                                                        value={timesheetDetail.startDate ? moment(new Date(timesheetDetail.startDate)).format('YYYY-MM-DD') : ""}
+                                                        invalid={errors?.startDate ? errors?.startDate[1] : false}
+                                                        required />
+                                                    <InputSelectGroup type="text" id={"employee"} name="employee" label="พนักงาน"
+                                                        options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
+                                                        onChange={(e) => {
+                                                            onChange(e, "employee")
+                                                        }}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        isSearchable
+                                                        value={timesheetDetail.employee?.employeeCode}
+                                                        required />
+                                                    <InputSelectGroup type="text" id={"mainBranch"} name="mainBranch" label="แปลงใหญ่"
+                                                        options={renderOptions(mainBranchOption, "branchName", "branchCode")}
+                                                        onChange={(e) => {
+                                                            onChangeMainBranch(e);
+                                                            onChange(e, "mainBranch")
+                                                        }}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        isSearchable
+                                                        value={timesheetDetail.mainBranch?.branchCode}
+                                                        required />
+                                                    <InputSelectGroup type="text" id={"subBranch"} name="subBranch" label="แปลงย่อย"
+                                                        options={renderOptions(subBranchOption, "branchName", "branchCode")}
+                                                        onChange={(e) => onChange(e, "subBranch")}
+                                                        value={timesheetDetail.subBranch?.branchCode}
+                                                        isSearchable
+                                                        disabled={mode == 'view' ? true : false}
+                                                    />
+                                                    <InputSelectGroup type="text" id={"task"} name="task" label="งาน"
+                                                        options={renderOptions(taskOption, "value1", "code")}
+                                                        onChange={(e) => {
+                                                            onChange(e, "task")
+                                                        }}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        isSearchable
+                                                        value={timesheetDetail.task?.code}
+                                                        required />
+                                                    <InputSelectGroup type="text" id={"product"} name="product" label="ผลผลิต"
+                                                        options={renderOptions(productOption, "value1", "code")}
+                                                        onChange={(e) => onChange(e, "product")}
+                                                        value={_convertValue(timesheetDetail.product)}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        isMulti
+                                                        isSearchable />
+                                                    <div className="block w-full">
+                                                        <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
+                                                            {"หมายเหตุ:"}
+                                                        </label>
+                                                        <textarea
                                                             disabled={mode == 'view' ? true : false}
-                                                            onChange={(e) => { getEmployeeUnassignList(e.target.value); onChange(e, 1, "startDate") }}
-                                                            value={timesheetDetail.startDate ? moment(new Date(timesheetDetail.startDate)).format('YYYY-MM-DD') : ""}
-                                                            invalid={errors?.startDate ? errors?.startDate[1] : false}
-                                                            required />
-                                                        <InputSelectGroup type="text" id={"employee"} name="employee" label="พนักงาน"
-                                                            options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
-                                                            onChange={(e) => {
-                                                                onChange(e, "employee")
-                                                            }}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            isSearchable
-                                                            value={timesheetDetail.employee?.employeeCode}
-                                                            required />
-                                                        <InputSelectGroup type="text" id={"mainBranch"} name="mainBranch" label="แปลงใหญ่"
-                                                            options={renderOptions(mainBranchOption, "branchName", "branchCode")}
-                                                            onChange={(e) => {
-                                                                onChangeMainBranch(e);
-                                                                onChange(e, "mainBranch")
-                                                            }}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            isSearchable
-                                                            value={timesheetDetail.mainBranch?.branchCode}
-                                                            required />
-                                                        <InputSelectGroup type="text" id={"subBranch"} name="subBranch" label="แปลงย่อย"
-                                                            options={renderOptions(subBranchOption, "branchName", "branchCode")}
-                                                            onChange={(e) => onChange(e, "subBranch")}
-                                                            value={timesheetDetail.subBranch?.branchCode}
-                                                            isSearchable
-                                                            disabled={mode == 'view' ? true : false}
+                                                            value={timesheetDetail.remark}
+                                                            onChange={(e) => onChange(e, "remark")}
+                                                            id="remark" name="หมายเหตุ"
+                                                            rows={2}
+                                                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
                                                         />
-                                                        <InputSelectGroup type="text" id={"task"} name="task" label="งาน"
-                                                            options={renderOptions(taskOption, "value1", "code")}
-                                                            onChange={(e) => {
-                                                                onChange(e, "task")
-                                                            }}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            isSearchable
-                                                            value={timesheetDetail.task?.code}
-                                                            required />
-                                                        <InputSelectGroup type="text" id={"product"} name="product" label="ผลผลิต"
-                                                            options={renderOptions(productOption, "value1", "code")}
-                                                            onChange={(e) => onChange(e, "product")}
-                                                            value={_convertValue(timesheetDetail.product)}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            isMulti
-                                                            isSearchable />
-                                                        <div className="block w-full">
-                                                            <label htmlFor={"remark"} className="block text-sm font-medium text-gray-700">
-                                                                {"หมายเหตุ:"}
-                                                            </label>
-                                                            <textarea
+
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 ml-2 py-4 mr-6">
+                                                    <InputRadioGroup
+                                                        value={openAddInventory}
+                                                        checked={openAddInventory}
+                                                        type={"checkbox"}
+                                                        name="status"
+                                                        id={"addInventory"}
+                                                        label={"เบิกสินค้าคงคลัง"}
+                                                        onChange={checkInventory}
+                                                        disabled={mode == 'view' ? true : false}
+                                                    />
+                                                </div>
+                                                {openAddInventory &&
+                                                    <>
+                                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
+                                                            <ItemInventory extraInventory={timesheetDetail.inventory}
+                                                                inventoryOption={inventoryOption}
+                                                                statusOperation={operationStatusCode}
+                                                                callbackInventory={(e, name) => callbackInventory(e, name)}
+                                                                errors={errors?.inventory ? errors?.inventory[1] : false}
                                                                 disabled={mode == 'view' ? true : false}
-                                                                value={timesheetDetail.remark}
-                                                                onChange={(e) => onChange(e, "remark")}
-                                                                id="remark" name="หมายเหตุ"
-                                                                rows={2}
-                                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:text-gray-800 disabled:bg-gray-50"
-                                                            />
+                                                                mode={mode} />
 
                                                         </div>
-                                                    </div>
-                                                    <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 ml-2 py-4 mr-6">
-                                                        <InputRadioGroup
-                                                            value={openAddInventory}
-                                                            checked={openAddInventory}
-                                                            type={"checkbox"}
-                                                            name="status"
-                                                            id={"addInventory"}
-                                                            label={"เบิกสินค้าคงคลัง"}
-                                                            onChange={checkInventory}
-                                                            disabled={mode == 'view' ? true : false}
-                                                        />
-                                                    </div>
-                                                    {openAddInventory &&
-                                                        <>
-                                                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4 mr-6">
-                                                                <ItemInventory extraInventory={timesheetDetail.inventory}
-                                                                    inventoryOption={inventoryOption}
-                                                                    statusOperation={operationStatusCode}
-                                                                    callbackInventory={(e, name) => callbackInventory(e, name)}
-                                                                    errors={errors?.inventory ? errors?.inventory[1] : false}
-                                                                    disabled={mode == 'view' ? true : false}
-                                                                    mode={mode} />
-
-                                                            </div>
-                                                        </>}
-                                                </div>
-                                                <div className="relative w-0 flex-1">
-                                                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
-                                                        <div class="col-span-2">
-                                                            <label className="block text-sm font-medium text-gray-700">
-                                                                ประเภทค่าเเรง
-                                                                <span style={{ color: "#991B1E" }}> *</span>
-                                                            </label>
-                                                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
-                                                                {wageType && wageType.map(function (item, inx) {
-                                                                    return (
-                                                                        <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                                            id={"wageType_" + inx} name={"wageType"} label={item.value1}
-                                                                            onChange={(e) => onChange(e, "wageType")}
-                                                                            value={item.code}
-                                                                            disabled={mode == 'view' ? true : false}
-                                                                            checked={item.code === timesheetDetail.wageType.code ? true : false} />
-                                                                    )
-                                                                })}
-
-                                                            </div>
-                                                        </div>
-
-                                                        <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
-                                                            mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                            required
-                                                            invalid={errors?.taskAmount ? errors?.taskAmount[1] : false}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            onChange={(e) => onChange(e, "taskAmount")}
-                                                            value={timesheetDetail.taskAmount} />
-                                                        <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
-                                                            mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                            required
-                                                            invalid={errors?.taskPaymentRate ? errors?.taskPaymentRate[1] : false}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            onChange={(e) => onChange(e, "taskPaymentRate")}
-                                                            value={timesheetDetail.taskPaymentRate} />
-                                                        <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
-                                                            mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                            onChange={(e) => { setOtAmount(e.target.value), onChange(e, "otAmount") }}
-                                                            // value={otAmount}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            value={timesheetDetail.otAmount}
-                                                        />
-                                                        <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
-                                                            mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                            onChange={(e) => { setOtRate(e.target.value), onChange(e, "otRate") }}
-                                                            // value={otRate}
-                                                            disabled={mode == 'view' ? true : false}
-                                                            value={timesheetDetail.otRate}
-                                                        />
-                                                        <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
-                                                            mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-                                                            onChange={(e) => onChange(e, "otTotal")}
-                                                            value={timesheetDetail.otTotal}
-                                                            disabled
-                                                        />
-                                                        <div class="col-span-2">
-                                                            <label className="block text-sm font-medium text-gray-700">
-                                                                สถานะงาน
-                                                                <span style={{ color: "#991B1E" }}> *</span>
-
-                                                            </label>
-                                                            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-4 mt-4">
-                                                                {operationStatus.map(function (item, inx) {
-                                                                    return (
-                                                                        <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
-                                                                            disabled={operationStatusCode === 'MD0028' ? true : mode == 'view' ? true : false}
-                                                                            id={"operationStatus_" + inx} name={"operationStatus"} label={item.value1}
-                                                                            onChange={(e) => onChange(e, "operationStatus")}
-                                                                            value={item.code}
-                                                                            checked={item.code === timesheetDetail.operationStatus.code ? true : false} />
-                                                                    )
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                    </>}
                                             </div>
-                                        }
-                                        {!querySuccess &&
-                                            <LoadingTemplate />
-                                        }
-                                    </div>
-                                    {/* <CardTimesheet index={0} timeSheet={timesheetDetail} onChange={onChange} deleteAddOnService={deleteAddOnService} mode={mode} /> */}
-                                    < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
+                                            <div className="relative w-0 flex-1">
+                                                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                                    <div class="col-span-2">
+                                                        <label className="block text-sm font-medium text-gray-700">
+                                                            ประเภทค่าเเรง
+                                                            <span style={{ color: "#991B1E" }}> *</span>
+                                                        </label>
+                                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-2 mt-4">
+                                                            {wageType && wageType.map(function (item, inx) {
+                                                                return (
+                                                                    <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                                        id={"wageType_" + inx} name={"wageType"} label={item.value1}
+                                                                        onChange={(e) => onChange(e, "wageType")}
+                                                                        value={item.code}
+                                                                        disabled={mode == 'view' ? true : false}
+                                                                        checked={item.code === timesheetDetail.wageType.code ? true : false} />
+                                                                )
+                                                            })}
 
-                                        <div className="flex justify-center items-center overflow-y-auto p-4" >
-                                            <div className="flex justify-center items-center">
-                                                <button type="button"
-                                                    className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
-                                                    onClick={() => { setOpen(false) }}
-                                                >
-                                                    {mode === "edit" ? "ยกเลิก" : "ปิดหน้าต่าง"}
-                                                </button>
-                                                {mode === "edit" && <button
-                                                    type="button"
-                                                    className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                                    onClick={handleSave}
-                                                >
-                                                    บันทึก
-                                                </button>}
+                                                        </div>
+                                                    </div>
+
+                                                    <InputGroupMask type="number" id="taskAmount" name="taskAmount" label="จำนวนงาน"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        required
+                                                        invalid={errors?.taskAmount ? errors?.taskAmount[1] : false}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        onChange={(e) => onChange(e, "taskAmount")}
+                                                        value={timesheetDetail.taskAmount} />
+                                                    <InputGroupMask type="number" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        required
+                                                        invalid={errors?.taskPaymentRate ? errors?.taskPaymentRate[1] : false}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        onChange={(e) => onChange(e, "taskPaymentRate")}
+                                                        value={timesheetDetail.taskPaymentRate} />
+                                                    <InputGroupMask type="number" id="otAmount" name="otAmount" label="จำนวน OT"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => { setOtAmount(e.target.value), onChange(e, "otAmount") }}
+                                                        // value={otAmount}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        value={timesheetDetail.otAmount}
+                                                    />
+                                                    <InputGroupMask type="number" id="otRate" name="otRate" label="อัตรา OT"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => { setOtRate(e.target.value), onChange(e, "otRate") }}
+                                                        // value={otRate}
+                                                        disabled={mode == 'view' ? true : false}
+                                                        value={timesheetDetail.otRate}
+                                                    />
+                                                    <InputGroupMask type="number" id="otTotal" name="otTotal" label="รวมเงิน OT"
+                                                        mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+                                                        onChange={(e) => onChange(e, "otTotal")}
+                                                        value={timesheetDetail.otTotal}
+                                                        disabled
+                                                    />
+                                                    <div class="col-span-2">
+                                                        <label className="block text-sm font-medium text-gray-700">
+                                                            สถานะงาน
+                                                            <span style={{ color: "#991B1E" }}> *</span>
+
+                                                        </label>
+                                                        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-4 gap-4 mb-4 mt-4">
+                                                            {operationStatus.map(function (item, inx) {
+                                                                return (
+                                                                    <InputRadioGroup key={inx} classes="h-4 w-4" type={"radio"}
+                                                                        disabled={operationStatusCode === 'MD0028' ? true : mode == 'view' ? true : false}
+                                                                        id={"operationStatus_" + inx} name={"operationStatus"} label={item.value1}
+                                                                        onChange={(e) => onChange(e, "operationStatus")}
+                                                                        value={item.code}
+                                                                        checked={item.code === timesheetDetail.operationStatus.code ? true : false} />
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                    }
+                                    {!querySuccess &&
+                                        <LoadingTemplate />
+                                    }
+                                </div>
+                                {/* <CardTimesheet index={0} timeSheet={timesheetDetail} onChange={onChange} deleteAddOnService={deleteAddOnService} mode={mode} /> */}
+                                < footer className="flex items-center justify-center sm:px-6 lg:px-8 sm:py-4 lg:py-4">
 
-                                    </footer>
+                                    <div className="flex justify-center items-center overflow-y-auto p-4" >
+                                        <div className="flex justify-center items-center">
+                                            <button type="button"
+                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-gray-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 mr-2"
+                                                onClick={() => { setOpen(false) }}
+                                            >
+                                                {mode === "edit" ? "ยกเลิก" : "ปิดหน้าต่าง"}
+                                            </button>
+                                            {mode === "edit" && <button
+                                                type="button"
+                                                className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1 pb-1.5 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                                onClick={handleSave}
+                                            >
+                                                บันทึก
+                                            </button>}
+                                        </div>
+                                    </div>
+
+                                </footer>
                                 {/* </div> */}
                             </Dialog.Panel>
                         </Transition.Child>

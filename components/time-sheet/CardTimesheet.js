@@ -82,7 +82,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const getInventoryList = async (branchCode) => {
         setInventoryOption([])
-        await InventoryService.getInventoryList({  branchCode: branchCode, status: 'Active'}).then(res => {
+        await InventoryService.getInventoryList({ branchCode: branchCode, status: 'Active' }).then(res => {
             if (res.data.resultCode === 200) {
                 setInventoryOption(res.data.resultData)
             } else {
@@ -139,15 +139,15 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     const checkInventory = (e) => {
         setAddInventory(e.target.checked)
         if (!e.target.checked) {
-            if(inventoryBackUp){
+            if (inventoryBackUp) {
                 for (let inventory of inventoryBackUp) {
-                    if(!inventory.action){
+                    if (!inventory.action) {
                         inventory.action = "DELETE"
                     }
-                  }
+                }
             }
             onChange({ target: { name: 'inventory', value: inventoryBackUp } }, index, 'inventory')
-        }else {
+        } else {
             onChange({
                 target: {
                     name: 'inventory', value: [{
@@ -238,10 +238,10 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
     }
     const calculatorOT = () => {
         if (!isEmpty(otAmount) && !isEmpty(otRate)) {
-            const otTotal = parseInt(otAmount) * parseInt(otRate)
-            onChange({ target: { name: 'otTotal', value: otTotal } }, index, 'otTotal')
+            const otTotal = parseFloat(otAmount) * parseFloat(otRate)
+            onChange({ target: { name: 'otTotal', value: otTotal.toFixed(2) } }, index, 'otTotal')
         } else {
-            onChange({ target: { name: 'otTotal', value: null } }, index, 'otTotal')
+            onChange({ target: { name: 'otTotal', value: 0 } }, index, 'otTotal')
 
         }
     }
@@ -277,7 +277,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                 </button>
 
             </div>}
-          
+
             <div className="rounded-md p-4">
                 {/* items-stretch overflow-hidden */}
                 {querySucess &&
@@ -355,7 +355,7 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
                                             extraInventory={timeSheet.inventory}
                                             inventoryOption={inventoryOption}
                                             errors={errors?.inventory ? errors?.inventory[timeSheet.index] : false}
-                                            callbackInventory={(e) => callbackInventory(e ,timeSheet.index)} 
+                                            callbackInventory={(e) => callbackInventory(e, timeSheet.index)}
                                         />
                                     </div>
                                 </>}
@@ -382,31 +382,31 @@ export default function CardTimesheet({ index, timeSheet, onChange, deleteAddOnS
 
                                     </div>
                                 </div>
-                                <InputGroupMask type="text" id="taskAmount" name="taskAmount" label="จำนวนงาน"
+                                <InputGroupMask type="number" id="taskAmount" name="taskAmount" label="จำนวนงาน"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => onChange(e, index, "taskAmount")}
                                     required
                                     value={timeSheet.taskAmount}
                                     invalid={errors?.taskAmount ? errors?.taskAmount[timeSheet.index] : false}
                                 />
-                                <InputGroupMask type="text" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
+                                <InputGroupMask type="number" id="taskPaymentRate" name="taskPaymentRate" label="ค่าแรง"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => onChange(e, index, "taskPaymentRate")}
                                     required
                                     value={timeSheet.taskPaymentRate}
                                     invalid={errors?.taskPaymentRate ? errors?.taskPaymentRate[timeSheet.index] : false}
                                 />
-                                <InputGroupMask type="text" id="otAmount" name="otAmount" label="จำนวน OT"
+                                <InputGroupMask type="number" id="otAmount" name="otAmount" label="จำนวน OT"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => { setOtAmount(e.target.value), onChange(e, index, "otAmount") }}
                                     value={otAmount}
                                 />
-                                <InputGroupMask type="text" id="otRate" name="otRate" label="อัตรา OT"
+                                <InputGroupMask type="number" id="otRate" name="otRate" label="อัตรา OT"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => { setOtRate(e.target.value), onChange(e, index, "otRate") }}
                                     value={otRate}
                                 />
-                                <InputGroupMask type="text" id="otTotal" name="otTotal" label="รวมเงิน OT"
+                                <InputGroupMask type="number" id="otTotal" name="otTotal" label="รวมเงิน OT"
                                     mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
                                     onChange={(e) => handleChange(e, index, "otTotal")}
                                     value={timeSheet.otTotal}
