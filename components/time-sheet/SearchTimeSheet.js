@@ -100,7 +100,8 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             { title: 'แปลงใหญ่', style: styleHeader },
             { title: 'แปลงย่อย', style: styleHeader },
             { title: 'งาน', style: styleHeader },
-            { title: 'จำนวนงาน', style: styleHeader },
+            { title: 'จำนวนงาน(รายวัน)', style: styleHeader },
+            { title: 'จำนวนงาน(เหมาจ่าย)', style: styleHeader },
             { title: 'ค่าแรง', style: styleHeader },
             { title: 'OT', style: styleHeader },
             { title: 'รวมเงิน OT', style: styleHeader },
@@ -111,14 +112,16 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
         if (operationsList && operationsList.length > 0) {
             dataRecord = operationsList.map((item, index) => {
                 return [
-                    { value: index + 1, style: styleData },
-                    { value: item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : '' },
-                    { value: item.employee.firstName + ' ' + item.employee.lastName, },
-                    { value: item.mainBranch.branchName ? item.mainBranch.branchName : '' },
-                    { value: item.subBranch.branchName ? item.subBranch.branchName : '' },
-                    { value: item.task.value1 ? item.task.value1 : '' },
-                    { value: item.taskAmount ? item.taskAmount : '', style: styleData },
-                    { value: item.taskPaymentRate ? item.taskPaymentRate : '', style: styleData },
+                    { value: index + 1, style: styleData },//ลำดับ
+                    { value: item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : '' }, //วัน/เดือน/ปี
+                    { value: item.employee.firstName + ' ' + item.employee.lastName, }, //พนักงาน
+                    { value: item.mainBranch.branchName ? item.mainBranch.branchName : '' },//แปลงใหญ่
+                    { value: item.subBranch.branchName ? item.subBranch.branchName : '' },//แปลงย่อย
+                    { value: item.task.value1 ? item.task.value1 : '' },//งาน
+                    { value: item.wageType.code == 'MD0024' ? item.taskAmount ? item.taskAmount : '' : '' },//รายวัน
+                    { value: item.wageType.code == 'MD0025' ? item.taskAmount ? item.taskAmount : '' : '' },//เหมาจ่าย
+                    // { value: item.taskAmount ? item.taskAmount : '', style: styleData },
+                    { value: item.taskPaymentRate ? item.taskPaymentRate : '', style: styleData },//OT
                     { value: item.otAmount && item.otRate ? `${item.otAmount} * ${item.otRate}` : `${item.otAmount || ''} ${item.otRate || ''}`, style: styleData },
                     { value: item.otTotal ? item.otTotal : '', style: styleData },
                     { value: item.wageType.value1 ? item.wageType.value1 : '' },
