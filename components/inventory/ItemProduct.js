@@ -111,7 +111,7 @@ export default function ItemProduct({
                 </div>
                 <div className="col-span-3">
                   <InputGroupMaskInline
-                    type="text"
+                    type="number"
                     id="amount"
                     name="amount"
                     label="จำนวน"

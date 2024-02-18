@@ -35,9 +35,6 @@ export default function InputGroupMask({ label, type, classes, id, name, onChang
                             defaultValue={value}
                             pattern="/^-?[0-9]+$/"
                             className={classNames(invalid ? 'border-red-800 focus:border-red-500 focus:ring-red-500 ' : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 ', classes, "block w-full rounded-md shadow-sm sm:text-sm disabled:text-gray-800 disabled:bg-gray-50 disabled:text-gray-500")}
-                            step="0.1"
-                            min="0"
-                            max="20"
 
                         />
                         {unit && <div class="absolute inset-y-2 right-0 flex items-center">
