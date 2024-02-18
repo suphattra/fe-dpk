@@ -83,14 +83,19 @@ export default function SearchInventory({
     const column = [
       { title: 'ลำดับ', style: styleHeader },
       { title: "รหัส", style: styleHeader },
-      { title: "ชื่อ", style: styleHeader },
+      { title: "วันที่นำเข้า", style: styleHeader },
+      { title: "ชื่อร้านค้า", style: styleHeader },
+      { title: "รูปแบบการจ่ายเงิน", style: styleHeader },
       { title: "ประเภท", style: styleHeader },
+      { title: "ชื่อการค้า", style: styleHeader },
       { title: "หน่วย", style: styleHeader },
       { title: "ราคา/หน่วย", style: styleHeader },
-      { title: "จำนวนคงเหลือ", style: styleHeader },
-      { title: "นำเข้าล่าสุด", style: styleHeader },
-      { title: "รูปแบบการจ่ายเงิน", style: styleHeader },
+      { title: "จำนวนนำเข้า", style: styleHeader },
+      { title: "จำนวนบาท", style: styleHeader },
       { title: "หมายเหตุ", style: styleHeader },
+      { title: "ผู้นำเข้าระบบ (Admin)", style: styleHeader },
+      // { title: "รูปแบบการจ่ายเงิน", style: styleHeader },
+
     ];
     let dataRecord = [];
     if (inventoryList && inventoryList.length > 0) {
@@ -98,23 +103,17 @@ export default function SearchInventory({
         return [
           { value: index + 1, style: styleData },
           { value: item.inventoryCode ? item.inventoryCode : "" },
-          {
-            value: item.inventoryName ? item.inventoryName : "",
-          },
+          { value: item.importDate ? moment(item.importDate).format("DD/MM/YYYY") : "" },
+          { value: item.sellerName ? item.sellerName : "", },
+          { value: item.paymentType.value1 ? item.paymentType.value1 : "" },
           { value: item.inventoryType.value1 ? item.inventoryType.value1 : "" },
+          { value: item.inventoryTradeName ? item.inventoryTradeName : "" },
           { value: item.unit ? item.unit : "" },
-          { value: item.pricePerUnit ? item.pricePerUnit : "" },
-          { value: item.amount ? item.amount : "" },
-          {
-            value: item.importDate
-              ? moment(item.importDate).format("DD/MM/YYYY")
-              : "",
-          },
-          {
-            value: item.paymentType.value1 ? item.paymentType.value1 : "",
-            style: styleData,
-          },
+          { value: item.pricePerUnit ? parseInt(item.pricePerUnit) : "" },
+          { value: item.amount },//ต้อง join จาก history
+          { value: parseInt(item.amount) * parseInt(item.pricePerUnit), style: styleData },
           { value: item.remark ? item.remark : "" },
+          { value: item.createdBy ? item.createdBy : "" },
         ];
       });
     }
