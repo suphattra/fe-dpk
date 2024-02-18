@@ -107,7 +107,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                         required
                         invalid={errorsList?.inventoryCode ? errorsList?.inventoryCode[extra.index] : false}
                         disabled={extra.action === 'NEW' ? false : statusOperation === 'MD0028' ? true : (mode === 'view') ? true : false}
-                        options={renderOptions(inventoryOption, "inventoryName", "inventoryCode")}
+                        options={renderOptions(inventoryOption, "inventoryTradeName", "inventoryCode")}
                         value={extra.inventoryCode}
                         onChange={(e) => {
                           handleOnChange(e, index, "inventory");
