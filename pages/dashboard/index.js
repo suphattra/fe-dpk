@@ -20,12 +20,17 @@ export default function MyCalendar(props) {
     const currentMonth = currentDate.getMonth();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
-    const [costOfWorkPerBranch, setCostOfWorkPerBranch] = useState({ data: {} });
+    const [costOfWorkPerBranch, setCostOfWorkPerBranch] = useState({ data: {}, resultTable: [] });
+    const [costOfWorkPerBranchTable, setCostOfWorkPerBranchTable] = useState([]);
+    const [costOfWorkPerTaskTable, setCostOfWorkPerTaskTable] = useState([]);
+    const [monthGroup, setMonthGroup] = useState([]);
     const [costOfWorkPerTask, setCostOfWorkPerTask] = useState({ data: {} });
     const [openTab, setOpenTab] = useState(0);
+    const [openTabInside, setOpenTabInside] = useState(2);
     const [success, setSuccess] = useState(false);
     const [optionYear, setOptionYear] = useState([]);
     const [yearBranch, setYearBranch] = useState(new Date().getFullYear());
+    const [period, setPeriod] = useState(1);
     const [yearTask, setYearTask] = useState(new Date().getFullYear());
     const [successCost, setSuccessCost] = useState(false);
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'January', 'February', 'March', 'April', 'May'];
@@ -168,6 +173,11 @@ export default function MyCalendar(props) {
             intersect: false,
         },
         scales: {
+            xAxes: [{
+                barPercentage: 1
+            }]
+        },
+        scales: {
             y: {
                 grid: {
                     drawBorder: false, // <-- this removes y-axis line
@@ -183,6 +193,20 @@ export default function MyCalendar(props) {
                     lineWidth: 1 // <-- this removes vertical lines between bars
                 }
             }
+        },
+        // layout: {
+        //     padding: 20
+        // },
+        plugins: {
+            legend: {
+                display: true
+            },
+            tooltip: {
+                enabled: true
+            }
+        },
+        datalabels: {
+            display: true,
         }
         // scales: {
         //     x: {
@@ -219,35 +243,33 @@ export default function MyCalendar(props) {
     };
     useEffect(() => {
         async function fetchData() {
-            await getCostOfWorkPerBranch(new Date().getFullYear())
-            await getCostOfWorkPerTask(new Date().getFullYear())
+            await getCostOfWorkPerBranch(new Date().getFullYear(), 1)
+            await getCostOfWorkPerTask(new Date().getFullYear(), 1)
         }
         fetchData();
     }, []);
     useEffect(() => {
         const currentYear = new Date().getFullYear();
         let listYear = []
-        for (let i = 0; i < 3; i++) { // Change 4 to the number of years you want (3 years retrospective + current year)
+        for (let i = 0; i < 3; i++) {
             const year = currentYear - i;
             console.log(currentYear)
             console.log(year)
-            // const option = document.createElement("option");
-            // option.value = year;
-            // option.text = year;
-            // yearSelect.add(option);
             listYear.push({ value: year, text: "ประจำปี ค.ศ. " + year })
 
         }
         setOptionYear(listYear)
     }, []);
 
-    const getCostOfWorkPerBranch = async (searchParam) => {
+    const getCostOfWorkPerBranch = async (searchParam, period) => {
         console.log(searchParam)
         setLoading(true)
-        await OperationsService.getCostOfWorkPerBranch({ year: searchParam }).then(res => {
+        await OperationsService.getCostOfWorkPerBranch({ year: searchParam, period: period }).then(res => {
             if (res.data.resultCode === 200) {
                 setSuccess(true)
                 setCostOfWorkPerBranch(res.data.resultData)
+                setCostOfWorkPerBranchTable(res.data.resultTable)
+                setMonthGroup(res.data.monthGroup)
                 setLoading(false)
             } else {
                 setCostOfWorkPerBranch({})
@@ -257,12 +279,13 @@ export default function MyCalendar(props) {
             setLoading(false)
         })
     }
-    const getCostOfWorkPerTask = async (searchParam) => {
+    const getCostOfWorkPerTask = async (searchParam, period) => {
         setLoading(true)
-        await OperationsService.costOfWorkPerTask({ year: searchParam }).then(res => {
+        await OperationsService.costOfWorkPerTask({ year: searchParam, period: period }).then(res => {
             if (res.data.resultCode === 200) {
                 setSuccessCost(true)
                 setCostOfWorkPerTask(res.data.resultData)
+                setCostOfWorkPerTaskTable(res.data.resultTable)
                 setLoading(false)
             } else {
                 setCostOfWorkPerTask({})
@@ -287,22 +310,81 @@ export default function MyCalendar(props) {
         return classes.filter(Boolean).join(' ')
     }
     const optionsr = {
+        legend: {
+            display: false
+        },
+        responsive: false,
+        tooltips: {
+            mode: 'label'
+        },
+        elements: {
+            line: {
+                fill: false
+            }
+        },
         scales: {
-            x: {
-                type: 'linear',
-                position: 'bottom',
-                beginAtZero: true,
-            },
-            y: {
-                type: 'linear',
-                position: 'left',
-                ticks: {
-                    autoSkip: true,
-                    maxTicksLimit: 5,
-                },
+            xAxes: [
+                {
+                    barThickness: 'flex',
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    // labels: x,
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            ],
+            yAxes: [
+                {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    id: 'y-axis-1',
+                    gridLines: {
+                        display: true
+                    },
+                    labels: {
+                        show: false
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }
+            ]
+        }
+    }
+    // function calculateWidth() {
+    //     const { x } = this.props
+    //     let length = x ? x.length : 0
+    //     switch (true) {
+    //         case length >= 0 && length <= 3:
+    //             return 400
+    //         case length >= 4 && length <= 50:
+    //             return 1200
+    //         case length >= 51 && length <= 100:
+    //             return 2000
+    //         default:
+    //             return 5000
+    //     }
+    // }
+    const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
             },
         },
-        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 10//Math.max(...costOfWorkPerBranch.values) + 1, // Adjust the max value based on your data
+            },
+        },
     };
     return <>
         <Layout>
@@ -347,93 +429,194 @@ export default function MyCalendar(props) {
                             <div className={classNames(openTab === 0 ? "block" : "hidden", "h-[calc(100vh-200px)] overflow-y-auto")}>
                                 <div className="container " id="tabs-tabContent">
                                     <div className="flex items-end justify-end py-2">
+                                        <div className="uppercase text-blueGray-400 mb-0 text-md font-semibold mr-4">
+                                            <InputSelectGroup
+                                                type="text"
+                                                id={"year"}
+                                                name="year"
+                                                label=""
+                                                onChange={async (e) => {
+                                                    setPeriod(e.target.value)
+                                                    getCostOfWorkPerBranch(yearBranch, e.target.value)
+                                                    getCostOfWorkPerTask(yearBranch, e.target.value)
+                                                }}
+                                                options={[
+                                                    { value: 1, name: 'ไตรมาสที่ 1' },
+                                                    { value: 2, name: 'ไตรมาสที่ 2' },
+                                                    { value: 3, name: 'ไตรมาสที่ 3' }
+                                                ]}
+                                                value={period}
+                                            />
+
+                                        </div>
+                                        <div className="uppercase text-blueGray-400 mb-0 text-md font-semibold mr-4">
+                                            <InputSelectGroup
+                                                type="text"
+                                                id={"year"}
+                                                name="year"
+                                                label=""
+                                                onChange={async (e) => {
+                                                    console.log(e)
+                                                    setYearBranch(e.target.value)
+                                                    getCostOfWorkPerBranch(e.target.value, period)
+                                                    getCostOfWorkPerTask(e.target.value, period)
+                                                }}
+                                                options={renderOptions(optionYear, "text", "value")}
+                                                value={yearBranch}
+                                            />
+
+                                        </div>
+                                        {/* </div> */}
                                         <button type="button"
                                             onClick={() => {
-                                                getCostOfWorkPerBranch(yearBranch)
-                                                getCostOfWorkPerBranch(yearTask)
+                                                getCostOfWorkPerBranch(yearBranch, period)
+                                                getCostOfWorkPerTask(yearBranch, period)
                                             }}
-                                            className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2 mr-2">
+                                            className="flex justify-center inline-flex items-center mb-1 rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2 mr-2">
                                             รีเฟรชข้อมูล
                                         </button>
                                     </div>
-                                    <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
+                                    <div className="flex items-center border-b-2 drop-shadow-xl border-indigo-900">
+                                        <nav className="-mb-px flex flex-1 space-x-6 xl:space-x-2" id="tabs-tab" role="tablist">
+                                            <button
+                                                className={classNames(
+                                                    openTabInside === 2
+                                                        ? 'border-indigo-300 text-white bg-indigo-600'
+                                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                                                    'whitespace-nowrap py-2 px-1 border-b-2 font-bold text-sm cursor-pointer w-36 rounded-t-md'
+                                                )}
+                                                onClick={() => setOpenTabInside(2)} key={2}>
+                                                แสดงแบบกราฟ
+                                            </button>
+                                            {<button onClick={() => setOpenTabInside(3)} key={3}
+                                                className={classNames(
+                                                    openTabInside === 3
+                                                        ? 'border-indigo-300 text-white bg-indigo-600'
+                                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                                                    'whitespace-nowrap py-2 px-1 border-b-2 font-bold text-sm cursor-pointer w-36 rounded-t-md'
+                                                )}>
+                                                แสดงแบบตาราง
+                                            </button>}
+                                        </nav>
+                                    </div>
+                                    <div className={classNames(openTabInside === 2 ? "block" : "hidden", "")}>
+                                        <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded ">
 
-                                        <div className="rounded-t mb-0 px-4 py-1 bg-transparent">
-                                            <div className="py-4">
-                                                <div className="flex items-between justify-between">
+                                            <div className="rounded-t mb-0 px-4 py-1 bg-transparent">
+                                                <div className="py-4">
+                                                    <div className="flex items-between justify-between">
 
-                                                    <h2 className="text-blueGray-700 text-xl font-semibold">
-                                                        สรุปค่าแรงของแต่ละสาขา/แปลง
-                                                    </h2>
-                                                    <div className="uppercase text-blueGray-400 mb-1 text-md font-semibold w-1/6">
-                                                        <InputSelectGroup
-                                                            type="text"
-                                                            id={"year"}
-                                                            name="year"
-                                                            label=""
-                                                            onChange={async (e) => {
-                                                                console.log(e)
-                                                                setYearBranch(e.target.value)
-                                                                getCostOfWorkPerBranch(e.target.value)
-                                                            }}
-                                                            options={renderOptions(optionYear, "text", "value")}
-                                                            value={yearBranch}
-                                                        />
-
+                                                        <h2 className="text-blueGray-700 text-xl font-semibold">
+                                                            สรุปค่าแรงของแต่ละสาขา/แปลง
+                                                        </h2>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        {/* <div class="chartWrapper">
-                                        <div class="chartAreaWrapper">
-                                            <div class="chartAreaWrapper2">
-                                            {success && <Bar data={chartDialy} options={options}  />}
+                                            <div className="p-4 flex-auto  ">
+                                                <div className="relative h-96 min-w-full overflow-y-auto" >
+                                                    {success && <Bar data={costOfWorkPerBranch} options={options} />}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <canvas id="axis-Test" height="300" width="0"></canvas>
-                                    </div> */}
-                                        <div className="p-4 flex-auto  ">
-                                            <div className="relative h-96 min-w-full overflow-y-auto" >
-                                                {success && <Bar data={costOfWorkPerBranch} options={options} />}
-                                            </div>
-                                        </div>
-                                        <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
-                                            <div className="py-4">
-                                                <div className="flex items-between justify-between">
-                                                    <h2 className="text-blueGray-700 text-xl font-semibold">
-                                                        สรุปค่าแรงตามประเภทงาน
-                                                    </h2>
-                                                    <div className="uppercase text-blueGray-400 mb-1 text-md font-semibold w-1/6">
-                                                        <InputSelectGroup
-                                                            type="text"
-                                                            id={"year"}
-                                                            name="year"
-                                                            label=""
-                                                            onChange={async (e) => {
-                                                                console.log(e)
-                                                                setYearTask(e.target.value)
-                                                                getCostOfWorkPerTask(e.target.value)
-                                                            }}
-                                                            options={renderOptions(optionYear, "text", "value")}
-                                                            value={yearTask}
-                                                        />
+                                            <div className="rounded-t mb-0 px-4 py-3 bg-transparent">
+                                                <div className="py-4">
+                                                    <div className="flex items-between justify-between">
+                                                        <h2 className="text-blueGray-700 text-xl font-semibold">
+                                                            สรุปค่าแรงตามประเภทงาน
+                                                        </h2>
+                                                        <div className="uppercase text-blueGray-400 mb-1 text-md font-semibold w-1/6">
+                                                            {/* <InputSelectGroup
+                                                                type="text"
+                                                                id={"year"}
+                                                                name="year"
+                                                                label=""
+                                                                onChange={async (e) => {
+                                                                    console.log(e)
+                                                                    // setYearTask(e.target.value)
+                                                                    getCostOfWorkPerTask(e.target.value)
+                                                                }}
+                                                                options={renderOptions(optionYear, "text", "value")}
+                                                                value={yearBranch}
+                                                            /> */}
 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="p-4 flex-auto">
-                                            <div className="relative h-96 min-w-full overflow-x-auto">
-                                                {successCost && <Bar data={costOfWorkPerTask} options={options} />}
+                                            <div className="p-4 flex-auto">
+                                                <div className="relative h-96 min-w-full overflow-x-auto">
+                                                    {successCost && <Bar data={costOfWorkPerTask} options={options} />}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    {/* <div className="relative h-350-px">
-                                    <Bar data={data} options={options} />
-                                </div>
-                                <div className="relative h-350-px">
-                                    <Bar data={data} options={options} />
-                                </div> */}
+                                    <div className={classNames(openTabInside === 3 ? "block" : "hidden", "")}>
+                                        <h2 className="text-blueGray-700 text-xl font-semibold p-4">
+                                            สรุปค่าแรงของแต่ละสาขา/แปลง
+                                        </h2>
+                                        <table className="min-w-full divide-y divide-gray-300 border rounded-md">
+                                            <thead className="bg-gray-50">
+                                                <tr className='text-center'>
+                                                    <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
+                                                        สาขา/แปลง
+                                                    </th>
+                                                    {monthGroup.length > 0 && monthGroup.map((item) => (
+                                                        <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
+                                                            {item.display}
+                                                        </th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200 bg-white">
+                                                {costOfWorkPerBranchTable && costOfWorkPerBranchTable.length > 0 && costOfWorkPerBranchTable.sort().map((item) => (
+                                                    <>
+                                                        <tr className='text-center'>
+                                                            <td className="whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-1/5">
+                                                                {item.branchName}
+                                                            </td>
+                                                            {monthGroup.length > 0 && monthGroup.map((label) => (
+                                                                <td className="whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-1/5">
+                                                                    {item[label.display] ? item[label.display].toLocaleString() : 0}
+                                                                </td>
+                                                            ))}
+                                                        </tr>
+                                                    </>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        <h2 className="text-blueGray-700 text-xl font-semibold p-4">
+                                            สรุปค่าแรงตามประเภทงาน
+                                        </h2>
+                                        <table className="min-w-full divide-y divide-gray-300 border rounded-md">
+                                            <thead className="bg-gray-50">
+                                                <tr className='text-center'>
+                                                    <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
+                                                        ประเภทงาน
+                                                    </th>
+                                                    {monthGroup.length > 0 && monthGroup.map((item) => (
+                                                        <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
+                                                            {item.display}
+                                                        </th>
+                                                    ))}
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-200 bg-white">
+                                                {costOfWorkPerTaskTable && costOfWorkPerTaskTable.length > 0 && costOfWorkPerTaskTable.sort().map((item) => (
+                                                    <>
+                                                        <tr className='text-center'>
+                                                            <td className="whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-1/5">
+                                                                {item.taskName}
+                                                            </td>
+                                                            {monthGroup.length > 0 && monthGroup.map((label) => (
+                                                                <td className="whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-1/5">
+                                                                    {item[label.display] ? item[label.display].toLocaleString() : 0}
+                                                                </td>
+                                                            ))}
+                                                        </tr>
+                                                    </>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                             <div className={classNames(openTab === 1 ? "block" : "hidden", "h-[calc(100vh-200px)] overflow-y-auto")}>
