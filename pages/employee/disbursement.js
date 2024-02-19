@@ -36,7 +36,7 @@ export default function Disbursement(props) {
         async function fetchData() {
             setSearchParam(data => ({ ...data, employeeCode: employeeCode }));
             await getEmployeeFinancialsList({...initial.search,employeeCode :employeeCode})
-            await getEmployeeFinancialsListReport({...initial.search,employeeCode :employeeCode})
+            // await getEmployeeFinancialsListReport({...initial.search,employeeCode :employeeCode})
         }
         fetchData();
     }, []);
@@ -52,7 +52,7 @@ export default function Disbursement(props) {
     const handleReset = async () => {
         setSearchParam(initial.search)
         getEmployeeFinancialsList({...initial.search,employeeCode :employeeCode})
-        getEmployeeFinancialsListReport({...initial.search,employeeCode :employeeCode})
+        // getEmployeeFinancialsListReport({...initial.search,employeeCode :employeeCode})
         setCurrentPage(1);
     }
 
@@ -63,7 +63,7 @@ export default function Disbursement(props) {
     }
     const handleSearch = async () => {
         getEmployeeFinancialsList({...searchParam,employeeCode :employeeCode});
-        getEmployeeFinancialsListReport({...searchParam,employeeCode :employeeCode})
+        // getEmployeeFinancialsListReport({...searchParam,employeeCode :employeeCode})
     }
 
     const getEmployeeFinancialsList = async (searchParam) => {

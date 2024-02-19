@@ -11,6 +11,7 @@ import { EmployeeService } from "../../pages/api/employee.service";
 import { MasterService } from "../../pages/api/master.service";
 import DownloadExcel from "../DownloadExcel";
 import moment from "moment";
+import ReportFinancialEmp from "./ReportFinancialEmp";
 
 export default function Search({
   handleSearch,
@@ -35,6 +36,7 @@ export default function Search({
   const [typeOption, setTypeOption] = useState([]);
   const [employeesOption, setEmployeesOption] = useState([]);
   const [reportData, setReportData] = useState([]);
+  const [openPopupReport, setOpenPopupReport] = useState(false);
 
   const getConfigList = async (code) => {
     let param = {
@@ -59,7 +61,7 @@ export default function Search({
           if (code === "ROLE") setRoleOption([]);
         }
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const initExport = async () => {
     const styleHeader = {
@@ -91,9 +93,9 @@ export default function Search({
         return [
           { value: index + 1, style: styleData },
           { value: item.firstName + ' ' + item.lastName, },
-          { value: item.nickName ? item.nickName : "",},
+          { value: item.nickName ? item.nickName : "", },
           { value: item.gender.value1 ? item.gender.value1 : "" },
-          { value: item.birthDate ? moment(item.birthDate).format('DD/MM/YYYY') : ""},
+          { value: item.birthDate ? moment(item.birthDate).format('DD/MM/YYYY') : "" },
           { value: item.nationality.value1 ? item.nationality.value1 : "" },
           { value: item.phoneContact1 ? item.phoneContact1 : "" },
           {
@@ -104,8 +106,8 @@ export default function Search({
             value: item.employeeRole.value1 ? item.employeeRole.value1 : "",
             style: styleData,
           },
-          { value: item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : ""},
-          { value: item.endDate ? moment(item.endDate).format('DD/MM/YYYY') : ""},
+          { value: item.startDate ? moment(item.startDate).format('DD/MM/YYYY') : "" },
+          { value: item.endDate ? moment(item.endDate).format('DD/MM/YYYY') : "" },
           { value: item.remark ? item.remark : "" },
         ];
       });
@@ -122,7 +124,10 @@ export default function Search({
     }
     setReportData(multiDataSet);
   };
-
+  const onSetOpenModal = (value) => {
+    // console.log(value)
+    setOpenPopupReport(value);
+  };
   return (
     <>
       <div className="md:container md:mx-auto">
@@ -130,6 +135,15 @@ export default function Search({
           className="flex justify-end w-full max-w-screen pt-4"
           aria-label="Breadcrumb"
         >
+          <button
+            type="button"
+            onClick={() => {
+              setOpenPopupReport(true)
+            }}
+            className="flex justify-center inline-flex items-center rounded-md border border-transparent bg-purple-600 px-6 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
+          >
+            สร้างรายงานบันทึกเบิก-จ่าย
+          </button>
           {reportData.length > 0 && (
             <DownloadExcel
               reportData={reportData}
@@ -216,6 +230,12 @@ export default function Search({
             </button>
           </div>
         </CardBasic>
+
+        {openPopupReport && <ReportFinancialEmp
+          open={openPopupReport}
+          setOpen={onSetOpenModal}>
+
+        </ReportFinancialEmp>}
       </div>
     </>
   );
