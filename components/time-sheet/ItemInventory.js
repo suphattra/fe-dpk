@@ -105,6 +105,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                         name="inventory"
                         label="สินค้าคงคลัง"
                         required
+                        isSearchable={true}
                         invalid={errorsList?.inventoryCode ? errorsList?.inventoryCode[extra.index] : false}
                         disabled={extra.action === 'NEW' ? false : statusOperation === 'MD0028' ? true : (mode === 'view') ? true : false}
                         options={renderOptions(inventoryOption, "inventoryTradeName", "inventoryCode")}
