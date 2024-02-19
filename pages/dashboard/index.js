@@ -249,6 +249,20 @@ export default function MyCalendar(props) {
         fetchData();
     }, []);
     useEffect(() => {
+        let month = new Date().getMonth() + 1
+        console.log("month", month )
+        if (month >= 1 && month < 4) {
+            setPeriod(1)
+        } else if (month >= 4 && month < 6) {
+            setPeriod(2)
+        } else if (month >= 6 && month < 9) {
+            setPeriod(3)
+        } else if (month >= 9 && month < 12) {
+            setPeriod(4)
+        }
+
+    }, []);
+    useEffect(() => {
         const currentYear = new Date().getFullYear();
         let listYear = []
         for (let i = 0; i < 3; i++) {
@@ -440,10 +454,12 @@ export default function MyCalendar(props) {
                                                     getCostOfWorkPerBranch(yearBranch, e.target.value)
                                                     getCostOfWorkPerTask(yearBranch, e.target.value)
                                                 }}
+                                                isDefault={true}
                                                 options={[
-                                                    { value: 1, name: 'ไตรมาสที่ 1' },
-                                                    { value: 2, name: 'ไตรมาสที่ 2' },
-                                                    { value: 3, name: 'ไตรมาสที่ 3' }
+                                                    { value: 1, name: 'ไตรมาสที่ 1 (ม.ค. - มี.ค.)' },
+                                                    { value: 2, name: 'ไตรมาสที่ 2 (เม.ย. -มิ.ย.)' },
+                                                    { value: 3, name: 'ไตรมาสที่ 3 (ก.ค. - ก.ย.)' },
+                                                    { value: 4, name: 'ไตรมาสที่ 4 (ต.ค. - ธ.ค.)' }
                                                 ]}
                                                 value={period}
                                             />
@@ -461,6 +477,7 @@ export default function MyCalendar(props) {
                                                     getCostOfWorkPerBranch(e.target.value, period)
                                                     getCostOfWorkPerTask(e.target.value, period)
                                                 }}
+                                                isDefault={true}
                                                 options={renderOptions(optionYear, "text", "value")}
                                                 value={yearBranch}
                                             />
