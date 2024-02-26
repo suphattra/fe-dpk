@@ -40,7 +40,7 @@ export default function Inventory() {
   useEffect(() => {
     async function fetchData() {
       await getInvenrotyList(searchParam);
-      await getInvenrotyListReport(searchParam);
+      // await getInvenrotyListReport(searchParam);
     }
     fetchData();
   }, []);
@@ -50,7 +50,7 @@ export default function Inventory() {
     setInventoryListExcel([]);
     setCurrentPage(1);
     getInvenrotyList(initial.search);
-    getInvenrotyListReport(initial.search);
+    // getInvenrotyListReport(initial.search);
   };
   const handleChange = (evt) => {
     const { name, value, checked, type } = evt.target;
@@ -117,7 +117,7 @@ export default function Inventory() {
     // setParamSearch(param);
     console.log(param);
     getInvenrotyList(param);
-    getInvenrotyListReport(param);
+    // getInvenrotyListReport(param);
   };
   const getInvenrotyList = async (searchParam) => {
     setLoading(true);
@@ -140,12 +140,10 @@ export default function Inventory() {
   const getInvenrotyListReport = async (searchParam) => {
     setLoading(true);
     let param = convertFilter(searchParam);
-    param.limit = 100000;
-    await InventoryService.getInventoryList(param)
+    await InventoryService.getInventoryReport(param)
       .then((res) => {
         if (res.data.resultCode === 200) {
           setInventoryListExcel(res.data.resultData);
-          setTotal(res.data.total);
         } else {
           setInventoryListExcel([]);
         }
@@ -175,6 +173,11 @@ export default function Inventory() {
       desc: desc ? "DESC" : "ASC",
     });
   };
+
+  const generateReport = async () => {
+    let param = await parstFilter(searchParam)
+    getInvenrotyListReport(param);
+  }
   return (
     <>
       <Layout>
@@ -204,6 +207,7 @@ export default function Inventory() {
             searchParam={searchParam}
             handleSearch={handleSearch}
             inventoryList={inventoryListExcel}
+            generateReport={generateReport}
           />
           <ResultInventory
             inventoryList={inventoryList}
