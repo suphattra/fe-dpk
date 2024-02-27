@@ -10,6 +10,7 @@ import { OperationsService } from '../api/operations.service';
 import LoadingOverlay from 'react-loading-overlay';
 import { InputSelectGroup } from '../../components';
 import { renderOptions } from '../../helpers/utils';
+import DownloadExcel from '../../components/DownloadExcel';
 Chart.register(CategoryScale);
 const localizer = momentLocalizer(moment)
 const breadcrumbs = [{ index: 1, href: '/calendar-schedule', name: 'DPK MANAGMENT SYSTEM' }]
@@ -22,9 +23,15 @@ export default function MyCalendar(props) {
     const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
     const [costOfWorkPerBranch, setCostOfWorkPerBranch] = useState({ data: {}, resultTable: [] });
     const [costOfWorkPerBranchTable, setCostOfWorkPerBranchTable] = useState([]);
-    const [costOfWorkPerTaskTable, setCostOfWorkPerTaskTable] = useState([]);
-    const [monthGroup, setMonthGroup] = useState([]);
     const [costOfWorkPerTask, setCostOfWorkPerTask] = useState({ data: {} });
+    const [costOfWorkPerTaskTable, setCostOfWorkPerTaskTable] = useState([]);
+
+    const [costOfWorkAllBranchTable, setCostOfWorkAllBranchTable] = useState([]);
+    const [taskGroup, setTaskGroup] = useState([]);
+    const [reportData, setReportData] = useState([]);
+
+    const [monthGroup, setMonthGroup] = useState([]);
+
     const [openTab, setOpenTab] = useState(0);
     const [openTabInside, setOpenTabInside] = useState(2);
     const [success, setSuccess] = useState(false);
@@ -245,12 +252,13 @@ export default function MyCalendar(props) {
         async function fetchData() {
             await getCostOfWorkPerBranch(new Date().getFullYear(), 1)
             await getCostOfWorkPerTask(new Date().getFullYear(), 1)
+            await getCostOfWorkAllBranch(new Date().getFullYear(), 1)
         }
         fetchData();
     }, []);
     useEffect(() => {
         let month = new Date().getMonth() + 1
-        console.log("month", month )
+        console.log("month", month)
         if (month >= 1 && month < 4) {
             setPeriod(1)
         } else if (month >= 4 && month < 6) {
@@ -286,7 +294,7 @@ export default function MyCalendar(props) {
                 setMonthGroup(res.data.monthGroup)
                 setLoading(false)
             } else {
-                setCostOfWorkPerBranch({})
+                setCostOfWorkPerBranch([])
                 setLoading(false)
             }
         }).catch(err => {
@@ -302,11 +310,163 @@ export default function MyCalendar(props) {
                 setCostOfWorkPerTaskTable(res.data.resultTable)
                 setLoading(false)
             } else {
-                setCostOfWorkPerTask({})
+                setCostOfWorkPerTask([])
                 setLoading(false)
             }
         }).catch(err => {
         })
+    }
+    const getCostOfWorkAllBranch = async (searchParam, period) => {
+        await OperationsService.costOfWorkAllBranch({ year: searchParam, period: period }).then(async res => {
+            if (res.data.resultCode === 200) {
+                setSuccessCost(true)
+                await setCostOfWorkAllBranchTable(res.data.resultData)
+                await setTaskGroup(res.data.taskGroup)
+                await initExport(res.data.resultData, res.data.taskGroup, res.data.monthGroup)
+                setLoading(false)
+            } else {
+                setCostOfWorkAllBranchTable([])
+                setLoading(false)
+            }
+        }).catch(err => {
+        })
+    }
+    const initExport = async (resultData, taskGroup, monthGroup) => {
+        const styleHeader = {
+            fill: { fgColor: { rgb: "6aa84f" } },
+            font: { sz: "12", bold: true },
+            alignment: { horizontal: "center" },
+        };
+        const styleData = {
+            font: { sz: "10", bold: false },
+            alignment: { horizontal: "center" },
+        };
+        let columnTask = taskGroup.map((item, index) => {
+            return { title: item.value1, style: styleHeader, width: { wpx: 90 } }
+        })
+        const column = [
+            { title: 'แปลงใหญ่/แปลงย่อย', style: styleHeader, width: { wpx: 200 } },
+            ...columnTask,
+            { title: 'รวม/เดือน', style: { ...styleHeader, fill: { fgColor: { rgb: "F4F98B" } }, width: { wpx: 120 } } },
+        ];
+        let dataRecord = [];
+        let dataRecord2 = [];
+        let dataRecord3 = [];
+        if (resultData && resultData.length > 0) {
+            dataRecord = resultData[0].map((item, index) => {
+                let task = []
+                for (const name of item.task) {
+
+                    Object.keys(name).forEach(key => {
+                        if (key != 'name' && key != 'value') {
+                            const value = name[key];
+                            task.push({ value: value, style: styleData })
+                        }
+                    });
+
+                }
+                let sumcolumn = 0
+                sumcolumn = task.reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0);
+                task.push({ value: sumcolumn, style: styleData })
+                return [
+                    { value: item.branchName, style: { ...styleData, alignment: { horizontal: "left" }, } },
+                    ...task
+                ];
+            });
+            dataRecord2 = resultData[1].map((item, index) => {
+                let task = []
+                for (const name of item.task) {
+                    Object.keys(name).forEach(key => {
+                        if (key != 'name' && key != 'value') {
+                            const value = name[key];
+                            task.push({ value: value, style: styleData })
+                        }
+                    });
+                }
+                let sumcolumn = 0
+                sumcolumn = task.reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0);
+                task.push({ value: sumcolumn, style: styleData })
+                return [
+                    { value: item.branchName, style: { ...styleData, alignment: { horizontal: "left" }, } },
+                    ...task
+                ];
+            });
+            dataRecord3 = resultData[2].map((item, index) => {
+                let task = []
+                for (const name of item.task) {
+                    Object.keys(name).forEach(key => {
+                        if (key != 'name' && key != 'value') {
+                            const value = name[key];
+                            task.push({ value: value, style: styleData })
+                        }
+                    });
+                }
+                let sumcolumn = 0
+                sumcolumn = task.reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0);
+                task.push({ value: sumcolumn, style: styleData })
+                return [
+                    { value: item.branchName, style: { ...styleData, alignment: { horizontal: "left" }, } },
+                    ...task
+                ];
+            });
+        }
+        console.log('dataRecord', dataRecord)
+        let multiDataSet = [];
+        //sum
+        // let sum = dataRecord.reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0)
+        // dataRecord.map(ele => {
+        //     // console.log(Object.values(ele).slice(1, task.length))
+        //     sum = Object.values(ele).slice(1, task.length).reduce((acc, val) => acc + (parseFloat(val) || 0), 0)
+
+        //     // console.log(Object.values(ele).slice(1, task.length).reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0))
+        // })
+        // console.log('sum', sum)
+        // if (dataRecord.length > 0) {
+        multiDataSet = [
+            {
+                xSteps: 2,
+                columns: [
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[0].display + ' ' + yearTask, style: { colSpan: 2 } },
+                ],
+                data: [],
+            },
+            {
+                columns: column,
+                data: dataRecord,
+            },
+            {
+                columns: [],
+                data: [],
+            },
+            {
+                xSteps: 2,
+                columns: [
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[1].display + ' ' + yearTask, style: { colSpan: 2 } },
+                ],
+                data: [],
+            },
+            {
+                columns: column,
+                data: dataRecord2,
+            },
+            {
+                columns: [],
+                data: [],
+            },
+            {
+                xSteps: 2,
+                columns: [
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[2].display + ' ' + yearTask, style: { colSpan: 2 } },
+                ],
+                data: [],
+            },
+            {
+                columns: column,
+                data: dataRecord3,
+            },
+        ];
+        // }
+        setReportData(multiDataSet);
     }
     // const options = {
     //     responsive: true,
@@ -453,6 +613,7 @@ export default function MyCalendar(props) {
                                                     setPeriod(e.target.value)
                                                     getCostOfWorkPerBranch(yearBranch, e.target.value)
                                                     getCostOfWorkPerTask(yearBranch, e.target.value)
+                                                    getCostOfWorkAllBranch(yearBranch, e.target.value)
                                                 }}
                                                 isDefault={true}
                                                 options={[
@@ -476,6 +637,7 @@ export default function MyCalendar(props) {
                                                     setYearBranch(e.target.value)
                                                     getCostOfWorkPerBranch(e.target.value, period)
                                                     getCostOfWorkPerTask(e.target.value, period)
+                                                    getCostOfWorkAllBranch(e.target.value, period)
                                                 }}
                                                 isDefault={true}
                                                 options={renderOptions(optionYear, "text", "value")}
@@ -484,10 +646,30 @@ export default function MyCalendar(props) {
 
                                         </div>
                                         {/* </div> */}
+                                        {reportData.length > 0 && (
+                                            <div className='pb-1'>
+                                                <DownloadExcel
+                                                    reportData={reportData}
+                                                    name="สร้างรายงาน"
+                                                    filename="สรุปค่าแรงของสาขา_ประเภทงาน"
+                                                />
+                                            </div>
+                                        )}
+                                        {/* <button type="button"
+                                            onClick={() => {
+                                                getCostOfWorkAllBranch(yearBranch, period)
+                                            }}
+                                            className="flex justify-center inline-flex items-center mb-1 rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2 disabled:text-gray-800 disabled:bg-gray-50 disabled:text-gray-500">
+                                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 48 48" className='mr-2'>
+                                                <path fill="#169154" d="M29,6H15.744C14.781,6,14,6.781,14,7.744v7.259h15V6z"></path><path fill="#18482a" d="M14,33.054v7.202C14,41.219,14.781,42,15.743,42H29v-8.946H14z"></path><path fill="#0c8045" d="M14 15.003H29V24.005000000000003H14z"></path><path fill="#17472a" d="M14 24.005H29V33.055H14z"></path><g><path fill="#29c27f" d="M42.256,6H29v9.003h15V7.744C44,6.781,43.219,6,42.256,6z"></path><path fill="#27663f" d="M29,33.054V42h13.257C43.219,42,44,41.219,44,40.257v-7.202H29z"></path><path fill="#19ac65" d="M29 15.003H44V24.005000000000003H29z"></path><path fill="#129652" d="M29 24.005H44V33.055H29z"></path></g><path fill="#0c7238" d="M22.319,34H5.681C4.753,34,4,33.247,4,32.319V15.681C4,14.753,4.753,14,5.681,14h16.638 C23.247,14,24,14.753,24,15.681v16.638C24,33.247,23.247,34,22.319,34z"></path><path fill="#fff" d="M9.807 19L12.193 19 14.129 22.754 16.175 19 18.404 19 15.333 24 18.474 29 16.123 29 14.013 25.07 11.912 29 9.526 29 12.719 23.982z"></path>
+                                            </svg>
+                                            สร้างรายงาน
+                                        </button> */}
                                         <button type="button"
                                             onClick={() => {
                                                 getCostOfWorkPerBranch(yearBranch, period)
                                                 getCostOfWorkPerTask(yearBranch, period)
+                                                getCostOfWorkAllBranch(yearBranch, period)
                                             }}
                                             className="flex justify-center inline-flex items-center mb-1 rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2 mr-2">
                                             รีเฟรชข้อมูล
@@ -567,6 +749,61 @@ export default function MyCalendar(props) {
                                         </div>
                                     </div>
                                     <div className={classNames(openTabInside === 3 ? "block" : "hidden", "")}>
+                                        <h2 className="text-blueGray-700 text-xl font-semibold p-2">
+                                            สรุปค่าแรงตามประเภทงานและสาขา
+                                        </h2>
+                                        {costOfWorkAllBranchTable && costOfWorkAllBranchTable.length > 0 && costOfWorkAllBranchTable.map((item, index) => (
+                                            <>
+                                                <h2 className="text-blueGray-700 text-sm font-semibold p-2 text-center">
+                                                    สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน {monthGroup[index].display}</h2>
+                                                <div className='w-full overflow-y-auto'>
+                                                    <table className="min-w-full divide-y divide-gray-300 border rounded-md">
+                                                        <thead className="bg-gray-50">
+                                                            <tr className='text-center'>
+                                                                <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900 w-20">
+                                                                    แปลงใหญ่/แปลงย่อย
+                                                                </th>
+                                                                {taskGroup.length > 0 && taskGroup.map((item) => (
+                                                                    <th scope="col" className="px-3 py-3.5 text-sm font-semibold border text-gray-900 w-24">
+                                                                        {item.value1}
+                                                                    </th>
+                                                                ))}
+                                                                <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900 w-24">
+                                                                    รวม
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody className="divide-y divide-gray-200 bg-white">
+                                                            <>
+                                                                {item.map((item2) => (
+                                                                    <tr className='text-center'>
+                                                                        <td className="whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-24">
+                                                                            {item2.branchName}
+                                                                        </td>
+                                                                        {item2.task.length > 0 && item2.task.map((task) => (
+                                                                            <td scope="col" className="px-3 py-3.5 text-sm font-medium border text-gray-900 w-24">
+                                                                                {/* {item.task.find(ele=>ele.name)} */}
+                                                                                {task.value.toLocaleString()}
+                                                                            </td>
+                                                                        ))}
+                                                                        <td colSpan="20" className='bg-green-50 whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-30'>{item2.task.reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0).toLocaleString()}</td>
+                                                                    </tr>
+                                                                ))}
+                                                                {item.length <= 0 &&
+                                                                    <tr className='text-center bg-red-50 p-2'>
+                                                                        <td colSpan="20" className='p-2'>ไม่มีข้อมูล</td>
+                                                                    </tr>}
+
+                                                            </>
+
+                                                        </tbody>
+
+
+                                                    </table>
+                                                </div>
+                                            </>
+                                        ))}
                                         <h2 className="text-blueGray-700 text-xl font-semibold p-4">
                                             สรุปค่าแรงของแต่ละสาขา/แปลง
                                         </h2>

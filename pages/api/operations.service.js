@@ -7,7 +7,8 @@ export const OperationsService = {
     updateOperations,
     createOperations,
     getCostOfWorkPerBranch,
-    costOfWorkPerTask
+    costOfWorkPerTask,
+    costOfWorkAllBranch
 
 };
 
@@ -54,3 +55,11 @@ async function costOfWorkPerTask(param) {
         console.log(err)
     }
 }
+async function costOfWorkAllBranch(param) {
+    try {
+        return http.get(`/v1/dashboards/costOfWorkAllBranch`, param);
+    } catch (err) {
+        console.log(err)
+    }
+}
+
