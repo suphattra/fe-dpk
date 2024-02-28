@@ -41,6 +41,13 @@ export default function MyCalendar(props) {
     const [yearTask, setYearTask] = useState(new Date().getFullYear());
     const [successCost, setSuccessCost] = useState(false);
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'January', 'February', 'March', 'April', 'May'];
+    const [optionPeriod, setOptionPeriod] = useState([
+        { value: 1, name: 'ไตรมาสที่ 1 (ม.ค. - มี.ค.)' },
+        { value: 2, name: 'ไตรมาสที่ 2 (เม.ย. -มิ.ย.)' },
+        { value: 3, name: 'ไตรมาสที่ 3 (ก.ค. - ก.ย.)' },
+        { value: 4, name: 'ไตรมาสที่ 4 (ต.ค. - ธ.ค.)' }
+    ]);
+    const [periodLabel, setPeriodLabel] = useState('ไตรมาสที่ 1 (ม.ค. - มี.ค.)');
     const data = {
         // labels,
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November ', 'December'],
@@ -261,12 +268,16 @@ export default function MyCalendar(props) {
         console.log("month", month)
         if (month >= 1 && month < 4) {
             setPeriod(1)
+            setPeriodLabel(optionPeriod.find(ele => ele.value == 1).name)
         } else if (month >= 4 && month < 6) {
             setPeriod(2)
+            setPeriodLabel(optionPeriod.find(ele => ele.value == 2).name)
         } else if (month >= 6 && month < 9) {
             setPeriod(3)
+            setPeriodLabel(optionPeriod.find(ele => ele.value == 3).name)
         } else if (month >= 9 && month < 12) {
             setPeriod(4)
+            setPeriodLabel(optionPeriod.find(ele => ele.value == 4).name)
         }
 
     }, []);
@@ -345,7 +356,7 @@ export default function MyCalendar(props) {
             return { title: item.value1, style: styleHeader, width: { wpx: 90 } }
         })
         const column = [
-            { title: 'แปลงใหญ่/แปลงย่อย', style: styleHeader, width: { wpx: 200 } },
+            { title: 'แปลงใหญ่', style: styleHeader, width: { wpx: 200 } },
             ...columnTask,
             { title: 'รวม/เดือน', style: { ...styleHeader, fill: { fgColor: { rgb: "F4F98B" } }, width: { wpx: 120 } } },
         ];
@@ -353,7 +364,7 @@ export default function MyCalendar(props) {
         let dataRecord2 = [];
         let dataRecord3 = [];
         if (resultData && resultData.length > 0) {
-            dataRecord = resultData[0].map((item, index) => {
+            dataRecord = resultData[0]?.map((item, index) => {
                 let task = []
                 for (const name of item.task) {
 
@@ -373,7 +384,7 @@ export default function MyCalendar(props) {
                     ...task
                 ];
             });
-            dataRecord2 = resultData[1].map((item, index) => {
+            dataRecord2 = resultData[1]?.map((item, index) => {
                 let task = []
                 for (const name of item.task) {
                     Object.keys(name).forEach(key => {
@@ -391,7 +402,7 @@ export default function MyCalendar(props) {
                     ...task
                 ];
             });
-            dataRecord3 = resultData[2].map((item, index) => {
+            dataRecord3 = resultData[2]?.map((item, index) => {
                 let task = []
                 for (const name of item.task) {
                     Object.keys(name).forEach(key => {
@@ -410,7 +421,7 @@ export default function MyCalendar(props) {
                 ];
             });
         }
-        console.log('dataRecord', dataRecord)
+        console.log('dataRecord', dataRecord, dataRecord2, dataRecord3)
         let multiDataSet = [];
         //sum
         // let sum = dataRecord.reduce((acc, val) => acc + (parseFloat(val.value) || 0), 0)
@@ -424,6 +435,13 @@ export default function MyCalendar(props) {
         // if (dataRecord.length > 0) {
         multiDataSet = [
             {
+                xSteps: column.length + 1,
+                columns: [
+                    { title: '' },
+                ],
+                data: [],
+            },
+            {
                 xSteps: 2,
                 columns: [
                     { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[0].display + ' ' + yearTask, style: { colSpan: 2 } },
@@ -432,7 +450,7 @@ export default function MyCalendar(props) {
             },
             {
                 columns: column,
-                data: dataRecord,
+                data: dataRecord ? dataRecord : [],
             },
             {
                 columns: [],
@@ -447,7 +465,7 @@ export default function MyCalendar(props) {
             },
             {
                 columns: column,
-                data: dataRecord2,
+                data: dataRecord2 ? dataRecord2 : [],
             },
             {
                 columns: [],
@@ -462,7 +480,7 @@ export default function MyCalendar(props) {
             },
             {
                 columns: column,
-                data: dataRecord3,
+                data: dataRecord3 ? dataRecord3 : [],
             },
         ];
         // }
@@ -651,7 +669,7 @@ export default function MyCalendar(props) {
                                                 <DownloadExcel
                                                     reportData={reportData}
                                                     name="สร้างรายงาน"
-                                                    filename="สรุปค่าแรงของสาขา_ประเภทงาน"
+                                                    filename={"สรุปค่าแรงของสาขาตามประเภทงาน " + periodLabel + " ประจำปี " + yearBranch}
                                                 />
                                             </div>
                                         )}

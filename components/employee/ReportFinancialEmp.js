@@ -216,7 +216,7 @@ export default function ReportFinancialEmp(props) {
                       <DownloadExcel
                         reportData={reportData}
                         name="สร้างรายงาน"
-                        filename="รายงานข้อมูลพนักงาน"
+                        filename={"รายงานการเบิกจ่ายเงิน_" + moment(searchParam.startDate).format('DD-MM-YYYY') + '_' + moment(searchParam.endDate).format('DD-MM-YYYY')}
                       />
 
                     </div>}
