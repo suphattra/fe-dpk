@@ -297,6 +297,7 @@ export default function MyCalendar(props) {
     const getCostOfWorkPerBranch = async (searchParam, period) => {
         console.log(searchParam)
         setLoading(true)
+        setPeriodLabel(optionPeriod.find(ele => ele.value == period).name)
         await OperationsService.getCostOfWorkPerBranch({ year: searchParam, period: period }).then(res => {
             if (res.data.resultCode === 200) {
                 setSuccess(true)
@@ -333,7 +334,7 @@ export default function MyCalendar(props) {
                 setSuccessCost(true)
                 await setCostOfWorkAllBranchTable(res.data.resultData)
                 await setTaskGroup(res.data.taskGroup)
-                await initExport(res.data.resultData, res.data.taskGroup, res.data.monthGroup)
+                await initExport(res.data.resultData, res.data.taskGroup, res.data.monthGroup, searchParam)
                 setLoading(false)
             } else {
                 setCostOfWorkAllBranchTable([])
@@ -342,7 +343,7 @@ export default function MyCalendar(props) {
         }).catch(err => {
         })
     }
-    const initExport = async (resultData, taskGroup, monthGroup) => {
+    const initExport = async (resultData, taskGroup, monthGroup, year) => {
         const styleHeader = {
             fill: { fgColor: { rgb: "6aa84f" } },
             font: { sz: "12", bold: true },
@@ -444,7 +445,7 @@ export default function MyCalendar(props) {
             {
                 xSteps: 2,
                 columns: [
-                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[0].display + ' ' + yearTask, style: { colSpan: 2 } },
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[0].display + ' ' + year, style: { colSpan: 2 } },
                 ],
                 data: [],
             },
@@ -459,7 +460,7 @@ export default function MyCalendar(props) {
             {
                 xSteps: 2,
                 columns: [
-                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[1].display + ' ' + yearTask, style: { colSpan: 2 } },
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[1].display + ' ' + year, style: { colSpan: 2 } },
                 ],
                 data: [],
             },
@@ -474,7 +475,7 @@ export default function MyCalendar(props) {
             {
                 xSteps: 2,
                 columns: [
-                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[2].display + ' ' + yearTask, style: { colSpan: 2 } },
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + monthGroup[2].display + ' ' + year, style: { colSpan: 2 } },
                 ],
                 data: [],
             },
@@ -632,6 +633,7 @@ export default function MyCalendar(props) {
                                                     getCostOfWorkPerBranch(yearBranch, e.target.value)
                                                     getCostOfWorkPerTask(yearBranch, e.target.value)
                                                     getCostOfWorkAllBranch(yearBranch, e.target.value)
+
                                                 }}
                                                 isDefault={true}
                                                 options={[
