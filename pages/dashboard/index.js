@@ -284,16 +284,30 @@ export default function MyCalendar(props) {
     };
     useEffect(() => {
         async function fetchData() {
-            await getCostOfWorkPerBranch(new Date().getFullYear(), 1)
-            await getCostOfWorkPerTask(new Date().getFullYear(), 1)
-            await getCostOfWorkAllBranch(new Date().getFullYear(), 1)
-            await getInventoryReport(new Date().getFullYear(), 1)
+            let month = new Date().getMonth() + 1
+            let period = 1
+            if (month >= 1 && month < 4) {
+                period = 1
+            } else if (month >= 4 && month < 6) {
+                period = 2
+            } else if (month >= 6 && month < 9) {
+                period = 3
+            } else if (month >= 9 && month < 12) {
+                period = 4
+            }
+            await getCostOfWorkPerBranch(new Date().getFullYear(), period)
+            await getCostOfWorkPerTask(new Date().getFullYear(), period)
+            await getCostOfWorkAllBranch(new Date().getFullYear(), period)
+
+            let months = (month.length == 1 ? "0" + month : month)
+            await getInventoryReport(new Date().getFullYear(), months)
         }
         fetchData();
     }, []);
     useEffect(() => {
         let month = new Date().getMonth() + 1
         console.log("month", month)
+        setPeriodInv(month.length == 1 ? "0" + month : month)
         if (month >= 1 && month < 4) {
             setPeriod(1)
             setPeriodLabel(optionPeriod.find(ele => ele.value == 1).name)
