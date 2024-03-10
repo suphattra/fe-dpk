@@ -11,16 +11,18 @@ import LoadingOverlay from 'react-loading-overlay';
 import { InputSelectGroup } from '../../components';
 import { renderOptions } from '../../helpers/utils';
 import DownloadExcel from '../../components/DownloadExcel';
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import { useRef } from 'react';
 Chart.register(CategoryScale);
 const localizer = momentLocalizer(moment)
 const breadcrumbs = [{ index: 1, href: '/calendar-schedule', name: 'DPK MANAGMENT SYSTEM' }]
 export default function MyCalendar(props) {
     const currentDate = new Date();
+    const tableRef = useRef(null);
     const [loading, setLoading] = useState(false)
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const randomDay = Math.floor(Math.random() * daysInMonth) + 1;
     const [costOfWorkPerBranch, setCostOfWorkPerBranch] = useState({ data: {}, resultTable: [] });
     const [costOfWorkPerBranchTable, setCostOfWorkPerBranchTable] = useState([]);
     const [costOfWorkPerTask, setCostOfWorkPerTask] = useState({ data: {} });
@@ -38,7 +40,7 @@ export default function MyCalendar(props) {
     const [optionYear, setOptionYear] = useState([]);
     const [yearBranch, setYearBranch] = useState(new Date().getFullYear());
     const [period, setPeriod] = useState(1);
-    const [yearTask, setYearTask] = useState(new Date().getFullYear());
+    const [yearInv, setYearInv] = useState(new Date().getFullYear());
     const [successCost, setSuccessCost] = useState(false);
     const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'January', 'February', 'March', 'April', 'May'];
     const [optionPeriod, setOptionPeriod] = useState([
@@ -48,6 +50,31 @@ export default function MyCalendar(props) {
         { value: 4, name: 'ไตรมาสที่ 4 (ต.ค. - ธ.ค.)' }
     ]);
     const [periodLabel, setPeriodLabel] = useState('ไตรมาสที่ 1 (ม.ค. - มี.ค.)');
+
+    /**
+     * inventory
+     */
+    const [optionMonth, setOptionMonth] = useState([
+        { value: "01", name: 'มกราคม' },
+        { value: "02", name: 'กุมพาพันธ์' },
+        { value: "03", name: 'มีนาคม' },
+        { value: "04", name: 'เมษายน' },
+        { value: "05", name: 'พฤษภาคม' },
+        { value: "06", name: 'มิถุนายน' },
+        { value: "07", name: 'กรกฎาคม' },
+        { value: "08", name: 'สิงหาคม' },
+        { value: "09", name: 'กันยายน' },
+        { value: "10", name: 'ตุลาคม' },
+        { value: "11", name: 'พฤศจิกายน' },
+        { value: "12", name: 'ธันวาคม' },
+    ]);
+    const [periodInv, setPeriodInv] = useState("01");
+    const [periodInvLabel, setPeriodInvLabel] = useState('ไตรมาสที่ 1 (ม.ค. - มี.ค.)');
+    const [inventoryTable, setInventoryTable] = useState([]);
+    const [inventoryBranchTable, setInventoryBranchTable] = useState([]);
+    const [reportDatainventory, setReportDatainventory] = useState([]);
+
+
     const data = {
         // labels,
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November ', 'December'],
@@ -260,6 +287,7 @@ export default function MyCalendar(props) {
             await getCostOfWorkPerBranch(new Date().getFullYear(), 1)
             await getCostOfWorkPerTask(new Date().getFullYear(), 1)
             await getCostOfWorkAllBranch(new Date().getFullYear(), 1)
+            await getInventoryReport(new Date().getFullYear(), 1)
         }
         fetchData();
     }, []);
@@ -269,15 +297,19 @@ export default function MyCalendar(props) {
         if (month >= 1 && month < 4) {
             setPeriod(1)
             setPeriodLabel(optionPeriod.find(ele => ele.value == 1).name)
+            setPeriodInvLabel(optionPeriod.find(ele => ele.value == 1).name)
         } else if (month >= 4 && month < 6) {
             setPeriod(2)
             setPeriodLabel(optionPeriod.find(ele => ele.value == 2).name)
+            setPeriodInvLabel(optionPeriod.find(ele => ele.value == 2).name)
         } else if (month >= 6 && month < 9) {
             setPeriod(3)
             setPeriodLabel(optionPeriod.find(ele => ele.value == 3).name)
+            setPeriodInvLabel(optionPeriod.find(ele => ele.value == 3).name)
         } else if (month >= 9 && month < 12) {
             setPeriod(4)
             setPeriodLabel(optionPeriod.find(ele => ele.value == 4).name)
+            setPeriodInvLabel(optionPeriod.find(ele => ele.value == 4).name)
         }
 
     }, []);
@@ -487,18 +519,78 @@ export default function MyCalendar(props) {
         // }
         setReportData(multiDataSet);
     }
-    // const options = {
-    //     responsive: true,
-    //     plugins: {
-    //         legend: {
-    //             position: 'top',
-    //         },
-    //         title: {
-    //             display: true,
-    //             text: 'Chart.js Bar Chart',
-    //         },
-    //     },
-    // };
+
+    const getInventoryReport = async (year, month) => {
+        setPeriodInvLabel(optionMonth.find(ele => ele.value == month).name)
+        let monthLabel = optionMonth.find(ele => ele.value == month).name
+        await OperationsService.inventoryReport({ year: year, month: month }).then(async res => {
+            if (res.data.resultCode === 200) {
+                setInventoryTable(res.data.resultTable)
+                setInventoryBranchTable(res.data.branchs)
+                await initExportInv(res.data.resultTable, res.data.branchs, year, monthLabel)
+                setLoading(false)
+            } else {
+                setLoading(false)
+            }
+        }).catch(err => {
+        })
+    }
+
+    const initExportInv = async (resultData, branchs, year, month) => {
+        const styleHeader = {
+            fill: { fgColor: { rgb: "6aa84f" } },
+            font: { sz: "10", bold: false },
+            alignment: { horizontal: "center" },
+        };
+        const styleData = {
+            font: { sz: "10", bold: false },
+            alignment: { horizontal: "center" },
+        };
+        let columnTask = branchs.map((item, index) => {
+            return { title: item.branchName, style: styleData, width: { wpx: 90 } }
+        })
+        const column = [
+            { title: 'ลำดับ', style: styleHeader, width: { wpx: 50 } },
+            { title: 'รหัสสินค้า', style: styleHeader, width: { wpx: 100 } },
+            { title: 'ชื่อสินค้า', style: styleHeader, width: { wpx: 200 } },
+            { title: 'หน่วย', style: styleHeader, width: { wpx: 100 } },
+            { title: 'ราคา/หน่วย', style: styleHeader, width: { wpx: 100 } },
+            ...columnTask,
+            { title: 'รวม', style: { ...styleHeader, fill: { fgColor: { rgb: "F4F98B" } }, width: { wpx: 120 } } },
+        ];
+        let dataRecord = [];
+        if (resultData && resultData.length > 0) {
+            dataRecord = resultData.map((item, index) => {
+                let task = []
+                inventoryBranchTable.length > 0 && inventoryBranchTable.map((inv) => (
+                    task.push({ value: item.distribution.filter((ele) => ele.branchCode == inv.branchCode).reduce((acc, entry) => acc + parseFloat(entry.amount), 0), style: { ...styleData, alignment: { horizontal: "right" }, } })
+                ))
+                return [
+                    { value: index + 1, style: { ...styleData, alignment: { horizontal: "center" }, } },
+                    { value: item.inventoryCode, style: { ...styleData, alignment: { horizontal: "left" }, } },
+                    { value: item.inventoryTradeName, style: { ...styleData, alignment: { horizontal: "left" }, } },
+                    { value: item.unit, style: { ...styleData, alignment: { horizontal: "left" }, } },
+                    { value: item.pricePerUnit, style: { ...styleData, alignment: { horizontal: "right" }, } },
+                    ...task,
+                    { value: item.distribution.reduce((acc, val) => acc + (parseFloat(val.amount) || 0), 0).toLocaleString(), style: styleData }
+                ];
+            });
+        }
+        let multiDataSet = [
+            {
+                xSteps: 5,
+                columns: [
+                    { title: 'สรุปค่าแรงของสาขา/ประเภทงาน (หน่วย บาท) ประจำเดือน ' + month + ' ' + year, merge: { colSpan: 2 }, style: { ...styleData }, across: 5 },
+                ],
+                data: [],
+            },
+            {
+                columns: column,
+                data: dataRecord,
+            }
+        ];
+        setReportDatainventory(multiDataSet)
+    }
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ')
     }
@@ -579,6 +671,7 @@ export default function MyCalendar(props) {
             },
         },
     };
+
     return <>
         <Layout>
             <LoadingOverlay active={loading} className="h-[calc(100vh-4rem)]" spinner text='Loading...'
@@ -625,8 +718,8 @@ export default function MyCalendar(props) {
                                         <div className="uppercase text-blueGray-400 mb-0 text-md font-semibold mr-4">
                                             <InputSelectGroup
                                                 type="text"
-                                                id={"year"}
-                                                name="year"
+                                                id={"period"}
+                                                name="period"
                                                 label=""
                                                 onChange={async (e) => {
                                                     setPeriod(e.target.value)
@@ -896,9 +989,67 @@ export default function MyCalendar(props) {
                             <div className={classNames(openTab === 1 ? "block" : "hidden", "h-[calc(100vh-200px)] overflow-y-auto")}>
                                 <div className="container px-8" id="tabs-tabContent">
                                     <div className="flex items-end justify-end py-2">
-                                        <button type="button"
+                                        <div className="uppercase text-blueGray-400 mb-0 text-md font-semibold mr-4">
+                                            <InputSelectGroup
+                                                type="text"
+                                                id={"periodInv"}
+                                                name="periodInv"
+                                                label=""
+                                                onChange={async (e) => {
+                                                    setPeriodInv(e.target.value)
+                                                    getInventoryReport(yearInv, e.target.value)
 
-                                            className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2 mr-2">
+                                                }}
+                                                isDefault={true}
+                                                options={optionMonth}
+                                                value={periodInv}
+                                            />
+
+                                        </div>
+                                        <div className="uppercase text-blueGray-400 mb-0 text-md font-semibold mr-4">
+                                            <InputSelectGroup
+                                                type="text"
+                                                id={"yearInv"}
+                                                name="yearInv"
+                                                label=""
+                                                onChange={async (e) => {
+                                                    console.log(e)
+                                                    setYearInv(e.target.value)
+                                                    getInventoryReport(e.target.value, periodInv)
+                                                }}
+                                                isDefault={true}
+                                                options={renderOptions(optionYear, "text", "value")}
+                                                value={yearInv}
+                                            />
+
+                                        </div>
+                                        {/* {reportDatainventory.length > 0 && (
+                                            <div className='pb-1'>
+                                                <DownloadExcel
+                                                    reportData={reportDatainventory}
+                                                    name="สร้างรายงาน"
+                                                    filename={"สรุปรายการสินค้าที่ถูกกระจายตามสาขา (จำนวนหน่วย) ประจำเดือน " + periodInvLabel + " ประจำปี " + yearInv}
+                                                />
+                                            </div>
+                                        )} */}
+                                        <div className='pb-1'>
+                                            <DownloadTableExcel
+                                                filename={"สรุปรายการสินค้าที่ถูกกระจายตามสาขา (จำนวนหน่วย) ประจำเดือน " + periodInvLabel + " ประจำปี " + yearInv}
+                                                sheet={periodInvLabel + yearInv}
+                                                currentTableRef={tableRef.current}
+                                            >
+
+                                                <button className="flex justify-center inline-flex items-center rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium shadow-sm hover:bg-white-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2 disabled:text-gray-800 disabled:bg-gray-50 disabled:text-gray-500">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15" viewBox="0 0 48 48" className='mr-2'>
+                                                        <path fill="#169154" d="M29,6H15.744C14.781,6,14,6.781,14,7.744v7.259h15V6z"></path><path fill="#18482a" d="M14,33.054v7.202C14,41.219,14.781,42,15.743,42H29v-8.946H14z"></path><path fill="#0c8045" d="M14 15.003H29V24.005000000000003H14z"></path><path fill="#17472a" d="M14 24.005H29V33.055H14z"></path><g><path fill="#29c27f" d="M42.256,6H29v9.003h15V7.744C44,6.781,43.219,6,42.256,6z"></path><path fill="#27663f" d="M29,33.054V42h13.257C43.219,42,44,41.219,44,40.257v-7.202H29z"></path><path fill="#19ac65" d="M29 15.003H44V24.005000000000003H29z"></path><path fill="#129652" d="M29 24.005H44V33.055H29z"></path></g><path fill="#0c7238" d="M22.319,34H5.681C4.753,34,4,33.247,4,32.319V15.681C4,14.753,4.753,14,5.681,14h16.638 C23.247,14,24,14.753,24,15.681v16.638C24,33.247,23.247,34,22.319,34z"></path><path fill="#fff" d="M9.807 19L12.193 19 14.129 22.754 16.175 19 18.404 19 15.333 24 18.474 29 16.123 29 14.013 25.07 11.912 29 9.526 29 12.719 23.982z"></path>
+                                                    </svg> สร้างรายงาน </button>
+
+                                            </DownloadTableExcel></div>
+                                        <button type="button"
+                                            onClick={() => {
+                                                getInventoryReport(yearInv, periodInv)
+                                            }}
+                                            className="flex justify-center inline-flex items-center mb-1 rounded-md border border-purple-600 bg-white-600 px-6 py-1.5 text-xs font-medium  shadow-sm hover:bg-white-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:ring-offset-2 mr-2">
                                             รีเฟรชข้อมูล
                                         </button>
                                     </div>
@@ -907,270 +1058,87 @@ export default function MyCalendar(props) {
                                             <div className="py-4">
                                                 <div className="flex items-between justify-between">
                                                     <h2 className="text-blueGray-700 text-md font-semibold">
-                                                        สรุปค่าใช้จ่ายซื้อสินค้าแต่ละรายการ (ประจำปี พ.ศ. 2567)
+                                                        สรุปรายการสินค้าที่ถูกกระจายไปแต่ละแปลง
                                                     </h2>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
                                             <div class="border-b border-gray-200 shadow">
-                                                <table class="min-w-full divide-y divide-gray-300 ">
-                                                    <thead class="bg-gray-50">
-                                                        <tr>
-                                                            <th class="px-6 py-2 text-xs text-gray-500">
-                                                                ID
-                                                            </th>
-                                                            <th class="px-6 py-2 text-xs text-gray-500">
-                                                                Name
-                                                            </th>
-                                                            <th class="px-6 py-2 text-xs text-gray-500">
-                                                                Email
-                                                            </th>
-                                                            <th class="px-6 py-2 text-xs text-gray-500">
-                                                                Created_at
-                                                            </th>
-                                                            <th class="px-6 py-2 text-xs text-gray-500">
-                                                                Edit
-                                                            </th>
-                                                            <th class="px-6 py-2 text-xs text-gray-500">
-                                                                Delete
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="bg-white divide-y divide-gray-300">
-                                                        <tr class="whitespace-nowrap">
-                                                            <td class="px-6 py-4 text-sm text-gray-500">
-                                                                1
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <div class="text-sm text-gray-900">
-                                                                    Jon doe
-                                                                </div>
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <div class="text-sm text-gray-500">jhondoe@example.com</div>
-                                                            </td>
-                                                            <td class="px-6 py-4 text-sm text-gray-500">
-                                                                2021-1-12
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <a href="#" class="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <a href="#" class="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="whitespace-nowrap">
-                                                            <td class="px-6 py-4 text-sm text-gray-500">
-                                                                1
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <div class="text-sm text-gray-900">
-                                                                    Jon doe
-                                                                </div>
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <div class="text-sm text-gray-500">jhondoe@example.com</div>
-                                                            </td>
-                                                            <td class="px-6 py-4 text-sm text-gray-500">
-                                                                2021-1-12
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <a href="#" class="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <a href="#" class="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="whitespace-nowrap">
-                                                            <td class="px-6 py-4 text-sm text-gray-500">
-                                                                1
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <div class="text-sm text-gray-900">
-                                                                    Jon doe
-                                                                </div>
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <div class="text-sm text-gray-500">jhondoe@example.com</div>
-                                                            </td>
-                                                            <td class="px-6 py-4 text-sm text-gray-500">
-                                                                2021-1-12
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <a href="#" class="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                                            </td>
-                                                            <td class="px-6 py-4">
-                                                                <a href="#" class="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col mt-8">
-                                        <div className="rounded-t mb-0 bg-transparent">
-                                            <div className="py-4">
-                                                <div className="flex items-between justify-between">
-                                                    <h2 className="text-blueGray-700 text-md font-semibold">
-                                                        สรุปจำนวนสินค้าที่ถูกกระจายไปแต่ละแปลง (ประจำปี พ.ศ. 2567)
-                                                    </h2>
+                                                <div className='w-full overflow-y-auto'>
+                                                    <table ref={tableRef} id="table-inv" class="min-w-full divide-y divide-gray-300 border rounded-md">
+                                                        <thead class="bg-gray-50">
+                                                            <tr className='text-center'>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                    ลำดับ
+                                                                </th>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                    รหัสสินค้า
+                                                                </th>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                    ชื่อสินค้า
+                                                                </th>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                    หน่วย
+                                                                </th>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap text-center bg-lime-100" rowspan="2">
+                                                                    ราคา/หน่วย
+                                                                </th>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 row-span-3 border text-center bg-lime-200" colSpan={inventoryBranchTable.length}>
+                                                                    จำนวนการกระจายสินค้า/สาขา(หน่วย)
+                                                                </th>
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap text-center bg-lime-100" rowspan="2">
+                                                                    รวม
+                                                                </th>
+                                                            </tr>
+                                                            <tr>
+                                                                {inventoryBranchTable.length > 0 && inventoryBranchTable.map((item) => (
+                                                                    <th scope="col" className="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap" style={{ width: "200px" }}>
+                                                                        {item.branchName}
+                                                                    </th>
+                                                                ))}
+
+                                                            </tr>
+
+                                                        </thead>
+                                                        <tbody class="bg-white divide-y divide-gray-300">
+                                                            <>
+                                                                {inventoryTable.map((inv, index) => (
+                                                                    <tr class="whitespace-nowrap">
+                                                                        <td class="px-6 py-4 text-sm text-gray-900 border">
+                                                                            {index + 1}
+                                                                        </td>
+                                                                        <td class="px-6 py-4 text-sm text-gray-900 border">
+                                                                            {inv.inventoryCode}
+                                                                        </td>
+                                                                        <td class="px-6 py-4 text-sm text-gray-900 border">
+                                                                            {inv.inventoryTradeName}
+                                                                        </td>
+                                                                        <td class="px-6 py-4 text-sm text-gray-900 border text-center">
+                                                                            {inv.unit}
+                                                                        </td>
+                                                                        <td class="px-6 py-4 text-sm text-gray-900 border text-center">
+                                                                            {inv.pricePerUnit}
+                                                                        </td>
+                                                                        {inventoryBranchTable.length > 0 && inventoryBranchTable.map((item) => (
+                                                                            // {inv.distribution.length > 0 && inv.distribution.map((item) => (
+                                                                            <td scope="col" className="px-6 py-4 text-sm text-gray-500 border whitespace-nowrap text-center" style={{ width: "150px" }}>
+                                                                                {inv.distribution.filter((ele) => ele.branchCode == item.branchCode).reduce((acc, entry) => acc + parseFloat(entry.amount), 0)}
+                                                                            </td>
+                                                                        ))}
+                                                                        <td className='bg-green-50 whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6'>{inv.distribution.reduce((acc, val) => acc + (parseFloat(val.amount) || 0), 0).toLocaleString()}</td>
+                                                                    </tr>
+                                                                ))}
+                                                                {inventoryTable.length <= 0 &&
+                                                                    <tr className='text-center bg-red-50 p-2'>
+                                                                        <td colSpan="20" className='p-2'>ไม่มีข้อมูล</td>
+                                                                    </tr>}
+                                                            </>
+
+
+                                                        </tbody>
+                                                    </table>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="py-2 -my-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                            <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
-                                                <table class="min-w-full">
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                                                                Name</th>
-                                                            <th
-                                                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                                                                สินค้า</th>
-                                                            <th
-                                                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                                                                Status</th>
-                                                            <th
-                                                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                                                                Edit</th>
-                                                            <th
-                                                                class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
-                                                                Delete</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody class="bg-white">
-                                                        <tr>
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <div class="flex items-center">
-                                                                    <div class="flex-shrink-0 w-10 h-10">
-                                                                        <img class="w-10 h-10 rounded-full" src="https://source.unsplash.com/user/erondu"
-                                                                            alt="admin dashboard ui" />
-                                                                    </div>
-
-                                                                    <div class="ml-4">
-                                                                        <div class="text-sm font-medium leading-5 text-gray-900">
-                                                                            John Doe
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <div class="text-sm leading-5 text-gray-500">แมกนีเซียม</div>
-                                                            </td>
-
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <span
-                                                                    class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">Active</span>
-                                                            </td>
-
-                                                            <td
-                                                                class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-400" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                </svg>
-                                                            </td>
-                                                            <td
-                                                                class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-400" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <div class="flex items-center">
-                                                                    <div class="flex-shrink-0 w-10 h-10">
-                                                                        <img class="w-10 h-10 rounded-full" src="https://source.unsplash.com/user/erondu"
-                                                                            alt="admin dashboard ui" />
-                                                                    </div>
-
-                                                                    <div class="ml-4">
-                                                                        <div class="text-sm font-medium leading-5 text-gray-900">
-                                                                            John Doe
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <div class="text-sm leading-5 text-gray-500">โกรแคล MGB</div>
-                                                            </td>
-
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <span
-                                                                    class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">Active</span>
-                                                            </td>
-
-                                                            <td
-                                                                class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-400" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                </svg>
-                                                            </td>
-                                                            <td
-                                                                class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-400" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <div class="flex items-center">
-                                                                    <div class="flex-shrink-0 w-10 h-10">
-                                                                        <img class="w-10 h-10 rounded-full" src="https://source.unsplash.com/user/erondu"
-                                                                            alt="admin dashboard ui" />
-                                                                    </div>
-
-                                                                    <div class="ml-4">
-                                                                        <div class="text-sm font-medium leading-5 text-gray-900">
-                                                                            John Doe
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <div class="text-sm leading-5 text-gray-500">แมมมอท ชูก้าร์ เอ็กซ์เพรส</div>
-                                                            </td>
-
-                                                            <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
-                                                                <span
-                                                                    class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full">Active</span>
-                                                            </td>
-
-                                                            <td
-                                                                class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-400" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                </svg>
-                                                            </td>
-                                                            <td
-                                                                class="px-6 py-4 text-sm leading-5 text-gray-500 whitespace-no-wrap border-b border-gray-200">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-400" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
                                             </div>
                                         </div>
                                     </div>
