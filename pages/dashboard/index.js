@@ -1122,7 +1122,11 @@ export default function MyCalendar(props) {
                                                                         </td>
                                                                         {inventoryBranchTable.length > 0 && inventoryBranchTable.map((item) => (
                                                                             // {inv.distribution.length > 0 && inv.distribution.map((item) => (
-                                                                            <td scope="col" className="px-6 py-4 text-sm text-gray-500 border whitespace-nowrap text-center" style={{ width: "150px" }}>
+                                                                            <td scope="col"
+                                                                                className={classNames("px-6 py-4 text-sm text-gray-500 border whitespace-nowrap text-center",
+                                                                                    inv.distribution.filter((ele) => ele.branchCode == item.branchCode).reduce((acc, entry) => acc + parseFloat(entry.amount), 0) == "0" ? "text-gray-500" : "text-red-700 font-bold")}
+                                                                                style={{ width: "150px" }}
+                                                                            >
                                                                                 {inv.distribution.filter((ele) => ele.branchCode == item.branchCode).reduce((acc, entry) => acc + parseFloat(entry.amount), 0)}
                                                                             </td>
                                                                         ))}
