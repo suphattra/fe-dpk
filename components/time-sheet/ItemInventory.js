@@ -5,6 +5,7 @@ import InputSelectGroupInline from "../InputSelectGroupInline";
 import { useEffect, useState } from "react";
 import InputGroupInline from "../InputGroupInline";
 import InputGroupMaskInline from "../InputGroupMaskInline";
+import InputGroupMask from "../InputGroupMask";
 
 export default function ItemInventory({ extraInventory, deleteAddOnService, callbackInventory, inventoryOption, disabled, errors, mode, statusOperation }) {
   const [inventoryList, setInventoryList] = useState([]);
@@ -117,7 +118,7 @@ export default function ItemInventory({ extraInventory, deleteAddOnService, call
                     </div>
                     <div className="col-span-3">
                       <InputGroupMaskInline
-                        type="text"
+                        type="number"
                         id="pickupAmount"
                         name="pickupAmount"
                         label="จำนวน"
