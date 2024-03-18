@@ -159,7 +159,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                                     สร้างรายงาน
                                 </button>
                             }
-                            filename="รายงานบันทึกการทำงาน"
+                            filename={"รายงานบันทึกการทำงาน_" + searchParam.startDate+"_"+searchParam.endDate}
                         >
                             <ExcelSheet dataSet={reportData} name={"รายงานบันทึกการทำงาน"} />
                         </ExcelFile>}
