@@ -108,7 +108,7 @@ export default function ReportFinancialEmp(props) {
         return [
           { value: index + 1, style: styleData },
           { value: item.transactionDate ? moment(item.transactionDate).format('DD/MM/YYYY') : "" },
-          { value: item.employeeData.firstName + item.employeeData.lastName },
+          { value: item.employeeData.firstName + " " + item.employeeData.lastName },
           { value: item.financialType?.value1, },
           { value: item.financialTopic?.value1 },
           { value: item.amount ? item.amount : "" },
