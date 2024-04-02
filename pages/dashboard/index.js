@@ -1083,31 +1083,31 @@ export default function MyCalendar(props) {
                                                     <table ref={tableRef} id="table-inv" class="min-w-full divide-y divide-gray-300 border rounded-md">
                                                         <thead class="bg-gray-50">
                                                             <tr className='text-center'>
-                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100 w-24" rowspan="2">
                                                                     ลำดับ
                                                                 </th>
-                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100 w-24" rowspan="2">
                                                                     รหัสสินค้า
                                                                 </th>
-                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100 w-64" rowspan="2">
                                                                     ชื่อสินค้า
                                                                 </th>
-                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100" rowspan="2">
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border text-center bg-lime-100 w-24" rowspan="2">
                                                                     หน่วย
                                                                 </th>
-                                                                <th class="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap text-center bg-lime-100" rowspan="2">
+                                                                <th class="px-4 py-2 text-xs text-gray-900 border whitespace-nowrap text-center bg-lime-100 w-24" rowspan="2">
                                                                     ราคา/หน่วย
                                                                 </th>
                                                                 <th class="px-6 py-2 text-xs text-gray-900 row-span-3 border text-center bg-lime-200" colSpan={inventoryBranchTable.length}>
                                                                     จำนวนการกระจายสินค้า/สาขา(หน่วย)
                                                                 </th>
-                                                                <th class="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap text-center bg-lime-100" rowspan="2">
+                                                                <th class="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap text-center bg-lime-100 w-24" rowspan="2">
                                                                     รวม
                                                                 </th>
                                                             </tr>
                                                             <tr>
                                                                 {inventoryBranchTable.length > 0 && inventoryBranchTable.map((item) => (
-                                                                    <th scope="col" className="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap" style={{ width: "200px" }}>
+                                                                    <th scope="col" className="px-6 py-2 text-xs text-gray-900 border whitespace-nowrap" style={{ width: "150px" }}>
                                                                         {item.branchName}
                                                                     </th>
                                                                 ))}
@@ -1115,36 +1115,36 @@ export default function MyCalendar(props) {
                                                             </tr>
 
                                                         </thead>
-                                                        <tbody class="bg-white divide-y divide-gray-300">
+                                                        <tbody class="bg-white divide-y divide-gray-300 overflow-y-auto">
                                                             <>
                                                                 {inventoryTable.map((inv, index) => (
                                                                     <tr class="whitespace-nowrap">
-                                                                        <td class="px-6 py-4 text-sm text-gray-900 border">
+                                                                        <td class="px-6 py-2 text-sm text-gray-900 border w-24">
                                                                             {index + 1}
                                                                         </td>
-                                                                        <td class="px-6 py-4 text-sm text-gray-900 border">
+                                                                        <td class="px-6 py-2 text-sm text-gray-900 border w-24">
                                                                             {inv.inventoryCode}
                                                                         </td>
-                                                                        <td class="px-6 py-4 text-sm text-gray-900 border">
+                                                                        <td class="px-6 py-2 text-sm text-gray-900 border w-64">
                                                                             {inv.inventoryTradeName}
                                                                         </td>
-                                                                        <td class="px-6 py-4 text-sm text-gray-900 border text-center">
+                                                                        <td class="px-6 py-2 text-sm text-gray-900 border text-center w-24">
                                                                             {inv.unit}
                                                                         </td>
-                                                                        <td class="px-6 py-4 text-sm text-gray-900 border text-center">
+                                                                        <td class="px-6 py-2 text-sm text-gray-900 border text-center w-24">
                                                                             {inv.pricePerUnit}
                                                                         </td>
                                                                         {inventoryBranchTable.length > 0 && inventoryBranchTable.map((item) => (
                                                                             // {inv.distribution.length > 0 && inv.distribution.map((item) => (
                                                                             <td scope="col"
-                                                                                className={classNames("px-6 py-4 text-sm text-gray-500 border whitespace-nowrap text-center",
+                                                                                className={classNames("px-6 py-2 text-sm text-gray-500 border whitespace-nowrap text-center",
                                                                                     inv.distribution.filter((ele) => ele.branchCode == item.branchCode).reduce((acc, entry) => acc + parseFloat(entry.amount), 0) == "0" ? "text-gray-500" : "text-red-700 font-bold")}
                                                                                 style={{ width: "150px" }}
                                                                             >
                                                                                 {inv.distribution.filter((ele) => ele.branchCode == item.branchCode).reduce((acc, entry) => acc + parseFloat(entry.amount), 0)}
                                                                             </td>
                                                                         ))}
-                                                                        <td className='bg-green-50 whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6'>{inv.distribution.reduce((acc, val) => acc + (parseFloat(val.amount) || 0), 0).toLocaleString()}</td>
+                                                                        <td className='bg-green-50 whitespace-nowrap border py-2 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 w-24'>{inv.distribution.reduce((acc, val) => acc + (parseFloat(val.amount) || 0), 0).toLocaleString()}</td>
                                                                     </tr>
                                                                 ))}
                                                                 {inventoryTable.length <= 0 &&
