@@ -5,7 +5,9 @@ export const InventoryService = {
     getInventoryDetail,
     updateInventory,
     createInventory,
-    getInventoryReport
+    getInventoryReport,
+    deleteInv,
+    checkOperation
 };
 
 async function getInventoryList(param) {
@@ -40,6 +42,21 @@ async function createInventory(data) {
 async function getInventoryReport(param) {
     try {
         return http.get(`/v1/inventories/report/inventory`, param);
+    } catch (err) {
+        console.log(err)
+    }
+}
+async function deleteInv(param) {
+    try {
+        return http.del(`/v1/inventories/${param}`);
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+async function checkOperation(param) {
+    try {
+        return http.get(`/v1/inventories/checkOperation/${param}`);
     } catch (err) {
         console.log(err)
     }

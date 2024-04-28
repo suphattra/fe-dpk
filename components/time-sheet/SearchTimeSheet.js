@@ -10,6 +10,7 @@ import moment from 'moment';
 import DownloadExcel from '../DownloadExcel';
 import ReactExport from 'react-data-export';
 import { NotifyService } from '../../pages/api/notify.service';
+import { InventoryService } from '../../pages/api/inventory.service';
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 export default function SearchTimeSheet({ handleSearch, handleReset, handleChange, searchParam, customerType, paymentStatus, operationsList }) {
@@ -20,6 +21,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
     const [mainBranchOption, setMainBranchOption] = useState([])
     const [subBranchOption, setSubBranchOption] = useState([])
     const [reportData, setReportData] = useState([]);
+    const [inventoryOption, setInventoryOption] = useState([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -28,7 +30,7 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             await getEmployeeList()
             await getMainBranchList()
             await getSubBranchList()
-
+            await getInventoryList()
         }
         fetchData();
     }, []);
@@ -49,6 +51,17 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
             }
         }).catch(err => {
             console.log(err)
+        })
+    }
+    const getInventoryList = async (branchCode) => {
+        setInventoryOption([])
+        await InventoryService.getInventoryList({}).then(res => {
+            if (res.data.resultCode === 200) {
+                setInventoryOption(res.data.resultData)
+            } else {
+                setInventoryOption([])
+            }
+        }).catch(err => {
         })
     }
     const getEmployeeList = async () => {
@@ -217,6 +230,14 @@ export default function SearchTimeSheet({ handleSearch, handleReset, handleChang
                             isSearchable
                             options={renderOptions(employeesOption, "firstName", "employeeCode", "lastName")}
                             value={searchParam.employee}
+                            onChange={handleChange}
+                            placeholder="ทั้งหมด"
+                        />
+                        <InputSelectGroup type="text" id="inventoryCode" name="inventoryCode" label="เบิกสินค้าคงคลัง"
+                            isMulti
+                            isSearchable
+                            options={renderOptions(inventoryOption, "inventoryTradeName", "inventoryCode", "")}
+                            value={searchParam.inventoryCode}
                             onChange={handleChange}
                             placeholder="ทั้งหมด"
                         />

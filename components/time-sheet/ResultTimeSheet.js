@@ -126,11 +126,17 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                     {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
                                                 </div>
                                             </th>
+
                                             <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
                                                 <div class="flex items-center cursor-pointer" onClick={() => { sortTable('startDate'); setSort(!sort) }}>
                                                     วัน/เดือน/ปี
                                                     {sort ? <BarsArrowUpIcon className="w-3 h-3 ml-1.5 mt-1" /> : <BarsArrowDownIcon className="w-3 h-3 ml-1.5 mt-1" />}
 
+                                                </div>
+                                            </th>
+                                            <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
+                                                <div class="text-center flex items-center cursor-pointer" >
+                                                    การเบิกสินค้าคงคลัง
                                                 </div>
                                             </th>
                                             <th scope="col" className="px-3 py-3.5 text-sm font-semibold text-gray-900">
@@ -166,6 +172,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                                         {job.otAmount && job.otRate ? `${job.otAmount} * ${job.otRate}` : `${job.otAmount || ''} ${job.otRate || ''}`}
                                                     </td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{job.startDate ? moment(job.startDate).format('DD/MM/YYYY') : ""}</td>
+                                                    <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">{job.inventory.length > 0 ? "มีการเบิก" : "ไม่มีการเบิก"}</td>
 
                                                     <td className="text-center whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                                         {job.operationStatus ? renderbadgeStatus(job.operationStatus.value1, job.operationStatus.code) : ""}
@@ -195,7 +202,7 @@ export default function ResultTimeSheet({ operationsList, total, paginate, curre
                                     // timesheet={timesheetDetail}
                                     operationCode={timesheetDetail.operationCode}
                                 />}
-                                <Pagination totalPosts={total} currentPages={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList}  maxPage={Math.ceil(total / 10)}/>
+                                <Pagination totalPosts={total} currentPages={currentPage} postsPerPage={10} paginate={paginate} lengthList={operationsList} maxPage={Math.ceil(total / 10)} />
                             </div>
                         </div>
                     </div>

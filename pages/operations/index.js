@@ -94,6 +94,14 @@ export default function Job() {
             })
             param.subBranch = split
         }
+        if (searchParam.inventoryCode) {
+            let split = ""
+            searchParam.inventoryCode.map((ele) => {
+                split += ele.value + '|'
+            })
+            param.inventoryCode = split
+        }
+        
 
         if (searchParam.startDate) {
             param.startDate = searchParam.startDate
